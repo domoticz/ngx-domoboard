@@ -27,7 +27,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "./node_modules/nebular-icons/scss/nebular-icons.scss"
             ],
             "scripts": []
           },

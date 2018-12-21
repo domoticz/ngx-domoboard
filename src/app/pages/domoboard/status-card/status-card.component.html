@@ -1,0 +1,12 @@
+<nb-card (click)="on = !on" [ngClass]="{'off': !on}">
+  <div class="icon-container">
+    <div class="icon primary">
+      <ng-content></ng-content>
+    </div>
+  </div>
+
+  <div class="details">
+    <div class="title">{{ title }}</div>
+    <div class="status">{{ on ? 'ON' : 'OFF' }}</div>
+  </div>
+</nb-card>

@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { DomoticzService } from 'src/app/core/services/domoticz.service';
+import { Observable } from 'rxjs';
+import { LightSwitch } from 'src/app/core/models/lightSwitch.interface';
 
 @Component({
   selector: 'nd-domoboard',
@@ -6,7 +9,15 @@ import { Component, OnInit } from '@angular/core';
 })
 
 export class DomoboardComponent implements OnInit {
-  constructor() { }
 
-  ngOnInit() { }
+  lightSwitches$: Observable<LightSwitch[]> = this.domoticzService.getLightSwitches();
+
+  constructor(private domoticzService: DomoticzService) { }
+
+  ngOnInit() {
+    this.lightSwitches$.subscribe((lightSwitches: LightSwitch[]) =>
+      console.log(lightSwitches)
+    );
+  }
+
 }

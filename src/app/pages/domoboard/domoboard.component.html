@@ -1,5 +1,7 @@
-<div class="col-xxxl-3 col-md-6">
-  <nd-status-card [title]="'Light'">
-    <i [ngClass]="'nb-lightbulb'"></i>
-  </nd-status-card>
+<div class="row">
+  <div class="col-xxxl-3 col-md-6" *ngFor="let lightSwitch of (lightSwitches$ | async)">
+    <nd-status-card [title]="lightSwitch.Name">
+      <i [ngClass]="'nb-lightbulb'"></i>
+    </nd-status-card>
+  </div>
 </div>

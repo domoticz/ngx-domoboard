@@ -5,8 +5,7 @@ import { LightSwitch } from 'src/app/core/models/light-switch.interface';
 
 @Component({
   selector: 'nd-domoboard',
-  templateUrl: './domoboard.component.html',
-  styleUrls: ['./domoboard.component.scss']
+  templateUrl: './domoboard.component.html'
 })
 
 export class DomoboardComponent implements OnInit {

@@ -1,4 +1,4 @@
-<nb-card (click)="on = !on" [ngClass]="{'off': !on}">
+<nb-card (click)="switchLight()" [ngClass]="{'off': !on}">
   <div class="icon-container">
     <div class="icon primary">
       <ng-content></ng-content>

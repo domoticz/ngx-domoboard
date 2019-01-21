@@ -10,4 +10,9 @@ export class StatusCardComponent {
   @Input() title: string;
   @Input() type: string;
   @Input() on = true;
+
+  switchLight() {
+    this.on = !this.on;
+  }
+
 }

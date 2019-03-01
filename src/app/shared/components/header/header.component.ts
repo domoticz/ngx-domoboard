@@ -1,5 +1,12 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
+
 import { environment } from 'src/environments/environment';
+
+enum routes {
+  Switches = 'domoboard',
+  Misc = ''
+}
 
 @Component({
   selector: 'nd-header',
@@ -7,12 +14,16 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./header.component.scss']
 })
 
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
 
   @Input() position = 'normal';
+
   name = environment.name;
 
-  constructor() { }
+  constructor(private router: Router) { }
 
-  ngOnInit() { }
+  onChangeTab(event) {
+    this.router.navigate([routes[event.tabTitle]]);
+  }
+
 }

@@ -1,3 +1,3 @@
 export enum Urls {
-  getlightswitches = 'json.htm?type=command&param=getlightswitches'
+  lightswitches = 'json.htm?type=command&param=getlightswitches'
 }

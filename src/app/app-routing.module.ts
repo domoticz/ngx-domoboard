@@ -3,8 +3,8 @@ import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
   { path: 'domoboard', loadChildren: './pages/domoboard/domoboard.module#DomoboardModule' },
-  { path: '',   redirectTo: '/domoboard', pathMatch: 'full' },
-  { path: '**', redirectTo: '/domoboard' }
+  { path: '',   redirectTo: '', pathMatch: 'full' },
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({

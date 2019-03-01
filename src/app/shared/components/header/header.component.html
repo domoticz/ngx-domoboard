@@ -1,7 +1,14 @@
 <div class="header-container"
      [class.left]="position === 'normal'"
      [class.right]="position === 'inverse'">
+
   <div class="logo-containter">
     <div class="logo"><span>{{name}}</span></div>
   </div>
+
+  <nb-tabset (changeTab)="onChangeTab($event)">
+    <nb-tab tabTitle="Misc"></nb-tab>
+    <nb-tab tabTitle="Switches"></nb-tab>
+  </nb-tabset>
+
 </div>

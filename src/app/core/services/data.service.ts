@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
+
 import { Observable } from 'rxjs';
+
+import { environment } from 'src/environments/environment';
 
 export abstract class DataService {
 
@@ -9,11 +11,11 @@ export abstract class DataService {
   constructor(protected httpClient: HttpClient) {}
 
   protected get<T>(relativeUrl: string): Observable<T> {
-    return this.httpClient.get<T>(`${this.baseUrl}${relativeUrl}`);
+    return this.httpClient.get<T>(`${ this.baseUrl }${ relativeUrl }`);
   }
 
   protected post<T>(relativeUrl: string, data: any): Observable<T> {
-    return this.httpClient.post<T>(`${this.baseUrl}${relativeUrl}`, data);
+    return this.httpClient.post<T>(`${ this.baseUrl }${ relativeUrl }`, data);
   }
 
 }

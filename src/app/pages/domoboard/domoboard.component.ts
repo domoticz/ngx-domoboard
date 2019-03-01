@@ -1,20 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
-import { Observable } from 'rxjs';
+import { iif, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+
+import { LightSwitch } from '@nd/core/models';
 
 import { DomoticzService } from 'src/app/core/services/domoticz.service';
-import { LightSwitch } from 'src/app/core/models/light-switch.interface';
 
 @Component({
   selector: 'nd-domoboard',
   templateUrl: './domoboard.component.html'
 })
-export class DomoboardComponent implements OnInit {
+export class DomoboardComponent {
 
-  lightSwitches$: Observable<LightSwitch[]> = this.domoticzService.getLightSwitches();
+  lightSwitches$ = this.domoticzService.select<LightSwitch[]>('lightSwitches').pipe(
+    switchMap(stored => iif(() => !!stored[0], of(stored), this.domoticzService.getLightSwitches()))
+  );
 
   constructor(private domoticzService: DomoticzService) { }
-
-  ngOnInit() {}
 
 }

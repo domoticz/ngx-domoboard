@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 
 enum routes {
-  Switches = 'domoboard',
+  Switches = 'switches',
   Misc = ''
 }
 

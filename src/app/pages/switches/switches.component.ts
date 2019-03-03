@@ -8,10 +8,10 @@ import { LightSwitch } from '@nd/core/models';
 import { DomoticzService } from 'src/app/core/services/domoticz.service';
 
 @Component({
-  selector: 'nd-domoboard',
-  templateUrl: './domoboard.component.html'
+  selector: 'nd-switches',
+  templateUrl: './switches.component.html'
 })
-export class DomoboardComponent {
+export class SwitchesComponent {
 
   lightSwitches$ = this.domoticzService.select<LightSwitch[]>('lightSwitches').pipe(
     switchMap(stored => iif(() => !!stored[0], of(stored), this.domoticzService.getLightSwitches()))

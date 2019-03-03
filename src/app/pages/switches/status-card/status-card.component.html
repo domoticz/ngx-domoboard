@@ -1,4 +1,5 @@
 <nb-card (click)="switchLight()" [ngClass]="{'off': !on}">
+
   <div class="icon-container">
     <div class="icon primary">
       <ng-content></ng-content>
@@ -9,4 +10,5 @@
     <div class="title">{{ title }}</div>
     <div class="status">{{ on ? 'ON' : 'OFF' }}</div>
   </div>
+  
 </nb-card>

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 
-import { DomoboardComponent } from './domoboard.component';
-import { DomoboardRoutingModule } from './domoboard-routing.module';
+import { SwitchesComponent } from './switches.component';
+import { SwitchesRoutingModule } from './switches-routing.module';
 import { StatusCardComponent } from './status-card/status-card.component';
 import { NbCardModule } from '@nebular/theme';
 import { CommonModule } from '@angular/common';
@@ -9,14 +9,14 @@ import { CommonModule } from '@angular/common';
 @NgModule({
   imports: [
     CommonModule,
-    DomoboardRoutingModule,
+    SwitchesRoutingModule,
     NbCardModule
   ],
   exports: [],
   declarations: [
-    DomoboardComponent,
+    SwitchesComponent,
     StatusCardComponent
   ],
   providers: [],
 })
-export class DomoboardModule { }
+export class SwitchesModule { }

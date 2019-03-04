@@ -14,7 +14,8 @@ import { DomoticzService } from 'src/app/core/services/domoticz.service';
 export class SwitchesComponent {
 
   lightSwitches$ = this.domoticzService.select<LightSwitch[]>('lightSwitches').pipe(
-    switchMap(stored => iif(() => !!stored[0], of(stored), this.domoticzService.getLightSwitches()))
+    switchMap(stored =>
+      iif(() => !!stored && !!stored.length, of(stored), this.domoticzService.getLightSwitches()))
   );
 
   constructor(private domoticzService: DomoticzService) { }

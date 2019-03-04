@@ -15,3 +15,8 @@
   </nb-layout-footer>
 
 </nb-layout>
+
+<nb-alert *ngIf="(notification$ | async) as notification" class="nd-alert"
+  status="danger" closable (close)="onClose()">
+  {{ notification }}
+</nb-alert>

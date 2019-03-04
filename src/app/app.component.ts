@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+
 import { NbThemeService } from '@nebular/theme';
+
+import { Observable } from 'rxjs';
+
+import { NotificationService } from './core/services/notification.service';
 
 @Component({
   selector: 'nd-root',
@@ -10,7 +15,12 @@ export class AppComponent implements OnInit {
 
   title = 'ngx-domoboard';
 
-  constructor(private themeService: NbThemeService) {}
+  notification$: Observable<string> = this.notifService.notification;
+
+  constructor(
+    private themeService: NbThemeService,
+    private notifService: NotificationService
+  ) {}
 
   ngOnInit() {
     this.enableDarkTheme();
@@ -18,6 +28,10 @@ export class AppComponent implements OnInit {
 
   enableDarkTheme() {
     this.themeService.changeTheme('cosmic');
+  }
+
+  onClose() {
+    this.notifService.clearNotification();
   }
 
 }

@@ -1,14 +1,17 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'nd-status-card',
   styleUrls: ['./status-card.component.scss'],
-  templateUrl: './status-card.component.html'
+  templateUrl: './status-card.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatusCardComponent {
 
   @Input() title: string;
+
   @Input() type: string;
+
   @Input() on = true;
 
   switchLight() {

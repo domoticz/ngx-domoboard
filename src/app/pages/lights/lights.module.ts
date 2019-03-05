@@ -2,18 +2,18 @@ import { NgModule } from '@angular/core';
 
 import { SharedModule } from '@nd/shared/shared.module';
 
-import { SwitchesComponent } from './switches.component';
-import { SwitchesRoutingModule } from './switches-routing.module';
+import { LightsComponent } from './lights.component';
+import { LightsRoutingModule } from './lights-routing.module';
 
 @NgModule({
   imports: [
-    SwitchesRoutingModule,
+    LightsRoutingModule,
     SharedModule
   ],
   exports: [],
   declarations: [
-    SwitchesComponent
+    LightsComponent
   ],
   providers: [],
 })
-export class SwitchesModule { }
+export class LightsModule { }

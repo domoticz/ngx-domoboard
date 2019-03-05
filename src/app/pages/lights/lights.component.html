@@ -1,0 +1,10 @@
+<div class="row">
+  <div class="col-xxxl-3 col-md-6" *ngFor="let light of (lights$ | async)">
+
+    <nd-status-card [title]="light.Name" (statusChanged)="statusChanged($event, light)"
+      [on]="light.Status === 'On' ? true : false">
+      <i [ngClass]="icon[light.Image] + ' ' + light.Status"></i>
+    </nd-status-card>
+
+  </div>
+</div>

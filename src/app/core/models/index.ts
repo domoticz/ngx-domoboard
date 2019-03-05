@@ -1,2 +1,2 @@
 export { DomoticzResponse } from './domoticz-response.interface';
-export { LightSwitch } from './light-switch.interface';
+export { Light } from './light.interface';

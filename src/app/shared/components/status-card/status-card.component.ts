@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'nd-status-card',
@@ -12,10 +12,13 @@ export class StatusCardComponent {
 
   @Input() type: string;
 
-  @Input() on = true;
+  @Input() on: boolean;
+
+  @Output() statusChanged = new EventEmitter<string>();
 
   switchLight() {
     this.on = !this.on;
+    this.statusChanged.emit(this.on ? 'On' : 'Off');
   }
 
 }

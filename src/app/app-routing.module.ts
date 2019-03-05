@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
-  { path: 'switches', loadChildren: './pages/switches/switches.module#SwitchesModule' },
+  { path: 'lights', loadChildren: './pages/lights/lights.module#LightsModule' },
   { path: '',   redirectTo: '', pathMatch: 'full' },
   { path: '**', redirectTo: '' }
 ];

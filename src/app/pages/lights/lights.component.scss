@@ -1,0 +1,13 @@
+.nd-fireplace {
+  width: 72px;
+  height: 72px;
+  background-size: 72px 72px;
+
+  &.On {
+    background-image: url('/assets/icons/fireplace-on.png');
+  }
+
+  &.Off {
+    background-image: url('/assets/icons/fireplace-off.png');
+  }
+}

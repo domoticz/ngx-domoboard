@@ -2,26 +2,22 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable, BehaviorSubject } from 'rxjs';
-import { map, distinctUntilChanged, pluck, tap } from 'rxjs/operators';
+import { map, distinctUntilChanged, pluck, tap, filter } from 'rxjs/operators';
 
-import { DomoticzResponse, LightSwitch } from '@nd/core/models';
+import { DomoticzResponse, Light } from '@nd/core/models';
 
 import { Urls } from '@nd/core/enums/urls.enum';
 
 import { DataService } from './data.service';
 
 interface State {
-  lightSwitches: LightSwitch[];
+  lights: Light[];
 }
-
-const initState = {
-  lightSwitches: []
-};
 
 @Injectable({providedIn: 'root'})
 export class DomoticzService extends DataService {
 
-  private subject = new BehaviorSubject<State>(initState);
+  private subject = new BehaviorSubject<State>({} as State);
   store = this.subject.asObservable().pipe(distinctUntilChanged());
 
   constructor(httpClient: HttpClient) {
@@ -32,13 +28,19 @@ export class DomoticzService extends DataService {
     return this.store.pipe(pluck(...name));
   }
 
-  getLightSwitches(): Observable<LightSwitch[]> {
-    return this.get<DomoticzResponse>(Urls.lightswitches).pipe(
+  getLights(): Observable<Light[]> {
+    return this.get<DomoticzResponse>(Urls.lights).pipe(
         map((resp: DomoticzResponse) => resp.result),
-        tap((switches: LightSwitch[]) => this.subject.next(
-          { ...this.subject.value, lightSwitches: switches }
+        tap((devices: Light[]) => this.subject.next(
+          { ...this.subject.value, lights: devices }
         ))
       );
+  }
+
+  switchLight(idx, cmd): Observable<DomoticzResponse> {
+    return this.get<DomoticzResponse>(
+      Urls.switchLight.replace('{idx}', idx).replace('{switchcmd}', cmd)
+    );
   }
 
 }

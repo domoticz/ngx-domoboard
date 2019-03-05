@@ -7,8 +7,7 @@
   </div>
 
   <nb-tabset (changeTab)="onChangeTab($event)">
-    <nb-tab tabTitle="Misc"></nb-tab>
-    <nb-tab tabTitle="Switches"></nb-tab>
+    <nb-tab *ngFor="let route of routes | keyvalue" tabTitle="{{ route.key }}"></nb-tab>
   </nb-tabset>
 
 </div>

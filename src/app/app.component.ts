@@ -4,7 +4,7 @@ import { NbThemeService } from '@nebular/theme';
 
 import { Observable } from 'rxjs';
 
-import { NotificationService } from './core/services/notification.service';
+import { NotificationService } from '@nd/core/services';
 
 @Component({
   selector: 'nd-root',

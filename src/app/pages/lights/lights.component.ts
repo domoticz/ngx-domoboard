@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 
 import { iif, of } from 'rxjs';
-import { switchMap, finalize, tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 
 import { Light } from '@nd/core/models';
 
-import { DomoticzService } from 'src/app/core/services/domoticz.service';
+import { DomoticzService } from '@nd/core/services';
 
 @Component({
   selector: 'nd-lights',

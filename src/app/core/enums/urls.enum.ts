@@ -1,4 +1,5 @@
 export enum Urls {
   lights = 'json.htm?type=devices&filter=light&used=true',
-  switchLight = 'json.htm?type=command&param=switchlight&idx={idx}&switchcmd={switchcmd}'
+  switchLight = 'json.htm?type=command&param=switchlight&idx={idx}&switchcmd={switchcmd}',
+  refreshLights = 'json.htm?type=devices&filter=light&used=true&order=[Order]&lastupdate={lastupdate}&plan=0'
 }

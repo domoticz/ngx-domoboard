@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { Subject } from 'rxjs';
-import { tap, takeUntil } from 'rxjs/operators';
+import { iif, of, Subject } from 'rxjs';
+import { switchMap, tap, takeUntil } from 'rxjs/operators';
 
 import { Light } from '@nd/core/models';
 
@@ -16,7 +16,11 @@ export class LightsComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject();
 
-  lights$ = this.service.select<Light[]>('lights');
+  lights$ = this.service.select<Light[]>('lights').pipe(
+    switchMap(stored =>
+      iif(() => !!stored && !!stored.length, of(stored), this.service.getLights())),
+    takeUntil(this.unsubscribe$)
+  );
 
   icon = {
     Fireplace: `nd-fireplace`,
@@ -26,7 +30,6 @@ export class LightsComponent implements OnInit, OnDestroy {
   constructor(private service: LightsService) { }
 
   ngOnInit() {
-    this.service.getLights().pipe(takeUntil(this.unsubscribe$)).subscribe();
     this.service.refreshLights().pipe(takeUntil(this.unsubscribe$)).subscribe();
   }
 

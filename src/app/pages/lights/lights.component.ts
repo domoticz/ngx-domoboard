@@ -23,7 +23,7 @@ export class LightsComponent implements OnInit, OnDestroy {
   );
 
   icon = {
-    Fireplace: `nd-fireplace`,
+    Fireplace: 'nd-fireplace',
     Light: 'nb-lightbulb'
   };
 

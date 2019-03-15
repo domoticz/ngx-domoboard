@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 
 import { NbTabsetModule, NbCardModule } from '@nebular/theme';
 
-import { HeaderComponent, StatusCardComponent } from './components';
+import { HeaderComponent, StatusCardComponent, SvgIconComponent } from './components';
+
+import { SafePipe } from './pipes';
 
 @NgModule({
   imports: [
@@ -14,11 +16,15 @@ import { HeaderComponent, StatusCardComponent } from './components';
   exports: [
     HeaderComponent,
     StatusCardComponent,
-    CommonModule
+    CommonModule,
+    SafePipe,
+    SvgIconComponent
   ],
   declarations: [
     HeaderComponent,
-    StatusCardComponent
+    StatusCardComponent,
+    SafePipe,
+    SvgIconComponent
   ]
 })
 export class SharedModule { }

@@ -3,7 +3,14 @@
 
     <nd-status-card [title]="light.Name" (statusChanged)="statusChanged($event, light)"
       [on]="light.Status === 'On' ? true : false">
-      <i [ngClass]="icon[light.Image] + ' ' + light.Status"></i>
+      <i *ngIf="icon[light.Image].startsWith('nb'); else svgIcon" [ngClass]="icon[light.Image]"></i>
+      <ng-template #svgIcon>
+          <svg>
+              // SVG elements don't have properties, therefore attribute binding is needed
+              // https://stackoverflow.com/a/35082700
+              <use attr.xlink:href="../../../assets/icons/fireplace.svg#fireplace"></use>
+            </svg>
+      </ng-template>
     </nd-status-card>
 
   </div>

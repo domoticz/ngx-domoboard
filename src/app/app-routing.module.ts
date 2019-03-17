@@ -1,11 +1,6 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-
-const routes: Routes = [
-  { path: 'lights', loadChildren: './pages/lights/lights.module#LightsModule' },
-  { path: '',   redirectTo: '', pathMatch: 'full' },
-  { path: '**', redirectTo: '' }
-];
+import { RouterModule } from '@angular/router';
+import { routes } from './app.routes';
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

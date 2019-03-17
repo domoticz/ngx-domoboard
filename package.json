@@ -2,6 +2,10 @@
   "name": "ngx-domoboard",
   "version": "0.0.0",
   "scripts": {
+    "android": "tns run android --bundle",
+    "ios": "tns run ios --bundle",
+    "mobile": "tns run --bundle",
+    "preview": "tns preview --bundle",
     "ng": "ng",
     "start": "node version.js && ng serve",
     "build": "ng build --configuration production",
@@ -11,6 +15,10 @@
   },
   "private": true,
   "dependencies": {
+    "nativescript-angular": "~7.2.0",
+    "nativescript-theme-core": "~1.0.4",
+    "reflect-metadata": "~0.1.12",
+    "tns-core-modules": "~5.2.0",
     "@angular/animations": "7.2.7",
     "@angular/cdk": "7.3.3",
     "@angular/common": "7.2.7",
@@ -20,6 +28,7 @@
     "@angular/platform-browser": "7.2.7",
     "@angular/platform-browser-dynamic": "7.2.7",
     "@angular/router": "7.2.7",
+    "@nativescript/schematics": "^0.5.1",
     "@nebular/bootstrap": "3.4.0",
     "@nebular/theme": "3.4.0",
     "bootstrap": "4.3.1",
@@ -30,6 +39,8 @@
     "zone.js": "0.8.29"
   },
   "devDependencies": {
+    "nativescript-dev-webpack": "^0.20.0",
+    "@nativescript/schematics": "~0.4.0",
     "@angular-devkit/build-angular": "0.13.3",
     "@angular/cli": "7.3.3",
     "@angular/compiler-cli": "7.2.7",
@@ -50,5 +61,8 @@
     "ts-node": "8.0.2",
     "tslint": "5.13.0",
     "typescript": "3.2.4"
+  },
+  "nativescript": {
+    "id": "org.nativescript.ngsample"
   }
 }

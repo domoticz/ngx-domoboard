@@ -10,6 +10,8 @@ import { GlobalErrorHandler } from '@nd/core/global-error-handler';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,8 @@ import { AppComponent } from './app.component';
     NbThemeModule.forRoot({ name: 'cosmic' }),
     NbLayoutModule,
     SharedModule,
-    NbAlertModule
+    NbAlertModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
     { provide: ErrorHandler, useClass: GlobalErrorHandler }

@@ -4,6 +4,7 @@ export interface Light {
   AddjValue: number;
   AddjValue2: number;
   BatteryLevel: number;
+  Color?: string;
   CustomImage: number;
   Data: string;
   Description: string;
@@ -18,6 +19,7 @@ export interface Light {
   HaveTimeout: boolean;
   ID: string;
   Image: string;
+  InternalState?: string;
   IsSubDevice: boolean;
   LastUpdate: string;
   Level: number;
@@ -29,7 +31,7 @@ export interface Light {
   PlanIDs: number[];
   Protected: boolean;
   ShowNotifications: boolean;
-  SignalLevel: string;
+  SignalLevel: string | number;
   Status: string;
   StrParam1: string;
   StrParam2: string;

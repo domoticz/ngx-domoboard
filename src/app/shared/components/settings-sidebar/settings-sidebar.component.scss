@@ -1,0 +1,26 @@
+@import '../../../../themes';
+
+@include nb-install-component() {
+
+  .sidebar-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 20rem;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    .settings-button {
+      width: 2rem;
+      position: absolute;
+      top: 50%;
+      left: 0;
+    }
+
+    .sidebar-content {
+      width: 18rem;
+      background: nb-theme(scrollbar-bg);
+    }
+  }
+}

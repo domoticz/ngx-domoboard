@@ -1,0 +1,16 @@
+@import '../../../../../themes';
+
+@include nb-install-component() {
+
+  .toggle-settings {
+    border-top-left-radius: .5rem;
+    border-bottom-left-radius: .5rem;
+    background-image: linear-gradient(to right,#00d9bf,#00d977);
+
+    i {
+      font-size: 2.75rem;
+      color: #ffffff;
+      display: block;
+    }
+  }
+}

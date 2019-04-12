@@ -29,11 +29,10 @@ export class LightsService extends DataService {
     return this.store.pipe(pluck(...name));
   }
 
-  getLights(): Observable<Light[]> {
+  getLights(): Observable<DomoticzResponse> {
     return this.get<DomoticzResponse>(Urls.lights).pipe(
-        map((resp: DomoticzResponse) => resp.result),
-        tap((devices: Light[]) =>
-          this.subject.next({ ...this.subject.value, lights: devices, lastUpdate: new Date().toString() }))
+      tap((resp: DomoticzResponse) =>
+        this.subject.next({ ...this.subject.value, lights: resp.result, lastUpdate: resp.ActTime.toString() }))
     );
   }
 

@@ -16,11 +16,7 @@ export class LightsComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject();
 
-  lights$ = this.service.select<Light[]>('lights').pipe(
-    switchMap(stored =>
-      iif(() => !!stored && !!stored.length, of(stored), this.service.getLights())),
-    takeUntil(this.unsubscribe$)
-  );
+  lights$ = this.service.select<Light[]>('lights');
 
   icon = {
     Fireplace: 'nd-fireplace',
@@ -30,7 +26,10 @@ export class LightsComponent implements OnInit, OnDestroy {
   constructor(private service: LightsService) { }
 
   ngOnInit() {
-    this.service.refreshLights().pipe(takeUntil(this.unsubscribe$)).subscribe();
+    this.service.getLights().pipe(
+      switchMap(() => this.service.refreshLights()),
+      takeUntil(this.unsubscribe$)
+    ).subscribe();
   }
 
   statusChanged(event, light: Light) {

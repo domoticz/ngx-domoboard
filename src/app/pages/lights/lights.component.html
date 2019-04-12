@@ -2,15 +2,10 @@
   <div class="col-xxxl-3 col-md-6" *ngFor="let light of (lights$ | async)">
 
     <nd-status-card [title]="light.Name" (statusChanged)="statusChanged($event, light)"
-      [on]="light.Status === 'On' ? true : false">
-      <!-- <i *ngIf="icon[light.Image].startsWith('nb'); else svgIcon" [ngClass]="icon[light.Image]"></i> -->
-      <i *ngIf="true; else svgIcon" [class]="icon[light.Image] + ' ' + light.Status"></i>
+      [on]="light.Status === 'On'">
+      <i *ngIf="icon[light.Image].startsWith('nb'); else svgIcon" [ngClass]="icon[light.Image]"></i>
       <ng-template #svgIcon>
-          <svg>
-            // SVG elements don't have properties, therefore attribute binding is needed
-            // https://stackoverflow.com/a/35082700
-            <use attr.xlink:href="../../../assets/icons/fireplace.svg#fireplace"></use>
-          </svg>
+          <nd-svg-icon class="custom-icon" [name]="icon[light.Image]"></nd-svg-icon>
       </ng-template>
     </nd-status-card>
 

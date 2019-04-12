@@ -28,7 +28,7 @@ import { environment } from '../environments/environment';
     NbLayoutModule,
     SharedModule,
     NbAlertModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('/ngx-domoboard/ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
     { provide: ErrorHandler, useClass: GlobalErrorHandler }

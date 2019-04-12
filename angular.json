@@ -42,7 +42,7 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "baseHref": "./",
+              "baseHref": "/ngx-domoboard/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,

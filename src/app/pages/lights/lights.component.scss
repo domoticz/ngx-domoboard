@@ -1,14 +1,19 @@
-.nd-icon {
-  width: 100%;
-  height: 100%;
+@import '../../../themes';
 
-  &.Off {
-    fill: #a1a1e5;
-    stroke: #a1a1e5;
-  }
+@include nb-install-component() {
 
-  &.On {
-    fill: #ffffff;
-    stroke: #ffffff;
+  .nd-icon {
+    width: 100%;
+    height: 100%;
+
+    &.Off {
+      fill: nb-theme(color-fg);
+      stroke: nb-theme(color-fg);
+    }
+
+    &.On {
+      fill: nb-theme(color-fg-heading);
+      stroke: nb-theme(color-fg-heading);
+    }
   }
 }

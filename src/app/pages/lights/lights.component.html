@@ -5,7 +5,7 @@
       [on]="light.Status === 'On'">
       <i *ngIf="icon[light.Image].startsWith('nb'); else svgIcon" [ngClass]="icon[light.Image]"></i>
       <ng-template #svgIcon>
-          <nd-svg-icon class="custom-icon" [name]="icon[light.Image]"></nd-svg-icon>
+          <nd-svg-icon class="nd-icon {{ light.Status }}" [name]="icon[light.Image]"></nd-svg-icon>
       </ng-template>
     </nd-status-card>
 

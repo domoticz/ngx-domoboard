@@ -1,18 +1,14 @@
-.nd-fireplace {
-  width: 72px;
-  height: 72px;
-  background-size: 72px 72px;
-
-  &.On {
-    background-image: url('assets/icons/fireplace-on.png');
-  }
-
-  &.Off {
-    background-image: url('assets/icons/fireplace-off.png');
-  }
-}
-
-.custom-icon {
+.nd-icon {
   width: 100%;
   height: 100%;
+
+  &.Off {
+    fill: #a1a1e5;
+    stroke: #a1a1e5;
+  }
+
+  &.On {
+    fill: #ffffff;
+    stroke: #ffffff;
+  }
 }

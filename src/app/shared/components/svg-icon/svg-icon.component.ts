@@ -4,7 +4,7 @@ import { Component, Input } from '@angular/core';
   selector: 'nd-svg-icon',
   template: `
   <svg>
-    <use attr.xlink:href="assets/icons/fireplace.svg#{{ name }}"></use>
+    <use attr.xlink:href="assets/icons/nd-icons.svg#{{ name }}"></use>
   </svg>
   `,
   styleUrls: ['./svg-icon.component.scss']

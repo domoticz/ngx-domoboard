@@ -7,7 +7,8 @@
     "build": "ng build --configuration production",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "cypress:open": "cypress open"
   },
   "private": true,
   "dependencies": {
@@ -41,6 +42,7 @@
     "@types/jasminewd2": "2.0.6",
     "@types/node": "11.12.2",
     "codelyzer": "5.0.0",
+    "cypress": "^3.2.0",
     "jasmine-core": "3.3.0",
     "jasmine-spec-reporter": "4.2.1",
     "karma": "4.0.1",

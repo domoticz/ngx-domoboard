@@ -6,11 +6,35 @@
     border-top-left-radius: .5rem;
     border-bottom-left-radius: .5rem;
     background-image: linear-gradient(to right,#00d9bf,#00d977);
+    border: none;
+    width: inherit;
+    height: inherit;
+    outline: none;
 
-    i {
-      font-size: 2.75rem;
-      color: #ffffff;
-      display: block;
+    .nd-gear {
+      width: 100%;
+      height: 100%;
+      fill: white;
+
+      &.pulse {
+        animation-name: gear-pulse;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+      }
     }
+  }
+}
+
+@keyframes gear-pulse {
+  from {
+    transform: scale3d(.8, .8, .8);
+  }
+
+  50% {
+    transform: scale3d(1, 1, 1);
+  }
+
+  to {
+    transform: scale3d(.8, .8, .8);
   }
 }

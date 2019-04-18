@@ -1,26 +1,61 @@
 @import '../../../../themes';
 
-@include nb-install-component() {
+@include nb-install-component() { }
 
-  .sidebar-container {
-    display: flex;
-    justify-content: flex-end;
-    width: 20rem;
+.sidebar-container {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 20rem;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  .settings-button {
+    width: 2.75rem;
+    height: 2.75rem;
+    position: relative;
+    top: 50%;
+    left: 0;
+  }
+
+  .settings-container {
+    animation-duration: 500ms;
+    animation-timing-function: ease-in-out;
+    overflow: hidden;
+
+    &.in {
+      animation-name: slidein;
+    }
+
+    &.out {
+      animation-name: slideout;
+    }
+  }
+
+  .sidebar-content {
+    min-width: 17.25rem;
     height: 100%;
-    position: absolute;
-    top: 0;
-    right: 0;
+    background: nb-theme(scrollbar-bg);
+  }
+}
 
-    .settings-button {
-      width: 2rem;
-      position: absolute;
-      top: 50%;
-      left: 0;
-    }
+@keyframes slidein {
+  from {
+    max-width: 0px;
+  }
 
-    .sidebar-content {
-      width: 18rem;
-      background: nb-theme(scrollbar-bg);
-    }
+  to {
+    max-width: 1000px;
+  }
+}
+
+@keyframes slideout {
+  from {
+    max-width: 1000px;
+  }
+
+  to {
+    max-width: 0px;
   }
 }

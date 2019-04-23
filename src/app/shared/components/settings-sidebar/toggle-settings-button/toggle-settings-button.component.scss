@@ -18,6 +18,7 @@
 
       &.pulse {
         animation-name: gear-pulse;
+        animation-delay: 500ms;
         animation-duration: 1s;
         animation-iteration-count: infinite;
       }

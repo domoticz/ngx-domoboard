@@ -4,7 +4,7 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
 const webpackOptions = {
   resolve: {
     extensions: ['.ts', '.js'],
-    plugins: [new TsconfigPathsPlugin({ configFile: "../tsconfig.json" })]
+    plugins: [new TsconfigPathsPlugin({ configFile: "cypress/tsconfig.json" })]
   },
   module: {
     rules: [
@@ -14,7 +14,7 @@ const webpackOptions = {
         exclude: [/node_modules/],
       },
       {
-        test: /\.(html|css)$/,
+        test: /\.(html|css|scss)$/,
         loader: 'raw-loader',
         exclude: /\.async\.(html|css)$/
       },

@@ -1,0 +1,16 @@
+@import 'src/themes';
+
+@include nb-install-component() {
+
+  .content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    background: nb-theme(scrollbar-bg);
+
+    .form-container {
+      margin: 25vh 20px;
+    }
+  }
+}

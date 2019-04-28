@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'nd-settings-sidebar',
@@ -8,7 +9,9 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@
         [animationState]="animationState" (slideOut)="hide()">
       </nd-toggle-settings-button>
       <div class="settings-container {{ animationState }}">
-        <div *ngIf="showContent" class="sidebar-content"></div>
+        <nd-settings-content *ngIf="showContent" class="sidebar-content"
+          [parent]="settingsForm">
+        </nd-settings-content>
       </div>
     </div>
   `,
@@ -21,7 +24,15 @@ export class SettingsSidebarComponent implements OnInit {
 
   showContent: boolean;
 
-  constructor(private cd: ChangeDetectorRef) { }
+  settingsForm = this.fb.group({
+    ip: [null],
+    port: [null]
+  });
+
+  constructor(
+    private cd: ChangeDetectorRef,
+    private fb: FormBuilder
+    ) { }
 
   ngOnInit() { }
 

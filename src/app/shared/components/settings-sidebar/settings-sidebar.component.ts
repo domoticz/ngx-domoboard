@@ -1,5 +1,8 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
+
+import { tap, filter } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'nd-settings-sidebar',
@@ -24,9 +27,13 @@ export class SettingsSidebarComponent implements OnInit {
 
   showContent: boolean;
 
+  ipPattern = '(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)';
+
+  portPattern = '([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])';
+
   settingsForm = this.fb.group({
-    ip: [null],
-    port: [null]
+    ip: [null, [Validators.pattern(this.ipPattern), Validators.required]],
+    port: [null, [Validators.pattern(this.portPattern), Validators.required]]
   });
 
   constructor(
@@ -34,7 +41,9 @@ export class SettingsSidebarComponent implements OnInit {
     private fb: FormBuilder
     ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.formValueChanges().subscribe();
+  }
 
   show() {
     this.animationState = 'in';
@@ -47,7 +56,14 @@ export class SettingsSidebarComponent implements OnInit {
     setTimeout(() => {
       this.showContent = false;
       this.cd.detectChanges();
-    }, 450);
+    }, 400);
+  }
+
+  formValueChanges(): Observable<any> {
+    return this.settingsForm.valueChanges.pipe(
+      filter(() => this.settingsForm.valid),
+      tap(value => console.log(value))
+    );
   }
 
 }

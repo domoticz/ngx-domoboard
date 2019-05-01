@@ -11,6 +11,28 @@
 
     .form-container {
       margin: 25vh 20px;
+
+      .form-control:focus {
+        color: nb-theme(color-white);
+      }
+
+      .input-danger {
+        box-shadow: none;
+      }
+
+      .error-message {
+        color: nb-theme(form-control-danger-border-color);
+      }
     }
+  }
+
+  .connection-state {
+    width: 80%;
+    height: 5rem;
+    background-color: nb-theme(layout-bg);
+    border: 2px solid nb-theme(form-control-danger-border-color);
+    border-radius: nb-theme(form-control-border-radius);
+    padding: nb-theme(form-control-padding);
+    color: nb-theme(form-control-placeholder-color);
   }
 }

@@ -21,7 +21,6 @@
 
   .settings-container {
     animation-duration: 500ms;
-    animation-timing-function: ease-in-out;
     overflow: hidden;
 
     &.in {
@@ -40,20 +39,20 @@
 
 @keyframes slidein {
   from {
-    max-width: 0px;
+    max-width: 0;
   }
 
   to {
-    max-width: 1000px;
+    max-width: 100%;
   }
 }
 
 @keyframes slideout {
   from {
-    max-width: 1000px;
+    max-width: 100%;
   }
 
   to {
-    max-width: 0px;
+    max-width: 0;
   }
 }

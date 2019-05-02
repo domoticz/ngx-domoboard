@@ -8,6 +8,8 @@ export abstract class DataService {
 
   protected baseUrl: string = environment.domoticzUrl;
 
+  private request: IDBOpenDBRequest = indexedDB.open('NDDB');
+
   constructor(protected httpClient: HttpClient) {}
 
   protected get<T>(relativeUrl: string): Observable<T> {

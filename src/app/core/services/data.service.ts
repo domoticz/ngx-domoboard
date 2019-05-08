@@ -3,7 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { environment } from '@nd/../environments/environment';
+import { Injectable } from '@angular/core';
 
+@Injectable({ providedIn: 'root' })
 export abstract class DataService {
 
   protected baseUrl: string = environment.domoticzUrl;
@@ -14,7 +16,7 @@ export abstract class DataService {
 
   DB_VERSION = 1;
 
-  DB_STORE_NAME = 'domoticz_connection_credentials';
+  DB_STORE_NAME = 'domoticz_url';
 
   constructor(protected httpClient: HttpClient) {}
 
@@ -49,6 +51,27 @@ export abstract class DataService {
       store.createIndex('ip', 'ip', { unique: true });
       store.createIndex('port', 'port', { unique: true });
     }.bind(self);
+  }
+
+  getObjectStore(store_name, mode) {
+    const tx = this.db.transaction(store_name, mode);
+    return tx.objectStore(store_name);
+  }
+
+  addUrl(ip, port) {
+    console.log('addUrl arguments:', arguments);
+    const obj = { ip: ip, port: port };
+
+    const store = this.getObjectStore(this.DB_STORE_NAME, 'readwrite');
+
+    const req = store.add(obj);
+
+    req.onsuccess = function (evt) {
+      console.log('Insertion in DB successful');
+    };
+    req.onerror = function() {
+      console.error('addPublication error', this.error);
+    };
   }
 
 }

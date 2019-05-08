@@ -1,8 +1,10 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { tap, filter } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { tap, filter, switchMap, catchError } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+
+import { SettingsService, DataService } from '@nd/core/services';
 
 @Component({
   selector: 'nd-settings-sidebar',
@@ -38,7 +40,9 @@ export class SettingsSidebarComponent implements OnInit {
 
   constructor(
     private cd: ChangeDetectorRef,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private service: SettingsService,
+    private dataService: DataService
     ) { }
 
   ngOnInit() {
@@ -62,7 +66,9 @@ export class SettingsSidebarComponent implements OnInit {
   formValueChanges(): Observable<any> {
     return this.settingsForm.valueChanges.pipe(
       filter(() => this.settingsForm.valid),
-      tap(value => console.log(value))
+      switchMap(value => this.service.getStatus(value.ip, value.port)),
+      catchError(() => of('caught!')),
+      tap(resp => console.log(resp))
     );
   }
 

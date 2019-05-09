@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { tap, filter, switchMap, catchError } from 'rxjs/operators';
+import { tap, filter, switchMap, catchError, retry, retryWhen } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
 import { SettingsService, DataService } from '@nd/core/services';
@@ -66,8 +66,10 @@ export class SettingsSidebarComponent implements OnInit {
   formValueChanges(): Observable<any> {
     return this.settingsForm.valueChanges.pipe(
       filter(() => this.settingsForm.valid),
-      switchMap(value => this.service.getStatus(value.ip, value.port)),
-      catchError(() => of('caught!')),
+      switchMap(value =>
+        this.service.getStatus(value.ip, value.port).pipe(
+          catchError(() => of(undefined))
+        )),
       tap(resp => console.log(resp))
     );
   }

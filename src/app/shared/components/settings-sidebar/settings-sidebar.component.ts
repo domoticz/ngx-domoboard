@@ -68,7 +68,7 @@ export class SettingsSidebarComponent implements OnInit {
       filter(() => this.settingsForm.valid),
       switchMap(value =>
         this.service.getStatus(value.ip, value.port).pipe(
-          catchError(() => of(undefined))
+          catchError(() => of())
         )),
       tap(resp => console.log(resp))
     );

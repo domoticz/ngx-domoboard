@@ -5,7 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { RouterModule } from '@angular/router';
 
-import { NbThemeModule, NbLayoutModule, NbAlertModule } from '@nebular/theme';
+import { NbThemeModule, NbLayoutModule, NbAlertModule, NbToastrModule } from '@nebular/theme';
 
 import { SharedModule } from '@nd/shared/shared.module';
 import { GlobalErrorHandler } from '@nd/core/global-error-handler';
@@ -28,7 +28,8 @@ import { environment } from '../environments/environment';
     NbLayoutModule,
     SharedModule,
     NbAlertModule,
-    ServiceWorkerModule.register('/ngx-domoboard/ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('/ngx-domoboard/ngsw-worker.js', { enabled: environment.production }),
+    NbToastrModule.forRoot()
   ],
   providers: [
     { provide: ErrorHandler, useClass: GlobalErrorHandler }

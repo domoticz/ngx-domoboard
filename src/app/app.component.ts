@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { NbThemeService } from '@nebular/theme';
+import { NbThemeService, NbToastrService } from '@nebular/theme';
 
 import { Observable } from 'rxjs';
 
@@ -19,7 +19,8 @@ export class AppComponent implements OnInit {
 
   constructor(
     private themeService: NbThemeService,
-    private notifService: NotificationService
+    private notifService: NotificationService,
+    private toastrService: NbToastrService
   ) {}
 
   ngOnInit() {

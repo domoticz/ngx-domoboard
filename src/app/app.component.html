@@ -17,8 +17,3 @@
 </nb-layout>
 
 <nd-settings-sidebar></nd-settings-sidebar>
-
-<nb-alert *ngIf="(notification$ | async) as notification" class="nd-alert"
-  status="danger" closable (close)="onClose()">
-  {{ notification }}
-</nb-alert>

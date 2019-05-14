@@ -7,6 +7,9 @@ import { FormGroup, FormControl } from '@angular/forms';
     <div class="content-container" [formGroup]="parent">
       <div class="form-container">
         <div class="form-group">
+          <nb-checkbox formControlName="ssl">SSL (mandatory for service worker)</nb-checkbox>
+        </div>
+        <div class="form-group">
           <input nbInput formControlName="ip" type="text" class="form-control" placeholder="domoticz ip adress"
             [ngClass]="{ 'input-danger': getInvalid('ip') }">
           <div class="error-message" *ngIf="getInvalid('ip')">

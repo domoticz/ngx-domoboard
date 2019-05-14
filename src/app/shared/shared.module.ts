@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
-import { NbTabsetModule, NbCardModule, NbInputModule } from '@nebular/theme';
+import { NbTabsetModule, NbCardModule, NbInputModule, NbCheckboxModule } from '@nebular/theme';
 
 import { sharedComponents } from './components';
 
@@ -14,7 +14,8 @@ import { SafePipe } from './pipes';
     NbTabsetModule,
     NbCardModule,
     ReactiveFormsModule,
-    NbInputModule
+    NbInputModule,
+    NbCheckboxModule
   ],
   exports: [
     sharedComponents,

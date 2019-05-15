@@ -1,4 +1,4 @@
-import { Routes } from "@angular/router";
+import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   { path: 'lights', loadChildren: './pages/lights/lights.module#LightsModule' },

@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule, ErrorHandler, ApplicationRef } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -33,6 +33,15 @@ import { environment } from '../environments/environment';
   providers: [
     { provide: ErrorHandler, useClass: GlobalErrorHandler }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+
+  app: ApplicationRef;
+
+  ngDoBootstrap(app: ApplicationRef) {
+    this.app = app;
+  }
+
+ }

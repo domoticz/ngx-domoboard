@@ -1,4 +1,4 @@
-@import '../../../../themes';
+@import 'src/_themes.scss';
 
 @include nb-install-component() { }
 
@@ -24,16 +24,18 @@
     overflow: hidden;
 
     &.in {
-      animation-name: slidein;
+      // animation-name: slidein;
+      max-width: 1000px;
     }
 
     &.out {
-      animation-name: slideout;
+      // animation-name: slideout;
+      max-width: 0;
     }
-  }
 
-  .sidebar-content {
-    min-width: 17.25rem;
+    .sidebar-content {
+      min-width: 17.25rem;
+    }
   }
 }
 

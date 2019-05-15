@@ -1,0 +1,17 @@
+{
+  "include": [
+    "integration/*.ts",
+    "../node_modules/cypress"
+  ],
+  "compilerOptions": {
+    "allowJs": true,
+    "moduleResolution": "node",
+    "baseUrl": "../src",
+    "paths": {
+      "@nd/*": ["/app/*"]
+    },
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true
+  }
+}

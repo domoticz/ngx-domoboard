@@ -1,7 +1,7 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { filter, switchMap, catchError, map } from 'rxjs/operators';
+import { filter, switchMap, catchError, map, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
 import { SettingsService, DataService } from '@nd/core/services';
@@ -24,7 +24,7 @@ import { DomoticzStatus } from '@nd/core/models/domoticz-status.interface';
   styleUrls: ['./settings-sidebar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SettingsSidebarComponent {
+export class SettingsSidebarComponent implements OnInit {
 
   animationState = 'out';
 
@@ -44,6 +44,11 @@ export class SettingsSidebarComponent {
     filter(() => this.settingsForm.valid),
     switchMap(value =>
       this.service.getStatus(value.ssl, value.ip, value.port).pipe(
+        tap(status => {
+          if (status.status === 'OK') {
+            this.dataService.addUrl(value.ssl, value.ip, value.port);
+          }
+        }),
         catchError(() => of({} as DomoticzStatus))
       ))
     );
@@ -54,6 +59,10 @@ export class SettingsSidebarComponent {
     private service: SettingsService,
     private dataService: DataService
     ) { }
+
+  ngOnInit() {
+    this.dataService.openDb();
+  }
 
   show() {
     this.animationState = 'in';

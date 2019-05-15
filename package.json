@@ -17,7 +17,7 @@
     "@angular/common": "7.2.13",
     "@angular/compiler": "7.2.13",
     "@angular/core": "7.2.13",
-    "@angular/elements": "^7.2.13",
+    "@angular/elements": "7.2.13",
     "@angular/forms": "7.2.13",
     "@angular/platform-browser": "7.2.13",
     "@angular/platform-browser-dynamic": "7.2.13",
@@ -32,7 +32,7 @@
     "rxjs": "6.4.0",
     "tslib": "1.9.3",
     "zone.js": "0.8.26",
-    "document-register-element": "^1.7.2"
+    "document-register-element": "1.7.2"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.13.8",

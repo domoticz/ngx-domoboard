@@ -32,6 +32,7 @@ import { DomoticzStatus } from '@nd/core/models/domoticz-status.interface';
         <span *ngIf="status?.status !== 'OK'">no connection</span>
         <ng-container *ngIf="status?.status === 'OK'">
           <span>Domoticz version: {{ status.version }}</span>
+          <span>Status: {{ status.status }}</span>
         </ng-container>
       </div>
     </div>

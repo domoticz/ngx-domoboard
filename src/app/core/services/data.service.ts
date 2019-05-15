@@ -5,6 +5,8 @@ import { Observable } from 'rxjs';
 import { environment } from '@nd/../environments/environment';
 import { Injectable } from '@angular/core';
 
+import { Urls } from '@nd/core/enums/urls.enum';
+
 @Injectable({ providedIn: 'root' })
 export abstract class DataService {
 
@@ -36,8 +38,8 @@ export abstract class DataService {
       // Better use "this" than "req" to get the result to avoid problems with
       // garbage collection.
       // db = req.result;
-      self.db = this.result;
-      console.log('openDb DONE');
+      self.db = req.result;
+      console.log(self.db);
     }.bind(self);
     req.onerror = function (evt) {
       console.error('openDb:', evt.target['errorCode']);
@@ -48,8 +50,7 @@ export abstract class DataService {
       const store = evt.currentTarget['result'].createObjectStore(
         self.DB_STORE_NAME, { keyPath: 'id', autoIncrement: true });
 
-      store.createIndex('ip', 'ip', { unique: true });
-      store.createIndex('port', 'port', { unique: true });
+      store.createIndex('url', 'url', { unique: true });
     }.bind(self);
   }
 
@@ -58,9 +59,9 @@ export abstract class DataService {
     return tx.objectStore(store_name);
   }
 
-  addUrl(ip, port) {
+  addUrl(ssl: boolean, ip: string, port: number) {
     console.log('addUrl arguments:', arguments);
-    const obj = { ip: ip, port: port };
+    const obj = { url: `${ssl ? 'https' : 'http'}://${ip}:${port}/${Urls.status}` };
 
     const store = this.getObjectStore(this.DB_STORE_NAME, 'readwrite');
 

@@ -24,13 +24,11 @@
     overflow: hidden;
 
     &.in {
-      // animation-name: slidein;
-      max-width: 1000px;
+      animation-name: slidein;
     }
 
     &.out {
-      // animation-name: slideout;
-      max-width: 0;
+      animation-name: slideout;
     }
 
     .sidebar-content {

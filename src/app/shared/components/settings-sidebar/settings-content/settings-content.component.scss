@@ -20,6 +20,11 @@
         box-shadow: none;
       }
 
+      .input-success {
+        box-shadow: none;
+        border-color: nb-theme(form-control-success-border-color);
+      }
+
       .error-message {
         color: nb-theme(form-control-danger-border-color);
       }
@@ -30,9 +35,18 @@
     width: 80%;
     height: 5rem;
     background-color: nb-theme(layout-bg);
-    border: 2px solid nb-theme(form-control-danger-border-color);
+    border-width: 2px;
+    border: solid;
     border-radius: nb-theme(form-control-border-radius);
     padding: nb-theme(form-control-padding);
     color: nb-theme(form-control-placeholder-color);
+
+    &.success {
+      border-color: nb-theme(form-control-success-border-color);
+    }
+
+    &.danger {
+      border-color: nb-theme(form-control-danger-border-color);
+    }
   }
 }

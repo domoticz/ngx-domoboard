@@ -1,10 +1,11 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { tap, filter, switchMap, catchError, retry, retryWhen } from 'rxjs/operators';
+import { filter, switchMap, catchError, map } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
 import { SettingsService, DataService } from '@nd/core/services';
+import { DomoticzStatus } from '@nd/core/models/domoticz-status.interface';
 
 @Component({
   selector: 'nd-settings-sidebar',
@@ -15,7 +16,7 @@ import { SettingsService, DataService } from '@nd/core/services';
       </nd-toggle-settings-button>
       <div class="settings-container {{ animationState }}">
         <nd-settings-content *ngIf="showContent" class="sidebar-content"
-          [parent]="settingsForm">
+          [parent]="settingsForm" [status]="status$ | async">
         </nd-settings-content>
       </div>
     </div>
@@ -23,7 +24,7 @@ import { SettingsService, DataService } from '@nd/core/services';
   styleUrls: ['./settings-sidebar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SettingsSidebarComponent implements OnInit {
+export class SettingsSidebarComponent {
 
   animationState = 'out';
 
@@ -39,16 +40,20 @@ export class SettingsSidebarComponent implements OnInit {
     port: [null, [Validators.pattern(this.portPattern), Validators.required]]
   });
 
+  status$: Observable<DomoticzStatus> = this.settingsForm.valueChanges.pipe(
+    filter(() => this.settingsForm.valid),
+    switchMap(value =>
+      this.service.getStatus(value.ssl, value.ip, value.port).pipe(
+        catchError(() => of({} as DomoticzStatus))
+      ))
+    );
+
   constructor(
     private cd: ChangeDetectorRef,
     private fb: FormBuilder,
     private service: SettingsService,
     private dataService: DataService
     ) { }
-
-  ngOnInit() {
-    this.formValueChanges().subscribe();
-  }
 
   show() {
     this.animationState = 'in';
@@ -62,17 +67,6 @@ export class SettingsSidebarComponent implements OnInit {
       this.showContent = false;
       this.cd.detectChanges();
     }, 400);
-  }
-
-  formValueChanges(): Observable<any> {
-    return this.settingsForm.valueChanges.pipe(
-      filter(() => this.settingsForm.valid),
-      switchMap(value =>
-        this.service.getStatus(value.ip, value.port).pipe(
-          catchError(() => of())
-        )),
-      tap(resp => console.log(resp))
-    );
   }
 
 }

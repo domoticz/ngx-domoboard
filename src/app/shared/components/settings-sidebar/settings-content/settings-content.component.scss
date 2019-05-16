@@ -34,6 +34,8 @@
   .connection-state {
     width: 80%;
     height: 5rem;
+    display: flex;
+    flex-direction: column;
     background-color: nb-theme(layout-bg);
     border-width: 2px;
     border: solid;

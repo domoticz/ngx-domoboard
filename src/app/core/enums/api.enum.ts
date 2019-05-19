@@ -1,4 +1,4 @@
-export enum Urls {
+export enum Api {
   status = 'json.htm?type=command&param=getversion',
   lights = 'json.htm?type=devices&filter=light&used=true',
   switchLight = 'json.htm?type=command&param=switchlight&idx={idx}&switchcmd={switchcmd}',

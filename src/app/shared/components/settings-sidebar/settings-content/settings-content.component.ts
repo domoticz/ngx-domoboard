@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+
 import { DomoticzStatus } from '@nd/core/models/domoticz-status.interface';
 
 @Component({
@@ -29,11 +30,11 @@ import { DomoticzStatus } from '@nd/core/models/domoticz-status.interface';
       </div>
 
       <div class="connection-state {{ status?.status === 'OK' ? 'success' : 'danger' }}">
-        <span *ngIf="status?.status !== 'OK'">no connection</span>
-        <ng-container *ngIf="status?.status === 'OK'">
+        <span *ngIf="status?.status !== 'OK' else domoticzStatus">no connection</span>
+        <ng-template #domoticzStatus>
           <span>Domoticz version: {{ status.version }}</span>
           <span>Status: {{ status.status }}</span>
-        </ng-container>
+        </ng-template>
       </div>
     </div>
   `,

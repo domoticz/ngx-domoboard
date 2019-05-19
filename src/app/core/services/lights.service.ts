@@ -6,7 +6,7 @@ import { distinctUntilChanged, pluck, tap, switchMap, filter } from 'rxjs/operat
 
 import { DomoticzResponse, Light } from '@nd/core/models';
 
-import { Urls } from '@nd/core/enums/urls.enum';
+import { Api } from '@nd/core/enums/api.enum';
 
 import { DataService } from './data.service';
 
@@ -30,7 +30,7 @@ export class LightsService extends DataService {
   }
 
   getLights(): Observable<DomoticzResponse> {
-    return this.get<DomoticzResponse>(Urls.lights).pipe(
+    return this.get<DomoticzResponse>(Api.lights).pipe(
       tap((resp: DomoticzResponse) =>
         this.subject.next({ ...this.subject.value, lights: resp.result, lastUpdate: resp.ActTime.toString() }))
     );
@@ -38,14 +38,14 @@ export class LightsService extends DataService {
 
   switchLight(idx, cmd): Observable<DomoticzResponse> {
     return this.get<DomoticzResponse>(
-      Urls.switchLight.replace('{idx}', idx).replace('{switchcmd}', cmd)
+      Api.switchLight.replace('{idx}', idx).replace('{switchcmd}', cmd)
     );
   }
 
   refreshLights(): Observable<DomoticzResponse> {
     return interval(10000).pipe(
       switchMap(() =>
-        this.get<DomoticzResponse>(Urls.refreshLights.replace('{lastupdate}', this.subject.value.lastUpdate))),
+        this.get<DomoticzResponse>(Api.refreshLights.replace('{lastupdate}', this.subject.value.lastUpdate))),
       filter(resp => !!resp.result),
       tap(resp => this.subject.next({ ...this.subject.value, lights:
         this.subject.value.lights.map(light => resp.result.find(res => light.idx === res.idx) || light),

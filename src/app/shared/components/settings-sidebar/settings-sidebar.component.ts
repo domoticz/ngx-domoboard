@@ -4,8 +4,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { filter, switchMap, catchError, map, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
-import { SettingsService, DataService } from '@nd/core/services';
+import { SettingsService, DataService, LightsService } from '@nd/core/services';
 import { DomoticzStatus } from '@nd/core/models/domoticz-status.interface';
+import { BaseUrl } from '@nd/core/models';
 
 @Component({
   selector: 'nd-settings-sidebar',
@@ -43,10 +44,10 @@ export class SettingsSidebarComponent implements OnInit {
   status$: Observable<DomoticzStatus> = this.settingsForm.valueChanges.pipe(
     filter(() => this.settingsForm.valid),
     switchMap(value =>
-      this.service.getStatus(value.ssl, value.ip, value.port).pipe(
+      this.service.getStatus(value as BaseUrl).pipe(
         tap(status => {
           if (status.status === 'OK') {
-            this.dataService.addUrl(value.ssl, value.ip, value.port);
+            this.dataService.addUrl(value as BaseUrl);
           }
         }),
         catchError(() => of({} as DomoticzStatus))
@@ -57,11 +58,15 @@ export class SettingsSidebarComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private fb: FormBuilder,
     private service: SettingsService,
-    private dataService: DataService
+    private dataService: DataService,
+    private lightsService: LightsService
     ) { }
 
   ngOnInit() {
     this.dataService.openDb();
+    setTimeout(() => this.dataService.getUrl(), 2000);
+    // setTimeout(() => console.log(this.dataService.baseUrl), 3000);
+    this.lightsService.getLights().pipe(tap(v => console.log(v))).subscribe();
   }
 
   show() {

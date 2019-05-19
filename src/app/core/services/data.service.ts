@@ -1,16 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { Observable, of, throwError, empty, BehaviorSubject, Subject, iif } from 'rxjs';
 
 import { environment } from '@nd/../environments/environment';
 import { Injectable } from '@angular/core';
-
-import { Urls } from '@nd/core/enums/urls.enum';
+import { BaseUrl } from '../models';
+import { catchError, tap, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export abstract class DataService {
 
-  protected baseUrl: string = environment.domoticzUrl;
+  baseUrl$ = new Subject<BaseUrl>();
 
   db: IDBDatabase;
 
@@ -22,35 +22,43 @@ export abstract class DataService {
 
   constructor(protected httpClient: HttpClient) {}
 
-  protected get<T>(relativeUrl: string): Observable<T> {
-    return this.httpClient.get<T>(`${ this.baseUrl }${ relativeUrl }`);
+  get<T>(relativeUrl: string): Observable<T> {
+    return this.baseUrl$.pipe(
+      distinctUntilChanged(),
+      tap(v => console.log('value: ' + v)),
+      switchMap(baseUrl => iif(() => !!baseUrl, this.httpClient.get<T>(
+        `${baseUrl.ssl ? 'https' : 'http'}://${baseUrl.ip}:${baseUrl.port}/${ relativeUrl }`
+      ), of()))
+    );
   }
 
   protected post<T>(relativeUrl: string, data: any): Observable<T> {
-    return this.httpClient.post<T>(`${ this.baseUrl }${ relativeUrl }`, data);
+    return this.baseUrl$.asObservable().pipe(
+      distinctUntilChanged(),
+      switchMap(baseUrl => iif(() => !!baseUrl, this.httpClient.post<T>(
+      `${baseUrl.ssl ? 'https' : 'http'}://${baseUrl.ip}:${baseUrl.port}/${ relativeUrl }`,
+      data
+      ), of()))
+    );
   }
 
   openDb() {
     const self = this;
-    console.log('openDb ...');
     const req = indexedDB.open(this.DB_NAME, this.DB_VERSION);
     req.onsuccess = function (evt) {
-      // Better use "this" than "req" to get the result to avoid problems with
-      // garbage collection.
-      // db = req.result;
-      self.db = req.result;
-      console.log(self.db);
-    }.bind(self);
+      this.db = evt.target.result;
+    }.bind(this);
     req.onerror = function (evt) {
       console.error('openDb:', evt.target['errorCode']);
     };
 
     req.onupgradeneeded = function (evt) {
-      console.log('openDb.onupgradeneeded');
       const store = evt.currentTarget['result'].createObjectStore(
-        self.DB_STORE_NAME, { keyPath: 'id', autoIncrement: true });
-
-      store.createIndex('url', 'url', { unique: true });
+        self.DB_STORE_NAME, { keyPath: 'id', autoIncrement: true }
+      );
+      store.createIndex('ssl', 'ssl');
+      store.createIndex('ip', 'ip');
+      store.createIndex('port', 'port');
     }.bind(self);
   }
 
@@ -59,20 +67,19 @@ export abstract class DataService {
     return tx.objectStore(store_name);
   }
 
-  addUrl(ssl: boolean, ip: string, port: number) {
-    console.log('addUrl arguments:', arguments);
-    const obj = { url: `${ssl ? 'https' : 'http'}://${ip}:${port}/${Urls.status}` };
-
+  addUrl(url: BaseUrl) {
     const store = this.getObjectStore(this.DB_STORE_NAME, 'readwrite');
+    store.add(url);
+  }
 
-    const req = store.add(obj);
-
-    req.onsuccess = function (evt) {
-      console.log('Insertion in DB successful');
-    };
-    req.onerror = function() {
-      console.error('addPublication error', this.error);
-    };
+  getUrl() {
+    const self = this;
+    const store = this.getObjectStore(this.DB_STORE_NAME, 'readonly');
+    const req = store.get(1);
+    req.onsuccess = ((evt: any) => {
+      self.baseUrl$.next(evt.target.result);
+      console.log(evt.target.result);
+    }).bind(self);
   }
 
 }

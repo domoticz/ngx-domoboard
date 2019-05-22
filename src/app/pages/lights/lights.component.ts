@@ -27,7 +27,7 @@ export class LightsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.service.getLights().pipe(
-      switchMap(() => this.service.refreshLights()),
+      // switchMap(() => this.service.refreshLights()),
       takeUntil(this.unsubscribe$)
     ).subscribe();
   }

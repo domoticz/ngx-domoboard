@@ -5,7 +5,7 @@ import { Observable, of, throwError, empty, BehaviorSubject, Subject, iif } from
 import { environment } from '@nd/../environments/environment';
 import { Injectable } from '@angular/core';
 import { BaseUrl } from '../models';
-import { catchError, tap, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { catchError, tap, distinctUntilChanged, switchMap, retryWhen } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export abstract class DataService {
@@ -22,13 +22,13 @@ export abstract class DataService {
 
   constructor(protected httpClient: HttpClient) {}
 
-  get<T>(relativeUrl: string): Observable<T> {
+  get(relativeUrl: string): Observable<any> {
     return this.baseUrl$.pipe(
       distinctUntilChanged(),
       tap(v => console.log('value: ' + v)),
-      switchMap(baseUrl => iif(() => !!baseUrl, this.httpClient.get<T>(
-        `${baseUrl.ssl ? 'https' : 'http'}://${baseUrl.ip}:${baseUrl.port}/${ relativeUrl }`
-      ), of()))
+      // switchMap(baseUrl => iif(() => !!baseUrl, this.httpClient.get<T>(
+      //   `${baseUrl.ssl ? 'https' : 'http'}://${baseUrl.ip}:${baseUrl.port}/${ relativeUrl }`
+      // ).pipe(retryWhen(() => of(!!baseUrl))), of()))
     );
   }
 
@@ -72,7 +72,7 @@ export abstract class DataService {
     store.add(url);
   }
 
-  getUrl() {
+  setUrl() {
     const self = this;
     const store = this.getObjectStore(this.DB_STORE_NAME, 'readonly');
     const req = store.get(1);

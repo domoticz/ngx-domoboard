@@ -30,29 +30,29 @@ export class LightsService extends DataService {
   }
 
   getLights(): Observable<DomoticzResponse> {
-    return this.get<DomoticzResponse>(Api.lights).pipe(
+    return this.get(Api.lights).pipe(
       tap((resp: DomoticzResponse) =>
         this.subject.next({ ...this.subject.value, lights: resp.result, lastUpdate: resp.ActTime.toString() }))
     );
   }
 
   switchLight(idx, cmd): Observable<DomoticzResponse> {
-    return this.get<DomoticzResponse>(
+    return this.get(
       Api.switchLight.replace('{idx}', idx).replace('{switchcmd}', cmd)
     );
   }
 
-  refreshLights(): Observable<DomoticzResponse> {
-    return interval(10000).pipe(
-      switchMap(() =>
-        this.get<DomoticzResponse>(Api.refreshLights.replace('{lastupdate}', this.subject.value.lastUpdate))),
-      filter(resp => !!resp.result),
-      tap(resp => this.subject.next({ ...this.subject.value, lights:
-        this.subject.value.lights.map(light => resp.result.find(res => light.idx === res.idx) || light),
-        lastUpdate: resp.ActTime.toString() })
-      )
-    );
-  }
+  // refreshLights(): Observable<DomoticzResponse> {
+  //   return interval(10000).pipe(
+  //     switchMap(() =>
+  //       this.get<DomoticzResponse>(Api.refreshLights.replace('{lastupdate}', this.subject.value.lastUpdate))),
+  //     filter(resp => !!resp.result),
+  //     tap(resp => this.subject.next({ ...this.subject.value, lights:
+  //       this.subject.value.lights.map(light => resp.result.find(res => light.idx === res.idx) || light),
+  //       lastUpdate: resp.ActTime.toString() })
+  //     )
+  //   );
+  // }
 
   clearStore() {
     this.subject.next({} as State);

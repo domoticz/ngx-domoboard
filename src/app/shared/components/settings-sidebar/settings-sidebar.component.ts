@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { filter, switchMap, catchError, map, tap } from 'rxjs/operators';
+import { filter, switchMap, catchError, map, tap, finalize } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
 import { SettingsService, DataService, LightsService } from '@nd/core/services';
@@ -50,7 +50,8 @@ export class SettingsSidebarComponent implements OnInit {
             this.dataService.addUrl(value as BaseUrl);
           }
         }),
-        catchError(() => of({} as DomoticzStatus))
+        catchError(() => of({} as DomoticzStatus)),
+        finalize(() => this.dataService.setUrl())
       ))
     );
 
@@ -64,9 +65,10 @@ export class SettingsSidebarComponent implements OnInit {
 
   ngOnInit() {
     this.dataService.openDb();
-    setTimeout(() => this.dataService.getUrl(), 2000);
+    setTimeout(() => this.dataService.setUrl(), 2000);
     // setTimeout(() => console.log(this.dataService.baseUrl), 3000);
     this.lightsService.getLights().pipe(tap(v => console.log(v))).subscribe();
+    this.dataService.get('').subscribe();
   }
 
   show() {

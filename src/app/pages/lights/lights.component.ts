@@ -33,9 +33,9 @@ export class LightsComponent implements OnInit, OnDestroy {
   }
 
   statusChanged(event, light: Light) {
-    this.service.switchLight(light.idx, event).pipe(
-      tap(resp => { if (resp.status === 'OK') { light.Status = event; } })
-    ).subscribe();
+    // this.service.switchLight(light.idx, event).pipe(
+    //   tap(resp => { if (resp.status === 'OK') { light.Status = event; } })
+    // ).subscribe();
   }
 
   ngOnDestroy(): void {

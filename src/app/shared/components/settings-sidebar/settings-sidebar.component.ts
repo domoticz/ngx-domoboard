@@ -1,10 +1,10 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { filter, switchMap, catchError, map, tap, finalize } from 'rxjs/operators';
+import { filter, switchMap, catchError, tap, finalize } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
-import { SettingsService, DataService, LightsService } from '@nd/core/services';
+import { SettingsService, DBService } from '@nd/core/services';
 import { DomoticzStatus } from '@nd/core/models/domoticz-status.interface';
 import { BaseUrl } from '@nd/core/models';
 
@@ -17,7 +17,7 @@ import { BaseUrl } from '@nd/core/models';
       </nd-toggle-settings-button>
       <div class="settings-container {{ animationState }}">
         <nd-settings-content *ngIf="showContent" class="sidebar-content"
-          [parent]="settingsForm" [status]="status$ | async">
+          [parent]="settingsForm" [status]="status$ | async" [baseUrl]="baseUrl$ | async">
         </nd-settings-content>
       </div>
     </div>
@@ -30,6 +30,8 @@ export class SettingsSidebarComponent implements OnInit {
   animationState = 'out';
 
   showContent: boolean;
+
+  baseUrl$ = this.dbService.store;
 
   ipPattern = '(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)';
 
@@ -47,11 +49,11 @@ export class SettingsSidebarComponent implements OnInit {
       this.service.getStatus(value as BaseUrl).pipe(
         tap(status => {
           if (status.status === 'OK') {
-            this.dataService.addUrl(value as BaseUrl);
+            this.dbService.addUrl(value as BaseUrl);
           }
         }),
         catchError(() => of({} as DomoticzStatus)),
-        finalize(() => this.dataService.setUrl())
+        finalize(() => this.dbService.setUrl())
       ))
     );
 
@@ -59,16 +61,11 @@ export class SettingsSidebarComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private fb: FormBuilder,
     private service: SettingsService,
-    private dataService: DataService,
-    private lightsService: LightsService
+    private dbService: DBService
     ) { }
 
   ngOnInit() {
-    this.dataService.openDb();
-    setTimeout(() => this.dataService.setUrl(), 2000);
-    // setTimeout(() => console.log(this.dataService.baseUrl), 3000);
-    this.lightsService.getLights().pipe(tap(v => console.log(v))).subscribe();
-    this.dataService.get('').subscribe();
+    this.dbService.openDb().then(() => this.dbService.setUrl());
   }
 
   show() {

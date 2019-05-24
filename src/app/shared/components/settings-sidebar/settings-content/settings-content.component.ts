@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 
 import { DomoticzStatus } from '@nd/core/models/domoticz-status.interface';
+import { BaseUrl } from '@nd/core/models';
 
 @Component({
   selector: 'nd-settings-content',
@@ -46,6 +47,18 @@ export class SettingsContentComponent {
   @Input() parent: FormGroup;
 
   @Input() status: DomoticzStatus;
+
+  private _baseUrl: BaseUrl;
+  @Input()
+  set baseUrl(value: BaseUrl) {
+    if (!!value) {
+      this.getControl('ssl').setValue(value.ssl);
+      this.getControl('ip').setValue(value.ip);
+      this.getControl('port').setValue(value.port);
+    }
+    this._baseUrl = value;
+  }
+  get baseUrl() { return this._baseUrl; }
 
   getControl(name: string) {
     return this.parent.get(name) as FormControl;

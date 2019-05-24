@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable, BehaviorSubject, interval } from 'rxjs';
-import { distinctUntilChanged, pluck, tap, switchMap, filter } from 'rxjs/operators';
+import { distinctUntilChanged, pluck, tap, switchMap, filter, shareReplay } from 'rxjs/operators';
 
 import { DomoticzResponse, Light } from '@nd/core/models';
 
 import { Api } from '@nd/core/enums/api.enum';
 
+import { DBService } from './db.service';
 import { DataService } from './data.service';
 
 interface State {
@@ -21,8 +22,11 @@ export class LightsService extends DataService {
   private subject = new BehaviorSubject<State>({} as State);
   store = this.subject.asObservable().pipe(distinctUntilChanged());
 
-  constructor(httpClient: HttpClient) {
-    super(httpClient);
+  constructor(
+    httpClient: HttpClient,
+    dbService: DBService
+  ) {
+    super(httpClient, dbService);
   }
 
   select<T>(...name: string[]): Observable<T> {
@@ -30,17 +34,17 @@ export class LightsService extends DataService {
   }
 
   getLights(): Observable<DomoticzResponse> {
-    return this.get(Api.lights).pipe(
+    return this.get<DomoticzResponse>(Api.lights).pipe(
       tap((resp: DomoticzResponse) =>
         this.subject.next({ ...this.subject.value, lights: resp.result, lastUpdate: resp.ActTime.toString() }))
     );
   }
 
-  switchLight(idx, cmd): Observable<DomoticzResponse> {
-    return this.get(
-      Api.switchLight.replace('{idx}', idx).replace('{switchcmd}', cmd)
-    );
-  }
+  // switchLight(idx, cmd): Observable<DomoticzResponse> {
+  //   return this.get(
+  //     Api.switchLight.replace('{idx}', idx).replace('{switchcmd}', cmd)
+  //   );
+  // }
 
   // refreshLights(): Observable<DomoticzResponse> {
   //   return interval(10000).pipe(

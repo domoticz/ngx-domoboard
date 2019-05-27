@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
-import { filter, switchMap, catchError, tap, finalize } from 'rxjs/operators';
+import { filter, switchMap, catchError, tap, distinctUntilChanged } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
 import { SettingsService, DBService } from '@nd/core/services';
@@ -44,16 +44,30 @@ export class SettingsSidebarComponent implements OnInit {
   });
 
   status$: Observable<DomoticzStatus> = this.settingsForm.valueChanges.pipe(
+    distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y)),
+    tap(value => {
+      if (this.settingsForm.invalid) {
+        this.dbService.setUrl(value);
+      }
+    }),
     filter(() => this.settingsForm.valid),
     switchMap(value =>
       this.service.getStatus(value as BaseUrl).pipe(
         tap(status => {
           if (status.status === 'OK') {
-            this.dbService.addUrl(value as BaseUrl);
+            this.dbService.addUrl(value as BaseUrl).then(s => {
+                this.dbService.setUrl();
+                console.log(s);
+              }).catch(e => {
+                this.dbService.setUrl();
+                console.log(e);
+              });
           }
         }),
-        catchError(() => of({} as DomoticzStatus)),
-        finalize(() => this.dbService.setUrl())
+        catchError(() => {
+          this.dbService.setUrl(value);
+          return of({} as DomoticzStatus);
+        })
       ))
     );
 

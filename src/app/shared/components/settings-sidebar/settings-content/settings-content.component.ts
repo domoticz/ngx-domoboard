@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 
 import { DomoticzStatus } from '@nd/core/models/domoticz-status.interface';
@@ -42,7 +42,7 @@ import { BaseUrl } from '@nd/core/models';
   styleUrls: ['./settings-content.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SettingsContentComponent {
+export class SettingsContentComponent implements OnDestroy {
 
   @Input() parent: FormGroup;
 
@@ -52,9 +52,15 @@ export class SettingsContentComponent {
   @Input()
   set baseUrl(value: BaseUrl) {
     if (!!value) {
-      this.getControl('ssl').setValue(value.ssl);
-      this.getControl('ip').setValue(value.ip);
-      this.getControl('port').setValue(value.port);
+      // https://github.com/angular/angular/issues/27803
+      if (!this.getControl('ssl')) {
+        this.parent.addControl('ssl', new FormControl(value.ssl));
+      } else {
+        this.getControl('ssl').setValue(value.ssl, { emitEvent: false });
+      }
+      this.getControl('ip').setValue(value.ip, { emitEvent: false });
+      this.getControl('port').setValue(value.port, { emitEvent: false });
+      this.parent.updateValueAndValidity();
     }
     this._baseUrl = value;
   }
@@ -66,6 +72,10 @@ export class SettingsContentComponent {
 
   getInvalid(name: string) {
     return this.getControl(name).invalid && !!this.getControl(name).value;
+  }
+
+  ngOnDestroy() {
+    this.parent.removeControl('ssl');
   }
 
 }

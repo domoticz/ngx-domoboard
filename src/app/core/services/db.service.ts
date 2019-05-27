@@ -11,7 +11,9 @@ import { catchError, tap, distinctUntilChanged, switchMap, retryWhen, shareRepla
 export class DBService {
 
   private subject = new BehaviorSubject<BaseUrl>(null);
-  store = this.subject.asObservable().pipe(distinctUntilChanged());
+  store = this.subject.asObservable().pipe(
+    distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y))
+  );
 
   db: IDBDatabase;
 
@@ -33,12 +35,12 @@ export class DBService {
       }.bind(this);
 
       req.onerror = function (evt) {
-        reject('openDb:' + evt.target['errorCode']);
+        reject('openDb: ' + evt.target['error'].message);
       };
 
       req.onupgradeneeded = function (evt) {
         const store = evt.currentTarget['result'].createObjectStore(
-          this.DB_STORE_NAME, { keyPath: 'id', autoIncrement: true }
+          this.DB_STORE_NAME, { keyPath: 'id' }
         );
         store.createIndex('ssl', 'ssl');
         store.createIndex('ip', 'ip');
@@ -52,18 +54,42 @@ export class DBService {
     return tx.objectStore(store_name);
   }
 
-  addUrl(url: BaseUrl) {
+  addUrl(url: BaseUrl): Promise<any> {
     const store = this.getObjectStore(this.DB_STORE_NAME, 'readwrite');
-    store.add(url);
+    const req = store.add({ id: 1, ...url});
+    return new Promise<any>((resolve, reject) => {
+      req.onsuccess = function (evt: any) {
+        resolve('addUrl: ' + evt.type);
+      };
+
+      req.onerror = function (evt) {
+        reject('addUrl: ' + evt.target['error'].message);
+      };
+    });
   }
 
-  setUrl() {
-    const self = this;
-    const store = this.getObjectStore(this.DB_STORE_NAME, 'readonly');
-    const req = store.get(1);
-    req.onsuccess = ((evt: any) => {
-      self.subject.next(evt.target.result);
-    }).bind(self);
+  setUrl(url?: BaseUrl) {
+    if (!!url) {
+      this.subject.next(null);
+    } else {
+      const req = this.getObjectStore(this.DB_STORE_NAME, 'readonly').get(1);
+      req.onsuccess = ((evt: any) => {
+        this.subject.next(evt.target.result);
+      }).bind(this);
+    }
+  }
+
+  getUrl(): Promise<any> {
+    const req = this.getObjectStore(this.DB_STORE_NAME, 'readonly').get(1);
+    return new Promise<any>((resolve, reject) => {
+      req.onsuccess = ((evt: any) => {
+        resolve(evt.target.result);
+      });
+
+      req.onerror = function (evt) {
+        reject('getUrl: ' + evt.target['error'].message);
+      };
+    });
   }
 
 }

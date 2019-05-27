@@ -16,7 +16,7 @@ export abstract class DataService {
     return this.dbService.store.pipe(
       switchMap(baseUrl => !!baseUrl ? this.httpClient.get<T>(
         `${baseUrl.ssl ? 'https' : 'http'}://${baseUrl.ip}:${baseUrl.port}/${ relativeUrl }`
-      ) : of())
+      ) : of(baseUrl))
     );
   }
 

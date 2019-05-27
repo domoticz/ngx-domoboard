@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable, BehaviorSubject, interval } from 'rxjs';
-import { distinctUntilChanged, pluck, tap, switchMap, filter, shareReplay } from 'rxjs/operators';
+import { distinctUntilChanged, pluck, tap, switchMap, filter, shareReplay, map } from 'rxjs/operators';
 
 import { DomoticzResponse, Light } from '@nd/core/models';
 
@@ -16,10 +16,15 @@ interface State {
   lastUpdate: string;
 }
 
+const initialState: State = {
+  lights: [],
+  lastUpdate: ''
+};
+
 @Injectable({providedIn: 'root'})
 export class LightsService extends DataService {
 
-  private subject = new BehaviorSubject<State>({} as State);
+  private subject = new BehaviorSubject<State>(initialState);
   store = this.subject.asObservable().pipe(distinctUntilChanged());
 
   constructor(
@@ -36,7 +41,10 @@ export class LightsService extends DataService {
   getLights(): Observable<DomoticzResponse> {
     return this.get<DomoticzResponse>(Api.lights).pipe(
       tap((resp: DomoticzResponse) =>
-        this.subject.next({ ...this.subject.value, lights: resp.result, lastUpdate: resp.ActTime.toString() }))
+        !!resp ? this.subject.next({
+          ...this.subject.value, lights: resp.result, lastUpdate: resp.ActTime.toString()
+          }) : this.clearStore()
+      )
     );
   }
 
@@ -59,7 +67,7 @@ export class LightsService extends DataService {
   // }
 
   clearStore() {
-    this.subject.next({} as State);
+    this.subject.next(initialState);
   }
 
 }

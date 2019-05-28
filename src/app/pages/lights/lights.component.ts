@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { iif, of, Subject } from 'rxjs';
-import { switchMap, tap, takeUntil } from 'rxjs/operators';
+import { Subject, merge } from 'rxjs';
+import { tap, takeUntil, take } from 'rxjs/operators';
 
 import { Light } from '@nd/core/models';
 
@@ -20,22 +20,37 @@ export class LightsComponent implements OnInit, OnDestroy {
 
   icon = {
     Fireplace: 'nd-fireplace',
-    Light: 'nb-lightbulb'
+    Light: 'nb-lightbulb',
+    Door: 'nd-door'
   };
 
   constructor(private service: LightsService) { }
 
   ngOnInit() {
-    this.service.getLights().pipe(
-      // switchMap(() => this.service.refreshLights()),
+    merge(
+      this.service.getLights(),
+      this.service.refreshLights()
+    ).pipe(
       takeUntil(this.unsubscribe$)
     ).subscribe();
   }
 
-  statusChanged(event, light: Light) {
-    // this.service.switchLight(light.idx, event).pipe(
-    //   tap(resp => { if (resp.status === 'OK') { light.Status = event; } })
-    // ).subscribe();
+  statusChanged(event: any, light: Light) {
+    if (['On/Off', 'Dimmer'].includes(light.SwitchType)) {
+      this.service.switchLight(light.idx, event).pipe(
+        tap(resp => {
+          if (resp.status === 'OK') {
+            light.Status = event;
+          } else {
+            throw resp;
+          }
+        }),
+        take(1),
+        takeUntil(this.unsubscribe$)
+      ).subscribe();
+    } else {
+      throw new Error('Not a switchable device!');
+    }
   }
 
   ngOnDestroy(): void {

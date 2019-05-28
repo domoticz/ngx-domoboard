@@ -2,10 +2,12 @@
   <div class="col-xxxl-3 col-md-6" *ngFor="let light of (lights$ | async)">
 
     <nd-status-card [title]="light.Name" (statusChanged)="statusChanged($event, light)"
-      [on]="light.Status === 'On'">
+      [on]="light.Status === 'On'" [disabled]="light.HaveTimeout" [status]="light.Status">
       <i *ngIf="icon[light.Image]?.startsWith('nb'); else svgIcon" [ngClass]="icon[light.Image]"></i>
       <ng-template #svgIcon>
-          <nd-svg-icon class="nd-icon {{ light.Status }}" [name]="icon[light.Image]"></nd-svg-icon>
+        <nd-svg-icon class="nd-icon {{ light.Status }}" [name]="icon[light.Image]"
+          [status]="light.Status">
+        </nd-svg-icon>
       </ng-template>
     </nd-status-card>
 

@@ -25,7 +25,9 @@ const initialState: State = {
 export class LightsService extends DataService {
 
   private subject = new BehaviorSubject<State>(initialState);
-  store = this.subject.asObservable().pipe(distinctUntilChanged());
+  store = this.subject.asObservable().pipe(
+    distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y))
+  );
 
   constructor(
     httpClient: HttpClient,
@@ -48,23 +50,23 @@ export class LightsService extends DataService {
     );
   }
 
-  // switchLight(idx, cmd): Observable<DomoticzResponse> {
-  //   return this.get(
-  //     Api.switchLight.replace('{idx}', idx).replace('{switchcmd}', cmd)
-  //   );
-  // }
+  switchLight(idx: string, cmd: string): Observable<DomoticzResponse> {
+    return this.get<DomoticzResponse>(
+      Api.switchLight.replace('{idx}', idx).replace('{switchcmd}', cmd)
+    );
+  }
 
-  // refreshLights(): Observable<DomoticzResponse> {
-  //   return interval(10000).pipe(
-  //     switchMap(() =>
-  //       this.get<DomoticzResponse>(Api.refreshLights.replace('{lastupdate}', this.subject.value.lastUpdate))),
-  //     filter(resp => !!resp.result),
-  //     tap(resp => this.subject.next({ ...this.subject.value, lights:
-  //       this.subject.value.lights.map(light => resp.result.find(res => light.idx === res.idx) || light),
-  //       lastUpdate: resp.ActTime.toString() })
-  //     )
-  //   );
-  // }
+  refreshLights(): Observable<DomoticzResponse> {
+    return interval(10000).pipe(
+      switchMap(() =>
+        this.get<DomoticzResponse>(Api.refreshLights.replace('{lastupdate}', this.subject.value.lastUpdate))),
+      filter(resp => !!resp && !!resp.result),
+      tap(resp => this.subject.next({
+        ...this.subject.value, lights: this.subject.value.lights.map(light =>
+          resp.result.find(res => light.idx === res.idx) || light), lastUpdate: resp.ActTime.toString()
+      }))
+    );
+  }
 
   clearStore() {
     this.subject.next(initialState);

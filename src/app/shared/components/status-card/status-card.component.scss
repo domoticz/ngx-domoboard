@@ -12,6 +12,15 @@
     $shadow: nb-theme(btn-hero-shadow);
     box-shadow: $bevel, $shadow;
 
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.3;
+    }
+
+    &.no-event {
+      pointer-events: none;
+    }
+
     .icon-container {
       height: 100%;
       padding: 0.625rem;

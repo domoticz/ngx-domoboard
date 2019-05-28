@@ -41,8 +41,4 @@ export class AppComponent implements OnInit {
     this.themeService.changeTheme('cosmic');
   }
 
-  onClose() {
-    this.notifService.clearNotification();
-  }
-
 }

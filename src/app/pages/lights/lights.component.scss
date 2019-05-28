@@ -11,6 +11,12 @@
       stroke: nb-theme(color-fg);
     }
 
+    &.Closed {
+      fill: nb-theme(color-fg);
+      stroke: nb-theme(color-fg);
+      pointer-events: none;
+    }
+
     &.On {
       fill: nb-theme(color-fg-heading);
       stroke: nb-theme(color-fg-heading);

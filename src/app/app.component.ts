@@ -8,15 +8,17 @@ import { tap, filter } from 'rxjs/operators';
 import { NotificationService } from '@nd/core/services';
 
 import { NbToastrConfig } from '@nebular/theme/components/toastr/toastr-config';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'nd-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
 
-  title = 'ngx-domoboard';
+  title = environment.name;
+
+  version = environment.version;
 
   notification$: Observable<string> = this.notifService.notification.pipe(
     filter(message => !!message),

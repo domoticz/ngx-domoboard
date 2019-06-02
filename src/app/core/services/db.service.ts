@@ -3,12 +3,12 @@ import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, pluck } from 'rxjs/operators';
 
-import { BaseUrl } from '@nd/core/models';
+import { DomoticzSettings } from '@nd/core/models';
 
 @Injectable({ providedIn: 'root' })
 export class DBService {
 
-  private subject = new BehaviorSubject<BaseUrl>(null);
+  private subject = new BehaviorSubject<DomoticzSettings>(null);
   store = this.subject.asObservable().pipe(
     distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y))
   );
@@ -19,7 +19,7 @@ export class DBService {
 
   DB_VERSION = 1;
 
-  DB_STORE_NAME = 'domoticz_url';
+  DB_STORE_NAME = 'domoticz_settings';
 
   select<T>(...name: string[]): Observable<T> {
     return this.store.pipe(pluck(...name));
@@ -37,12 +37,9 @@ export class DBService {
       };
 
       req.onupgradeneeded = function (evt) {
-        const store = evt.currentTarget['result'].createObjectStore(
+        evt.currentTarget['result'].createObjectStore(
           this.DB_STORE_NAME, { keyPath: 'id' }
         );
-        store.createIndex('ssl', 'ssl');
-        store.createIndex('ip', 'ip');
-        store.createIndex('port', 'port');
       }.bind(this);
     });
   }
@@ -52,7 +49,7 @@ export class DBService {
     return tx.objectStore(store_name);
   }
 
-  addUrl(url: BaseUrl): Promise<any> {
+  addUrl(url: DomoticzSettings): Promise<any> {
     const store = this.getObjectStore(this.DB_STORE_NAME, 'readwrite');
     const req = store.add({ id: 1, ...url});
     return new Promise<any>((resolve, reject) => {
@@ -66,7 +63,7 @@ export class DBService {
     });
   }
 
-  setUrl(url?: BaseUrl) {
+  setUrl(url?: DomoticzSettings) {
     if (!!url) {
       this.subject.next(null);
     } else {

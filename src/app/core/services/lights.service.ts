@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable, BehaviorSubject, interval } from 'rxjs';
-import { distinctUntilChanged, pluck, tap, switchMap, filter, shareReplay, map } from 'rxjs/operators';
+import { distinctUntilChanged, pluck, tap, switchMap, filter } from 'rxjs/operators';
 
 import { DomoticzResponse, Light } from '@nd/core/models';
 

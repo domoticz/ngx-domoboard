@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, Input, OnDestroy } from '@angular/c
 import { FormGroup, FormControl } from '@angular/forms';
 
 import { DomoticzStatus } from '@nd/core/models/domoticz-status.interface';
-import { BaseUrl } from '@nd/core/models';
+import { DomoticzSettings } from '@nd/core/models';
 
 @Component({
   selector: 'nd-settings-content',
@@ -28,6 +28,17 @@ import { BaseUrl } from '@nd/core/models';
             Not a valid port number
           </div>
         </div>
+        <div class="form-group">
+          <span class="optional">Optional:</span>
+        </div>
+        <div class="form-group">
+          <input nbInput formControlName="username" type="text" class="form-control" placeholder="username"
+            [ngClass]="{ 'input-danger': getInvalid('username'), 'input-success': status?.status === 'OK' }">
+        </div>
+        <div class="form-group">
+          <input nbInput formControlName="password" type="text" class="form-control" placeholder="password"
+            [ngClass]="{ 'input-danger': getInvalid('password'), 'input-success': status?.status === 'OK' }">
+        </div>
       </div>
 
       <div class="connection-state {{ status?.status === 'OK' ? 'success' : 'danger' }}">
@@ -48,9 +59,9 @@ export class SettingsContentComponent implements OnDestroy {
 
   @Input() status: DomoticzStatus;
 
-  private _baseUrl: BaseUrl;
+  private _settings: DomoticzSettings;
   @Input()
-  set baseUrl(value: BaseUrl) {
+  set settings(value: DomoticzSettings) {
     if (!!value) {
       // https://github.com/angular/angular/issues/27803
       if (!this.getControl('ssl')) {
@@ -62,9 +73,9 @@ export class SettingsContentComponent implements OnDestroy {
       this.getControl('port').setValue(value.port, { emitEvent: false });
       this.parent.updateValueAndValidity();
     }
-    this._baseUrl = value;
+    this._settings = value;
   }
-  get baseUrl() { return this._baseUrl; }
+  get settings() { return this._settings; }
 
   getControl(name: string) {
     return this.parent.get(name) as FormControl;

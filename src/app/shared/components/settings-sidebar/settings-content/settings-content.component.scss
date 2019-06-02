@@ -10,7 +10,7 @@
     background: nb-theme(scrollbar-bg);
 
     .form-container {
-      margin: 25vh 20px;
+      margin: 15vh 20px;
 
       .form-control:focus {
         color: nb-theme(color-white);
@@ -31,9 +31,16 @@
     }
   }
 
+  .optional {
+    margin: 0 0 .5rem .5rem;
+    color: white;
+  }
+
   .connection-state {
     width: 80%;
     height: 5rem;
+    margin-top: auto;
+    margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
     background-color: nb-theme(layout-bg);

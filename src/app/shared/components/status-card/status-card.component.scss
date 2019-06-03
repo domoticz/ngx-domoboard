@@ -8,8 +8,8 @@
     height: 6rem;
     overflow: visible;
 
-    $bevel: btn-hero-bevel(nb-theme(card-bg));
-    $shadow: nb-theme(btn-hero-shadow);
+    $bevel: btn-hero-bevel(nb-theme(background-basic-color-1));
+    $shadow: nb-theme(shadow);
     box-shadow: $bevel, $shadow;
 
     &.disabled {
@@ -38,33 +38,7 @@
       transform: translate3d(0, 0, 0);
       -webkit-transform-style: preserve-3d;
       -webkit-backface-visibility: hidden;
-      color: nb-theme(color-white);
-
-      &.primary {
-        @include btn-hero-primary-gradient();
-        @include btn-hero-primary-bevel-glow-shadow();
-      }
-      &.success {
-        @include btn-hero-success-gradient();
-        @include btn-hero-success-bevel-glow-shadow();
-      }
-      &.info {
-        @include btn-hero-info-gradient();
-        @include btn-hero-info-bevel-glow-shadow();
-      }
-      &.warning {
-        @include btn-hero-warning-gradient();
-        @include btn-hero-warning-bevel-glow-shadow();
-      }
-      &.danger {
-        @include btn-hero-danger-gradient();
-        @include btn-hero-danger-bevel-glow-shadow();
-      }
-      &.secondary {
-        @include btn-hero-secondary-bg();
-        @include btn-hero-secondary-bevel-glow-shadow();
-        color: nb-theme(card-fg);
-      }
+      color: nb-theme(text-control-color);
 
       @include nb-for-theme(corporate) {
         &.primary,
@@ -79,7 +53,7 @@
     }
 
     &:hover {
-      background: lighten(nb-theme(card-bg), 5%);
+      background: lighten(nb-theme(background-basic-color-1), 5%);
 
       .icon {
         &.primary {

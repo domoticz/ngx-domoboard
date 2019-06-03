@@ -7,19 +7,19 @@
     height: 100%;
 
     &.Off {
-      fill: nb-theme(color-fg);
-      stroke: nb-theme(color-fg);
+      fill: nb-theme(text-basic-color);
+      stroke: nb-theme(text-basic-color);
     }
 
     &.Closed {
-      fill: nb-theme(color-fg);
-      stroke: nb-theme(color-fg);
+      fill: nb-theme(text-basic-color);
+      stroke: nb-theme(text-basic-color);
       pointer-events: none;
     }
 
     &.On {
-      fill: nb-theme(color-fg-heading);
-      stroke: nb-theme(color-fg-heading);
+      fill: nb-theme(text-alternate-color);
+      stroke: nb-theme(text-alternate-color);
     }
   }
 }

@@ -78,10 +78,10 @@
     }
 
     &.off {
-      color: nb-theme(card-fg);
+      color: nb-theme(text-basic-color);
 
       .icon {
-        color: nb-theme(card-fg);
+        color: nb-theme(text-basic-color);
 
         &.primary, &.success, &.info, &.warning, &.danger {
           box-shadow: none;
@@ -94,7 +94,7 @@
       }
 
       .title {
-        color: nb-theme(card-fg);
+        color: nb-theme(text-basic-color);
       }
     }
 
@@ -109,25 +109,25 @@
     }
 
     .title {
-      font-family: nb-theme(font-secondary);
+      font-family: nb-theme(font-family-secondary);
       font-size: 1.25rem;
-      font-weight: nb-theme(font-weight-bold);
-      color: nb-theme(card-fg-heading);
+      font-weight: nb-theme(text-heading-5-font-weight);
+      color: nb-theme(text-basic-color);
     }
 
     .status {
       font-size: 1rem;
-      font-weight: nb-theme(font-weight-light);
+      font-weight: nb-theme(text-heading-2-font-weight);
       text-transform: uppercase;
-      color: nb-theme(card-fg);
+      color: nb-theme(text-basic-color);
     }
   }
 
   @include nb-for-theme(cosmic) {
     nb-card {
       &.off .icon-container {
-        @include nb-ltr(border-right, 1px solid nb-theme(separator));
-        @include nb-rtl(border-left, 1px solid nb-theme(separator));
+        @include nb-ltr(border-right, 1px solid nb-theme(divider-color));
+        @include nb-rtl(border-left, 1px solid nb-theme(divider-color));
       }
 
       .icon-container {
@@ -148,11 +148,11 @@
       }
 
       .title {
-        font-weight: nb-theme(font-weight-bolder);
+        font-weight: nb-theme(text-heading-4-font-weight);
       }
 
       .status {
-        font-weight: nb-theme(font-weight-light);
+        font-weight: nb-theme(text-heading-2-font-weight);
       }
     }
   }

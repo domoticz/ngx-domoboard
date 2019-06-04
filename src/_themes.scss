@@ -1,12 +1,15 @@
 @import '~@nebular/theme/styles/theming';
 @import '~@nebular/theme/styles/themes/cosmic';
 
-$nb-enabled-themes: (cosmic);
-
 $nb-themes: nb-register-theme((
-  // color-bg: #222222,
-  // shadow: 0 1px 2px 0 #000000,
-  // color-fg: #303030,
-  // layout-bg: #ededed,
-  tabs-padding: 1.7rem
-), cosmic, cosmic);
+  color-basic-100: #a1a1e5,
+  color-basic-800: #3d3780,
+  color-basic-1000: #2f296b,
+
+  text-primary-color: #ffff,
+  text-primary-hover-color: text-primary-color,
+
+  tabset-tab-active-underline-color-1: #00d977,
+  tabset-tab-active-underline-color-2: #00d9bf,
+  tabset-tab-hover-underline-color: none
+), custom-cosmic, cosmic);

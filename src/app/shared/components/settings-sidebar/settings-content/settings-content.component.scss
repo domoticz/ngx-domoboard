@@ -7,7 +7,7 @@
     flex-direction: column;
     align-items: center;
     height: 100%;
-    background: nb-theme(scrollbar-bg);
+    background: nb-theme(background-basic-color-2);
 
     .form-container {
       margin: 15vh 20px;
@@ -22,11 +22,11 @@
 
       .input-success {
         box-shadow: none;
-        border-color: nb-theme(form-control-success-border-color);
+        border-color: nb-theme(input-success-border-color);
       }
 
       .error-message {
-        color: nb-theme(form-control-danger-border-color);
+        color: nb-theme(input-danger-border-color);
       }
     }
   }
@@ -43,19 +43,19 @@
     margin-bottom: 2rem;
     display: flex;
     flex-direction: column;
-    background-color: nb-theme(layout-bg);
+    background-color: nb-theme(layout-background-color);
     border-width: 2px;
     border: solid;
-    border-radius: nb-theme(form-control-border-radius);
-    padding: nb-theme(form-control-padding);
-    color: nb-theme(form-control-placeholder-color);
+    border-radius: nb-theme(input-rectangle-border-radius);
+    padding: nb-theme(input-tiny-padding);
+    color: nb-theme(input-disabled-placeholder-text-color);
 
     &.success {
-      border-color: nb-theme(form-control-success-border-color);
+      border-color: nb-theme(input-success-border-color);
     }
 
     &.danger {
-      border-color: nb-theme(form-control-danger-border-color);
+      border-color: nb-theme(input-danger-border-color);
     }
   }
 }

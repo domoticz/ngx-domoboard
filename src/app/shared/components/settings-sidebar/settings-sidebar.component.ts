@@ -40,7 +40,7 @@ export class SettingsSidebarComponent implements OnInit {
     ssl: [null],
     ip: [null, [Validators.pattern(this.ipPattern), Validators.required]],
     port: [null, [Validators.pattern(this.portPattern), Validators.required]],
-    username: [null, this.valueValidator('password')],
+    username: [null],
     password: [null]
   });
 

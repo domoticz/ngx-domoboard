@@ -1,0 +1,23 @@
+#header-tabset {
+
+  .tabset {
+    height: 100%;
+  }
+
+  .tab-link {
+    height: 100%;
+    font-weight: nb-theme(text-paragraph-font-weight);
+    font-size: nb-theme(text-button-giant-font-size);
+    text-transform: capitalize;
+  }
+
+  .active .tab-link::before {
+    background: nb-theme(tabset-tab-active-underline-color-1);
+    background-image: linear-gradient(to right,nb-theme(tabset-tab-active-underline-color-2),
+      nb-theme(tabset-tab-active-underline-color-1));
+  }
+
+  .tab-text {
+    align-self: center;
+  }
+}

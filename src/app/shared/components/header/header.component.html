@@ -1,12 +1,10 @@
-<div class="header-container"
-     [class.left]="position === 'normal'"
-     [class.right]="position === 'inverse'">
+<div class="header-container">
 
   <div class="logo-containter">
     <div class="logo"><span>{{name}}</span></div>
   </div>
 
-  <nb-tabset (changeTab)="onChangeTab($event)">
+  <nb-tabset id="header-tabset" (changeTab)="onChangeTab($event)">
     <nb-tab *ngFor="let route of routes | keyvalue" tabTitle="{{ route.key }}"></nb-tab>
   </nb-tabset>
 

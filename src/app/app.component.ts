@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
   }
 
   enableDarkTheme() {
-    this.themeService.changeTheme('cosmic');
+    this.themeService.changeTheme('custom-cosmic');
   }
 
 }

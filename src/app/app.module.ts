@@ -24,7 +24,7 @@ import { environment } from '../environments/environment';
     HttpClientModule,
     RouterModule.forRoot(routes),
     BrowserAnimationsModule,
-    NbThemeModule.forRoot({ name: 'cosmic' }),
+    NbThemeModule.forRoot({ name: 'custom-cosmic' }),
     NbLayoutModule,
     SharedModule,
     ServiceWorkerModule.register('/ngx-domoboard/ngsw-worker.js', { enabled: environment.production }),

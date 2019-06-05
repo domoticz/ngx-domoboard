@@ -3,13 +3,36 @@
 
 $nb-themes: nb-register-theme((
   color-basic-100: #a1a1e5,
+  color-basic-200: #9292d8,
+  color-basic-300: #8282ca,
+  color-basic-400: #7474bd,
+  color-basic-500: #6565ac,
+  color-basic-600: #57579b,
+  color-basic-700: #49498b,
   color-basic-800: #3d3780,
+  color-basic-900: #342f72,
   color-basic-1000: #2f296b,
+
+  color-primary-400: #ad59ff,
+  color-primary-500: #7659ff,
+  color-primary-600: #7e4ddb,
+  color-primary-700: #9259ff,
 
   text-primary-color: #ffff,
   text-primary-hover-color: text-primary-color,
 
+  text-subtitle-font-weight: 500,
+
+  text-paragraph-font-weight: 300,
+
   tabset-tab-active-underline-color-1: #00d977,
   tabset-tab-active-underline-color-2: #00d9bf,
-  tabset-tab-hover-underline-color: none
+  tabset-tab-hover-underline-color: none,
+
+  shadow: 0 8px 20px 0 rgba(40,37,89,.6),
+  border-radius: .5rem,
+
+  button-hero-bevel-size: 0 3px 0 0,
+  button-hero-glow-size: 0 2px 8px 0,
+  button-hero-shadow: 0 4px 10px 0 rgba(33,7,77,.5)
 ), custom-cosmic, cosmic);

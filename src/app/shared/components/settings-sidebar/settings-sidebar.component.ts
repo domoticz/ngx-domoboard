@@ -1,11 +1,16 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
-import { FormBuilder, Validators, FormControl, ValidatorFn, AbstractControl } from '@angular/forms';
+import { FormBuilder, Validators, FormControl, ValidatorFn, FormGroup, ValidationErrors } from '@angular/forms';
 
 import { filter, switchMap, catchError, tap, distinctUntilChanged } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
 import { DomoticzSettings, DomoticzStatus } from '@nd/core/models';
 import { SettingsService, DBService } from '@nd/core/services';
+
+const oneFilledOutValidator: ValidatorFn = (group: FormGroup): ValidationErrors | null => {
+  return Object.keys(group.value).every(key => !!group.value[key]) ||
+    Object.keys(group.value).every(key => !group.value[key]) ? null : { oneFilledOut: true };
+};
 
 @Component({
   selector: 'nd-settings-sidebar',
@@ -40,8 +45,10 @@ export class SettingsSidebarComponent implements OnInit {
     ssl: [null],
     ip: [null, [Validators.pattern(this.ipPattern), Validators.required]],
     port: [null, [Validators.pattern(this.portPattern), Validators.required]],
-    username: [null],
-    password: [null]
+    credentials: this.fb.group({
+      username: [null],
+      password: [null]
+    }, { validators: oneFilledOutValidator })
   });
 
   status$: Observable<DomoticzStatus> = this.settingsForm.valueChanges.pipe(
@@ -85,25 +92,6 @@ export class SettingsSidebarComponent implements OnInit {
 
   getControl(name: string) {
     return this.settingsForm.get(name) as FormControl;
-  }
-
-  valueValidator(control: string): ValidatorFn {
-    return (c: AbstractControl) => {
-      if (!c.value) {
-        console.log(c.parent);
-        if (!!c.parent && !!this.getControl(control) && !this.getControl(control).value) {
-          return null;
-        } else {
-          return {};
-        }
-      } else {
-        if (!!c.parent && !!this.getControl(control) && !this.getControl(control).value) {
-          return {};
-        } else {
-          return null;
-        }
-      }
-    };
   }
 
   show() {

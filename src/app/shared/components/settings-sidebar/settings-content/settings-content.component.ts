@@ -16,31 +16,35 @@ import { DomoticzSettings } from '@nd/core/models';
         </div>
         <div class="form-group">
           <input nbInput formControlName="ip" type="text" class="form-control" placeholder="domoticz ip adress"
-            [ngClass]="{ 'input-danger': getInvalid('ip'), 'input-success': status?.status === 'OK' &&
-            !getInvalid('ip') }">
-          <div class="error-message" *ngIf="getInvalid('ip')">
+            [ngClass]="{ 'input-danger': getInvalid(parent, 'ip'), 'input-success': status?.status === 'OK' &&
+            !getInvalid(parent, 'ip') }">
+          <div class="error-message" *ngIf="getInvalid(parent, 'ip')">
             Not a valid ip adress
           </div>
         </div>
         <div class="form-group">
           <input nbInput formControlName="port" type="text" class="form-control" placeholder="port"
-            [ngClass]="{ 'input-danger': getInvalid('port'), 'input-success': status?.status === 'OK' &&
-            !getInvalid('port') }">
-          <div class="error-message" *ngIf="getInvalid('port')">
+            [ngClass]="{ 'input-danger': getInvalid(parent, 'port'), 'input-success': status?.status === 'OK' &&
+            !getInvalid(parent, 'port') }">
+          <div class="error-message" *ngIf="getInvalid(parent, 'port')">
             Not a valid port number
           </div>
         </div>
         <div class="form-group">
           <span class="optional">Optional:</span>
         </div>
-        <div class="form-group">
-          <input nbInput formControlName="username" type="text" class="form-control" placeholder="username"
-            [ngClass]="{ 'input-danger': getInvalid('username'), 'input-success': status?.status === 'OK' }">
-        </div>
-        <div class="form-group">
-          <input nbInput formControlName="password" type="text" class="form-control" placeholder="password"
-            [ngClass]="{ 'input-danger': getInvalid('password'), 'input-success': status?.status === 'OK' }">
-        </div>
+        <ng-container [formGroup]="credentials">
+          <div class="form-group">
+            <input nbInput formControlName="username" type="text" class="form-control" placeholder="username"
+              [ngClass]="{ 'input-danger': getInvalid(credentials, 'username'), 'input-success': status?.status === 'OK' &&
+              !getInvalid(credentials, 'username') }">
+          </div>
+          <div class="form-group">
+            <input nbInput formControlName="password" type="text" class="form-control" placeholder="password"
+              [ngClass]="{ 'input-danger': getInvalid(credentials, 'password'), 'input-success': status?.status === 'OK' &&
+              !getInvalid(credentials, 'password') }">
+          </div>
+        </ng-container>
       </div>
 
       <div class="connection-state {{ status?.status === 'OK' ? 'success' : 'danger' }}">
@@ -57,7 +61,13 @@ import { DomoticzSettings } from '@nd/core/models';
 })
 export class SettingsContentComponent implements OnDestroy {
 
-  @Input() parent: FormGroup;
+  private _parent: FormGroup;
+  @Input()
+  set parent(value) {
+    this.credentials = value.get('credentials') as FormGroup;
+    this._parent = value;
+  }
+  get parent() { return this._parent; }
 
   @Input() status: DomoticzStatus;
 
@@ -66,25 +76,27 @@ export class SettingsContentComponent implements OnDestroy {
   set settings(value: DomoticzSettings) {
     if (!!value) {
       // https://github.com/angular/angular/issues/27803
-      if (!this.getControl('ssl')) {
+      if (!this.getControl(this.parent, 'ssl')) {
         this.parent.addControl('ssl', new FormControl(value.ssl));
       } else {
-        this.getControl('ssl').setValue(value.ssl, { emitEvent: false });
+        this.getControl(this.parent, 'ssl').setValue(value.ssl, { emitEvent: false });
       }
-      this.getControl('ip').setValue(value.ip, { emitEvent: false });
-      this.getControl('port').setValue(value.port, { emitEvent: false });
+      this.getControl(this.parent, 'ip').setValue(value.ip, { emitEvent: false });
+      this.getControl(this.parent, 'port').setValue(value.port, { emitEvent: false });
       this.parent.updateValueAndValidity();
     }
     this._settings = value;
   }
   get settings() { return this._settings; }
 
-  getControl(name: string) {
-    return this.parent.get(name) as FormControl;
+  credentials: FormGroup;
+
+  getControl(parent: FormGroup, name: string) {
+    return parent.get(name) as FormControl;
   }
 
-  getInvalid(name: string) {
-    return this.getControl(name).invalid && !!this.getControl(name).value;
+  getInvalid(parent: FormGroup, name: string) {
+    return this.getControl(parent, name).invalid && !!this.getControl(parent, name).value;
   }
 
   ngOnDestroy() {

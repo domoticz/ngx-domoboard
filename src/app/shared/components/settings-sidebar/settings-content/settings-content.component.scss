@@ -14,14 +14,14 @@
 
       .form-control:focus {
         color: nb-theme(text-control-color);
+        background-color: nb-theme(background-basic-color-2);
       }
 
       .input-danger {
-        box-shadow: none;
+        border-color: nb-theme(input-danger-border-color);
       }
 
       .input-success {
-        box-shadow: none;
         border-color: nb-theme(input-success-border-color);
       }
 
@@ -48,7 +48,7 @@
     border: solid;
     border-radius: nb-theme(input-rectangle-border-radius);
     padding: nb-theme(input-tiny-padding);
-    color: nb-theme(input-disabled-placeholder-text-color);
+    color: nb-theme(input-text-color);
 
     &.success {
       border-color: nb-theme(input-success-border-color);

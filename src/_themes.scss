@@ -34,5 +34,9 @@ $nb-themes: nb-register-theme((
 
   button-hero-bevel-size: 0 3px 0 0,
   button-hero-glow-size: 0 2px 8px 0,
-  button-hero-shadow: 0 4px 10px 0 rgba(33,7,77,.5)
+  button-hero-shadow: 0 4px 10px 0 rgba(33,7,77,.5),
+
+  checkbox-text-color: text-primary-color,
+  checkbox-success-checked-checkmark-color: text-primary-color,
+  checkbox-warning-checked-checkmark-color: text-primary-color
 ), custom-cosmic, cosmic);

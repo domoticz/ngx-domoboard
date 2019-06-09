@@ -1,20 +1,30 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpRequest, HttpEvent } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
 import { Api } from '@nd/core/enums/api.enum';
-import { DomoticzStatus, DomoticzSettings } from '@nd/core/models';
+import { DomoticzAuth, DomoticzSettings } from '@nd/core/models';
+import { map } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class SettingsService {
 
   constructor(private httpClient: HttpClient) { }
 
-  getStatus(url: DomoticzSettings): Observable<DomoticzStatus> {
-    return this.httpClient.get<DomoticzStatus>(
-      `${url.ssl ? 'https' : 'http'}://${url.ip}:${url.port}/${Api.status}`
+  getAuth(settings: DomoticzSettings): Observable<DomoticzAuth> {
+    let req = new HttpRequest<DomoticzAuth>('GET',
+      `${settings.ssl ? 'https' : 'http'}://${settings.ip}:${settings.port}/${Api.auth}`
     );
+    try {
+      if (!!Object.keys(settings.credentials).every(key => settings.credentials[key] !== null)) {
+        const authToken = btoa(`${settings.credentials.username}:${settings.credentials.password}`);
+        req = req.clone({
+          headers: req.headers.set('Authorization', `Basic ${authToken}`)
+        });
+      }
+    } catch (e) { }
+    return this.httpClient.request<DomoticzAuth>(req.method, req.url, { headers: req.headers });
   }
 
 }

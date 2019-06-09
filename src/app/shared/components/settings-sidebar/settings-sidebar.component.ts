@@ -4,7 +4,7 @@ import { FormBuilder, Validators, FormControl, ValidatorFn, FormGroup, Validatio
 import { filter, switchMap, catchError, tap, distinctUntilChanged } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
-import { DomoticzSettings, DomoticzStatus } from '@nd/core/models';
+import { DomoticzSettings, DomoticzAuth } from '@nd/core/models';
 import { SettingsService, DBService } from '@nd/core/services';
 
 const oneFilledOutValidator: ValidatorFn = (group: FormGroup): ValidationErrors | null => {
@@ -21,7 +21,7 @@ const oneFilledOutValidator: ValidatorFn = (group: FormGroup): ValidationErrors 
       </nd-toggle-settings-button>
       <div class="settings-container {{ animationState }}">
         <nd-settings-content *ngIf="showContent" class="sidebar-content"
-          [parent]="settingsForm" [status]="status$ | async" [settings]="settings$ | async">
+          [parent]="settingsForm" [auth]="auth$ | async" [settings]="settings$ | async">
         </nd-settings-content>
       </div>
     </div>
@@ -51,7 +51,7 @@ export class SettingsSidebarComponent implements OnInit {
     }, { validators: oneFilledOutValidator })
   });
 
-  status$: Observable<DomoticzStatus> = this.settingsForm.valueChanges.pipe(
+  auth$: Observable<DomoticzAuth> = this.settingsForm.valueChanges.pipe(
     distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y)),
     tap(value => {
       if (this.settingsForm.invalid) {
@@ -60,21 +60,23 @@ export class SettingsSidebarComponent implements OnInit {
     }),
     filter(() => this.settingsForm.valid),
     switchMap(value =>
-      this.service.getStatus(value as DomoticzSettings).pipe(
-        tap(status => {
-          if (status.status === 'OK') {
+      this.service.getAuth(value as DomoticzSettings).pipe(
+        tap(() => {
+          if (auth => auth.status === 'OK' && auth.rights > -1) {
             this.dbService.addUrl(value as DomoticzSettings).then(s => {
-                this.dbService.setUrl();
-                console.log(s);
-              }).catch(e => {
-                this.dbService.setUrl();
-                console.log(e);
-              });
+              this.dbService.setUrl();
+              console.log(s);
+            }).catch(e => {
+              this.dbService.setUrl();
+              console.log(e);
+            });
+          } else {
+            this.dbService.setUrl(value);
           }
         }),
         catchError(() => {
           this.dbService.setUrl(value);
-          return of({} as DomoticzStatus);
+          return of({} as DomoticzAuth);
         })
       ))
   );

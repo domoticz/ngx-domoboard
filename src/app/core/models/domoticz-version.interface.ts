@@ -1,4 +1,4 @@
-export interface DomoticzStatus {
+export interface DomoticzVersion {
   DomoticzUpdateURL: string;
   HaveUpdate: boolean;
   Revision: number;
@@ -11,4 +11,4 @@ export interface DomoticzStatus {
   status: string;
   title: string;
   version: string;
-  }
+}

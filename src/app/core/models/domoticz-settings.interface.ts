@@ -1,7 +1,8 @@
+import { Credentials } from './credentials.interface';
+
 export interface DomoticzSettings {
   ssl: boolean;
   ip: string;
   port: number;
-  username?: string;
-  password?: string;
+  credentials: Credentials;
 }

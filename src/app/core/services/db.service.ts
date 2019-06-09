@@ -63,8 +63,8 @@ export class DBService {
     });
   }
 
-  setUrl(url?: DomoticzSettings) {
-    if (!!url) {
+  setUrl(settings?: DomoticzSettings) {
+    if (!!settings) {
       this.subject.next(null);
     } else {
       const req = this.getObjectStore(this.DB_STORE_NAME, 'readonly').get(1);

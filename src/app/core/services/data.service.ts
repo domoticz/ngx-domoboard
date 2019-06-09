@@ -20,7 +20,8 @@ export abstract class DataService {
     return this.dbService.store.pipe(
       switchMap(settings => !!settings ? this.httpClient.get<T>(
         `${settings.ssl ? 'https' : 'http'}://${settings.ip}:${settings.port}/${ relativeUrl }`,
-        !!settings.username && !!settings.password ? this.getAuthOption(settings) : {}
+        !!settings.credentials && !!Object.keys(settings.credentials).every(key => settings.credentials[key] !== null) ?
+          this.getAuthOption(settings) : {}
       ) : of(null))
     );
   }
@@ -35,7 +36,7 @@ export abstract class DataService {
   }
 
   getAuthOption(settings: DomoticzSettings): any {
-    const authToken = btoa(`${settings.username}:${settings.password}`);
+    const authToken = btoa(`${settings.credentials.username}:${settings.credentials.password}`);
     return {
       headers: new HttpHeaders({
         'Authorization': `Basic: ${authToken}`

@@ -9,6 +9,7 @@ import { NbThemeModule, NbLayoutModule, NbToastrModule } from '@nebular/theme';
 
 import { SharedModule } from '@nd/shared/shared.module';
 import { GlobalErrorHandler } from '@nd/core/global-error-handler';
+import { httpInterceptorProviders } from '@nd/core/http-interceptors';
 
 import { AppComponent } from './app.component';
 import { routes } from './app.routes';
@@ -31,7 +32,8 @@ import { environment } from '../environments/environment';
     NbToastrModule.forRoot()
   ],
   providers: [
-    { provide: ErrorHandler, useClass: GlobalErrorHandler }
+    { provide: ErrorHandler, useClass: GlobalErrorHandler },
+    httpInterceptorProviders
   ],
   bootstrap: [AppComponent],
   entryComponents: [AppComponent]

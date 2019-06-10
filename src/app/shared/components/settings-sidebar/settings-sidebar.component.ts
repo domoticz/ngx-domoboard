@@ -61,8 +61,8 @@ export class SettingsSidebarComponent implements OnInit {
     filter(() => this.settingsForm.valid),
     switchMap(value =>
       this.service.getAuth(value as DomoticzSettings).pipe(
-        tap(() => {
-          if (auth => auth.status === 'OK' && auth.rights > -1) {
+        tap(auth => {
+          if (auth.status === 'OK' && auth.rights > -1) {
             this.dbService.addUrl(value as DomoticzSettings).then(s => {
               this.dbService.setUrl();
               console.log(s);
@@ -72,6 +72,7 @@ export class SettingsSidebarComponent implements OnInit {
             });
           } else {
             this.dbService.setUrl(value);
+            this.settingsForm.get('credentials').setErrors({ 'invalid': true });
           }
         }),
         catchError(() => {

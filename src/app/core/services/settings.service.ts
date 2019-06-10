@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpRequest, HttpEvent } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpRequest, HttpEvent, HttpBackend } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
@@ -10,7 +10,11 @@ import { map } from 'rxjs/operators';
 @Injectable({providedIn: 'root'})
 export class SettingsService {
 
-  constructor(private httpClient: HttpClient) { }
+  private httpClient: HttpClient;
+
+  constructor(handler: HttpBackend) {
+    this.httpClient = new HttpClient(handler);
+  }
 
   getAuth(settings: DomoticzSettings): Observable<DomoticzAuth> {
     let req = new HttpRequest<DomoticzAuth>('GET',

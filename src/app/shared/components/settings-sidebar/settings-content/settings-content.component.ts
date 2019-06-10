@@ -15,7 +15,7 @@ import { DomoticzAuth, DomoticzSettings } from '@nd/core/models';
         </div>
         <div class="form-group">
           <input nbInput formControlName="ip" type="text" class="form-control" placeholder="domoticz ip adress"
-            [ngClass]="{ 'input-danger': getInvalid('ip'), 'input-success': status?.status === 'OK' &&
+            [ngClass]="{ 'input-danger': getInvalid('ip'), 'input-success': auth?.status === 'OK' &&
             !getInvalid('ip') }">
           <div class="error-message" *ngIf="getInvalid('ip')">
             Not a valid ip adress
@@ -23,7 +23,7 @@ import { DomoticzAuth, DomoticzSettings } from '@nd/core/models';
         </div>
         <div class="form-group">
           <input nbInput formControlName="port" type="text" class="form-control" placeholder="port"
-            [ngClass]="{ 'input-danger': getInvalid('port'), 'input-success': status?.status === 'OK' &&
+            [ngClass]="{ 'input-danger': getInvalid('port'), 'input-success': auth?.status === 'OK' &&
             !getInvalid('port') }">
           <div class="error-message" *ngIf="getInvalid('port')">
             Not a valid port number

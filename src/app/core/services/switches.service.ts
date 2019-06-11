@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, interval } from 'rxjs';
 import { distinctUntilChanged, pluck, tap, switchMap, filter } from 'rxjs/operators';
 
-import { DomoticzResponse, Light } from '@nd/core/models';
+import { DomoticzResponse, Switch } from '@nd/core/models';
 
 import { Api } from '@nd/core/enums/api.enum';
 
@@ -12,17 +12,19 @@ import { DBService } from './db.service';
 import { DataService } from './data.service';
 
 interface State {
-  lights: Light[];
+  switchTypes: string[];
+  switches: Switch[];
   lastUpdate: string;
 }
 
 const initialState: State = {
-  lights: [],
+  switchTypes: [],
+  switches: [],
   lastUpdate: ''
 };
 
 @Injectable({providedIn: 'root'})
-export class LightsService extends DataService {
+export class SwitchesService extends DataService {
 
   private subject = new BehaviorSubject<State>(initialState);
   store = this.subject.asObservable().pipe(
@@ -40,11 +42,12 @@ export class LightsService extends DataService {
     return this.store.pipe(pluck(...name));
   }
 
-  getLights(): Observable<DomoticzResponse> {
-    return this.get<DomoticzResponse>(Api.lights).pipe(
+  getSwitches(): Observable<DomoticzResponse> {
+    return this.get<DomoticzResponse>(Api.switches).pipe(
       tap((resp: DomoticzResponse) =>
         !!resp ? this.subject.next({
-          ...this.subject.value, lights: resp.result, lastUpdate: resp.ActTime.toString()
+          ...this.subject.value, switches: resp.result, lastUpdate: resp.ActTime.toString(),
+          switchTypes: [...resp.result.map(s => s.SwitchType).filter((st, i, sts) => sts.indexOf(st) === i)]
           }) : this.clearStore()
       )
     );
@@ -56,14 +59,15 @@ export class LightsService extends DataService {
     );
   }
 
-  refreshLights(): Observable<DomoticzResponse> {
+  refreshSwitches(): Observable<DomoticzResponse> {
     return interval(10000).pipe(
       switchMap(() =>
-        this.get<DomoticzResponse>(Api.refreshLights.replace('{lastupdate}', this.subject.value.lastUpdate))),
+        this.get<DomoticzResponse>(Api.refreshSwitches.replace('{lastupdate}', this.subject.value.lastUpdate))),
       filter(resp => !!resp && !!resp.result),
       tap(resp => this.subject.next({
-        ...this.subject.value, lights: this.subject.value.lights.map(light =>
-          resp.result.find(res => light.idx === res.idx) || light), lastUpdate: resp.ActTime.toString()
+        ...this.subject.value, switches: this.subject.value.switches.map(light =>
+          resp.result.find(res => light.idx === res.idx) || light), lastUpdate: resp.ActTime.toString(),
+          switchTypes: [...resp.result.map(s => s.SwitchType).filter((st, i, sts) => sts.indexOf(st) === i)]
       }))
     );
   }

@@ -15,8 +15,7 @@ export class HeaderComponent {
   name = environment.name;
 
   routes = {
-    Misc: '',
-    Lights: 'lights',
+    Switches: 'switches',
   };
 
   constructor(private router: Router) { }

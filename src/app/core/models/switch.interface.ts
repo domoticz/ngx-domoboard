@@ -1,4 +1,4 @@
-export interface Light {
+export interface Switch {
   AddjMulti: number;
   AddjMulti2: number;
   AddjValue: number;

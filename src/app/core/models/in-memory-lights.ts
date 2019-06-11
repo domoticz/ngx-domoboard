@@ -1,6 +1,6 @@
-import { Light } from '@nd/core/models';
+import { Switch } from '@nd/core/models';
 
-export const lights: Light[] = [
+export const lights: Switch[] = [
   {
     'AddjMulti': 1,
     'AddjMulti2': 1,

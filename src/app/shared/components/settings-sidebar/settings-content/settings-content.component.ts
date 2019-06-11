@@ -9,13 +9,13 @@ import { DomoticzAuth, DomoticzSettings } from '@nd/core/models';
     <div class="content-container" [formGroup]="parent">
       <div class="form-container">
         <div class="form-group">
-          <nb-checkbox [status]="auth?.status === 'OK' ? 'success' : 'warning'" formControlName="ssl">
+          <nb-checkbox [status]="connected ? 'success' : 'warning'" formControlName="ssl">
             SSL (mandatory for service worker support)
           </nb-checkbox>
         </div>
         <div class="form-group">
           <input nbInput formControlName="ip" type="text" class="form-control" placeholder="domoticz ip adress"
-            [ngClass]="{ 'input-danger': getInvalid('ip'), 'input-success': auth?.status === 'OK' &&
+            [ngClass]="{ 'input-danger': getInvalid('ip'), 'input-success': connected &&
             !getInvalid('ip') }">
           <div class="error-message" *ngIf="getInvalid('ip')">
             Not a valid ip adress
@@ -23,7 +23,7 @@ import { DomoticzAuth, DomoticzSettings } from '@nd/core/models';
         </div>
         <div class="form-group">
           <input nbInput formControlName="port" type="text" class="form-control" placeholder="port"
-            [ngClass]="{ 'input-danger': getInvalid('port'), 'input-success': auth?.status === 'OK' &&
+            [ngClass]="{ 'input-danger': getInvalid('port'), 'input-success': connected &&
             !getInvalid('port') }">
           <div class="error-message" *ngIf="getInvalid('port')">
             Not a valid port number
@@ -35,23 +35,24 @@ import { DomoticzAuth, DomoticzSettings } from '@nd/core/models';
         <ng-container [formGroup]="credentials">
           <div class="form-group">
             <input nbInput formControlName="username" type="text" class="form-control" placeholder="username"
-              [ngClass]="{ 'input-danger': parent.get('credentials').invalid, 'input-success': auth?.status === 'OK' &&
+              [ngClass]="{ 'input-danger': parent.get('credentials').invalid, 'input-success': connected &&
               !getInvalid('credentials') }">
           </div>
           <div class="form-group">
             <input nbInput formControlName="password" type="password" class="form-control" placeholder="password"
-              [ngClass]="{ 'input-danger': parent.get('credentials').invalid, 'input-success': auth?.status === 'OK' &&
+              [ngClass]="{ 'input-danger': parent.get('credentials').invalid, 'input-success': connected &&
               !getInvalid('credentials') }">
           </div>
         </ng-container>
       </div>
 
-      <div class="connection-state {{ auth?.status === 'OK' ? 'success' : 'danger' }}">
-        <span *ngIf="auth?.status !== 'OK' else DomoticzAuth">no connection</span>
-        <ng-template #DomoticzAuth>
+      <div class="connection-state {{ connected ? 'success' : 'danger' }}">
+        <span *ngIf="auth?.status !== 'OK'">no connection</span>
+        <span *ngIf="auth?.rights === -1">need authentication</span>
+        <ng-container *ngIf="connected">
           <span>Domoticz version: {{ auth.version }}</span>
           <span>Status: {{ auth.status }}</span>
-        </ng-template>
+        </ng-container>
       </div>
     </div>
   `,
@@ -68,7 +69,15 @@ export class SettingsContentComponent implements OnDestroy {
   }
   get parent() { return this._parent; }
 
-  @Input() auth: DomoticzAuth;
+  private _auth: DomoticzAuth;
+  @Input()
+  set auth(value) {
+    if (!!value) {
+      this.connected = value.status === 'OK' && value.rights > -1;
+      this._auth = value;
+    }
+  }
+  get auth() { return this._auth; }
 
   private _settings: DomoticzSettings;
   @Input()
@@ -93,6 +102,8 @@ export class SettingsContentComponent implements OnDestroy {
   get settings() { return this._settings; }
 
   credentials: FormGroup;
+
+  connected: boolean;
 
   getControl(name: string) {
     return this.parent.get(name) as FormControl;

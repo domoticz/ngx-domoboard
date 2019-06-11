@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpRequest, HttpEvent, HttpBackend } from '@angular/common/http';
+import { HttpClient, HttpRequest, HttpBackend } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
 import { Api } from '@nd/core/enums/api.enum';
 import { DomoticzAuth, DomoticzSettings } from '@nd/core/models';
-import { map } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class SettingsService {

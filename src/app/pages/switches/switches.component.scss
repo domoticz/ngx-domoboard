@@ -1,0 +1,43 @@
+@import 'src/_themes.scss';
+
+@include nb-install-component() {
+
+  .switchType-container {
+
+    .switchType {
+      font-size: nb-theme(text-heading-5-font-size);
+    }
+
+    .nd-icon {
+      width: 100%;
+      height: 100%;
+
+      &.Off {
+        fill: nb-theme(text-basic-color);
+        stroke: nb-theme(text-basic-color);
+      }
+
+      &.Closed {
+        fill: nb-theme(text-basic-color);
+        stroke: nb-theme(text-basic-color);
+        pointer-events: none;
+      }
+
+      &.On {
+        fill: nb-theme(text-primary-color);
+        stroke: nb-theme(text-primary-color);
+      }
+    }
+  }
+}
+
+.switchType-container {
+  display: flex;
+  flex-direction: column;
+
+  .switchType {
+    margin: 1rem 0;
+    text-transform: uppercase;
+  }
+
+}

@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { LightsComponent } from './lights.component';
+import { SwitchesComponent } from './switches.component';
 
 const routes: Routes = [
-  { path: '',  component: LightsComponent }
+  { path: '',  component: SwitchesComponent }
 ];
 
 @NgModule({
@@ -11,4 +11,4 @@ const routes: Routes = [
   exports: [],
   declarations: [],
 })
-export class LightsRoutingModule { }
+export class SwitchesRoutingModule { }

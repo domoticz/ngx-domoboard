@@ -4,6 +4,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, pluck } from 'rxjs/operators';
 
 import { DomoticzSettings } from '@nd/core/models';
+import { Credentials } from '../models/credentials.interface';
 
 @Injectable({ providedIn: 'root' })
 export class DBService {
@@ -49,42 +50,47 @@ export class DBService {
     return tx.objectStore(store_name);
   }
 
-  addUrl(url: DomoticzSettings): Promise<any> {
+  addSettings(settings: DomoticzSettings): Promise<any> {
     const store = this.getObjectStore(this.DB_STORE_NAME, 'readwrite');
-    const req = store.add({ id: 1, ...url});
+    try {
+      if (!!Object.keys(settings.credentials).every(key => settings.credentials[key] !== null)) {
+        const authToken = btoa(`${settings.credentials.username}:${settings.credentials.password}`);
+        settings.authToken = authToken;
+        delete settings.credentials;
+      }
+    } catch (e) { }
+    const req = store.put({ id: 1, ...settings});
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = function (evt: any) {
-        resolve('addUrl: ' + evt.type);
+        resolve('addSettings: ' + evt.type);
       };
 
       req.onerror = function (evt) {
-        reject('addUrl: ' + evt.target['error'].message);
+        reject('addSettings: ' + evt.target['error'].message);
       };
     });
   }
 
-  setUrl(settings?: DomoticzSettings) {
+  setSettings(settings?: DomoticzSettings) {
     if (!!settings) {
       this.subject.next(null);
     } else {
       const req = this.getObjectStore(this.DB_STORE_NAME, 'readonly').get(1);
       req.onsuccess = ((evt: any) => {
-        this.subject.next(evt.target.result);
+        this.subject.next(this.decodeSettings(evt.target.result));
       }).bind(this);
     }
   }
 
-  getUrl(): Promise<any> {
-    const req = this.getObjectStore(this.DB_STORE_NAME, 'readonly').get(1);
-    return new Promise<any>((resolve, reject) => {
-      req.onsuccess = ((evt: any) => {
-        resolve(evt.target.result);
-      });
-
-      req.onerror = function (evt) {
-        reject('getUrl: ' + evt.target['error'].message);
-      };
-    });
+  decodeSettings(settings: DomoticzSettings): DomoticzSettings {
+    if (!!settings && !!settings.authToken) {
+      return { ...settings, credentials: {
+        username: atob(settings.authToken).split(':')[0],
+        password: atob(settings.authToken).split(':')[1]
+      } };
+    } else {
+      return settings;
+    }
   }
 
 }

@@ -5,4 +5,5 @@ export interface DomoticzSettings {
   ip: string;
   port: number;
   credentials: Credentials;
+  authToken?: string;
 }

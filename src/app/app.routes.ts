@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  { path: 'lights', loadChildren: './pages/lights/lights.module#LightsModule' },
+  { path: 'switches', loadChildren: './pages/switches/switches.module#SwitchesModule' },
   { path: '',   redirectTo: '', pathMatch: 'full' },
   { path: '**', redirectTo: '' }
 ];

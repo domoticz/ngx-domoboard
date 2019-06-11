@@ -1,0 +1,20 @@
+<div class="switchType-container" *ngFor="let switchType of (switchTypes$ | async)">
+  <span class="switchType">{{ switchType }}</span>
+
+  <div class="row">
+    <ng-container *ngFor="let switch of (switches$ | async)">
+      <div class="col-xxxl-3 col-md-6" *ngIf="switch.SwitchType === switchType">
+        <nd-status-card [title]="switch.Name" (statusChanged)="statusChanged($event, switch)"
+          [on]="switch.Status === 'On'" [disabled]="switch.HaveTimeout" [status]="switch.Status">
+          <i *ngIf="icon[switch.Image]?.startsWith('nb'); else svgIcon" [ngClass]="icon[switch.Image]"></i>
+
+          <ng-template #svgIcon>
+            <nd-svg-icon class="nd-icon {{ switch.Status }}" [name]="icon[switch.Image]"
+              [status]="switch.Status">
+            </nd-svg-icon>
+          </ng-template>
+        </nd-status-card>
+      </div>
+    </ng-container>
+  </div>
+</div>

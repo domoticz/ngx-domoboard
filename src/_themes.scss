@@ -38,5 +38,7 @@ $nb-themes: nb-register-theme((
 
   checkbox-text-color: text-primary-color,
   checkbox-success-checked-checkmark-color: text-primary-color,
-  checkbox-warning-checked-checkmark-color: text-primary-color
+  checkbox-warning-checked-checkmark-color: text-primary-color,
+
+  text-control-color: #ffff
 ), custom-cosmic, cosmic);

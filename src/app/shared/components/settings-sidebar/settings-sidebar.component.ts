@@ -100,10 +100,12 @@ export class SettingsSidebarComponent implements OnInit {
   show() {
     this.animationState = 'in';
     this.showContent = true;
+    this.settingsForm.enable();
   }
 
   hide() {
     this.animationState = 'out';
+    this.settingsForm.disable();
     // Wait animation duration to destroy content.
     setTimeout(() => {
       this.showContent = false;

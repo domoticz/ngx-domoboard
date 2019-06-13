@@ -66,8 +66,7 @@ export class SwitchesService extends DataService {
       filter(resp => !!resp && !!resp.result),
       tap(resp => this.subject.next({
         ...this.subject.value, switches: this.subject.value.switches.map(light =>
-          resp.result.find(res => light.idx === res.idx) || light), lastUpdate: resp.ActTime.toString(),
-          switchTypes: [...resp.result.map(s => s.SwitchType).filter((st, i, sts) => sts.indexOf(st) === i)]
+          resp.result.find(res => light.idx === res.idx) || light), lastUpdate: resp.ActTime.toString()
       }))
     );
   }

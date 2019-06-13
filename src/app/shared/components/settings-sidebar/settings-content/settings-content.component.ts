@@ -96,6 +96,8 @@ export class SettingsContentComponent implements OnDestroy {
         this.parent.get('credentials').get('password').setValue(value.credentials.password, { emitEvent: false });
       }
       this.parent.updateValueAndValidity();
+    } else if (!this.getControl('ssl')) {
+      this.parent.addControl('ssl', new FormControl(null));
     }
     this._settings = value;
   }

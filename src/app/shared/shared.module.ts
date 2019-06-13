@@ -20,7 +20,8 @@ import { SafePipe } from './pipes';
   exports: [
     sharedComponents,
     CommonModule,
-    SafePipe
+    SafePipe,
+    NbCardModule
   ],
   declarations: [
     sharedComponents,

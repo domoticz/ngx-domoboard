@@ -17,3 +17,13 @@
 </nb-layout>
 
 <nd-settings-sidebar></nd-settings-sidebar>
+
+<ng-template #updateDialog let-data let-ref="dialogRef">
+  <nb-card>
+    <nb-card-header id="dialog-header" class="center">Update available</nb-card-header>
+    <nb-card-body class="center dialog-body">{{ data }}</nb-card-body>
+    <nb-card-footer class="center">
+      <button nbButton (click)="closeDialog()">Reload</button>
+    </nb-card-footer>
+  </nb-card>
+</ng-template>

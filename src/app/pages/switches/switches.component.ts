@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { Subject, concat } from 'rxjs';
+import { Subject, merge } from 'rxjs';
 import { tap, takeUntil, take } from 'rxjs/operators';
 
 import { Switch } from '@nd/core/models';
@@ -29,7 +29,7 @@ export class SwitchesComponent implements OnInit, OnDestroy {
   constructor(private service: SwitchesService) { }
 
   ngOnInit() {
-    concat(
+    merge(
       this.service.getSwitches(),
       this.service.refreshSwitches()
     ).pipe(

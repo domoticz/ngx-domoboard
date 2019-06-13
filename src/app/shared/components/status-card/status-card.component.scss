@@ -22,17 +22,6 @@
       }
     }
 
-    &:hover {
-      background: lighten(nb-theme(background-basic-color-1), 5%);
-
-      .icon {
-
-        &.primary {
-          background-image: btn-hero-primary-light-gradient();
-        }
-      }
-    }
-
     &.off {
       color: nb-theme(text-basic-color);
 
@@ -59,6 +48,23 @@
     .status {
       font-weight: nb-theme(text-paragraph-font-weight);
       color: nb-theme(text-basic-color);
+    }
+  }
+
+  @media (min-width: 1280px) {
+
+    nb-card {
+
+      &:hover {
+        background: lighten(nb-theme(background-basic-color-1), 5%);
+
+        .icon {
+
+          &.primary {
+            background-image: btn-hero-primary-light-gradient();
+          }
+        }
+      }
     }
   }
 }

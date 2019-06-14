@@ -14,11 +14,11 @@ import { DomoticzAuth, DomoticzSettings } from '@nd/core/models';
           </nb-checkbox>
         </div>
         <div class="form-group">
-          <input nbInput formControlName="ip" type="text" class="form-control" placeholder="domoticz ip adress"
-            [ngClass]="{ 'input-danger': getInvalid('ip'), 'input-success': connected &&
-            !getInvalid('ip') }">
-          <div class="error-message" *ngIf="getInvalid('ip')">
-            Not a valid ip adress
+          <input nbInput formControlName="domain" type="text" class="form-control" placeholder="domain / ip"
+            [ngClass]="{ 'input-danger': getInvalid('domain'), 'input-success': connected &&
+            !getInvalid('domain') }">
+          <div class="error-message" *ngIf="getInvalid('domain')">
+            Domain is required
           </div>
         </div>
         <div class="form-group">
@@ -89,7 +89,7 @@ export class SettingsContentComponent implements OnDestroy {
       } else {
         this.getControl('ssl').setValue(value.ssl, { emitEvent: false });
       }
-      this.getControl('ip').setValue(value.ip, { emitEvent: false });
+      this.getControl('domain').setValue(value.domain, { emitEvent: false });
       this.getControl('port').setValue(value.port, { emitEvent: false });
       if (!!Object.keys(value.credentials).every(key => value.credentials[key] !== null)) {
         this.parent.get('credentials').get('username').setValue(value.credentials.username, { emitEvent: false });

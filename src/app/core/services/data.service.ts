@@ -19,7 +19,7 @@ export abstract class DataService {
   protected get<T>(relativeUrl: string) {
     return this.dbService.store.pipe(
       switchMap(settings => !!settings ? this.httpClient.get<T>(
-        `${settings.ssl ? 'https' : 'http'}://${settings.ip}:${settings.port}/${ relativeUrl }`,
+        `${settings.ssl ? 'https' : 'http'}://${settings.domain}:${settings.port}/${ relativeUrl }`,
         !!settings.credentials && !!Object.keys(settings.credentials).every(key => settings.credentials[key] !== null) ?
           this.getAuthOption(settings) : {}
       ) : of(null))
@@ -29,7 +29,7 @@ export abstract class DataService {
   protected post<T>(relativeUrl: string, data: any) {
     return this.dbService.store.pipe(
       switchMap(settings => !!settings ? this.httpClient.post<T>(
-      `${settings.ssl ? 'https' : 'http'}://${settings.ip}:${settings.port}/${ relativeUrl }`,
+      `${settings.ssl ? 'https' : 'http'}://${settings.domain}:${settings.port}/${ relativeUrl }`,
       data
       ) : of(null))
     );

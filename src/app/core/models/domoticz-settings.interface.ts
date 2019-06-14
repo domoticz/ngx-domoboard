@@ -2,7 +2,7 @@ import { Credentials } from './credentials.interface';
 
 export interface DomoticzSettings {
   ssl: boolean;
-  ip: string;
+  domain: string;
   port: number;
   credentials: Credentials;
   authToken?: string;

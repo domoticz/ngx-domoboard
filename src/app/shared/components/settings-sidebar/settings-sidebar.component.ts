@@ -37,13 +37,11 @@ export class SettingsSidebarComponent implements OnInit {
 
   settings$ = this.dbService.store;
 
-  ipPattern = '(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)';
-
   portPattern = '([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])';
 
   settingsForm = this.fb.group({
     ssl: [null],
-    ip: [null, [Validators.pattern(this.ipPattern), Validators.required]],
+    domain: [null, [Validators.required]],
     port: [null, [Validators.pattern(this.portPattern), Validators.required]],
     credentials: this.fb.group({
       username: [null],
@@ -75,7 +73,7 @@ export class SettingsSidebarComponent implements OnInit {
             this.settingsForm.get('credentials').setErrors({ 'invalid': true });
           }
         }),
-        catchError(() => {
+        catchError(e => {
           this.dbService.setSettings(value);
           return of({} as DomoticzAuth);
         })

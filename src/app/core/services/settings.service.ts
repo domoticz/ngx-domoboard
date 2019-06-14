@@ -17,7 +17,7 @@ export class SettingsService {
 
   getAuth(settings: DomoticzSettings): Observable<DomoticzAuth> {
     let req = new HttpRequest<DomoticzAuth>('GET',
-      `${settings.ssl ? 'https' : 'http'}://${settings.ip}:${settings.port}/${Api.auth}`
+      `${settings.ssl ? 'https' : 'http'}://${settings.domain}:${settings.port}/${Api.auth}`
     );
     try {
       if (!!Object.keys(settings.credentials).every(key => settings.credentials[key] !== null)) {

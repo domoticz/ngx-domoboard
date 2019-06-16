@@ -4,7 +4,7 @@ import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter } from 
   selector: 'nd-status-card',
   template: `
     <nb-card (click)="switchLight()" [ngClass]="{'off': !on, 'disabled': disabled,
-      'no-event': !clickable}">
+      'no-event': !clickable}" [nbSpinner]="loading">
 
       <div class="icon-container">
         <div class="icon primary">
@@ -31,6 +31,8 @@ export class StatusCardComponent {
   @Input() on: boolean;
 
   @Input() disabled: boolean;
+
+  @Input() loading: boolean;
 
   private _status: string;
   @Input()

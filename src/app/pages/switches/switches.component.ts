@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { Subject, merge } from 'rxjs';
-import { tap, takeUntil, take } from 'rxjs/operators';
+import { tap, takeUntil, take, finalize } from 'rxjs/operators';
 
 import { Switch } from '@nd/core/models';
 
@@ -26,7 +26,15 @@ export class SwitchesComponent implements OnInit, OnDestroy {
     Door: 'nd-door'
   };
 
-  constructor(private service: SwitchesService) { }
+  loading$ = this.service.loading$;
+
+  switchLoading: boolean;
+
+  clickedIdx: string;
+
+  constructor(
+    private service: SwitchesService
+  ) { }
 
   ngOnInit() {
     merge(
@@ -37,17 +45,20 @@ export class SwitchesComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
-  statusChanged(event: any, light: Switch) {
-    if (['On/Off', 'Dimmer'].includes(light.SwitchType)) {
-      this.service.switchLight(light.idx, event).pipe(
+  statusChanged(event: any, _switch: Switch) {
+    if (['On/Off', 'Dimmer'].includes(_switch.SwitchType)) {
+      this.switchLoading = true;
+      this.clickedIdx = _switch.idx;
+      this.service.switchLight(_switch.idx, event).pipe(
         tap(resp => {
           if (resp.status === 'OK') {
-            light.Status = event;
+            _switch.Status = event;
           } else {
             throw resp;
           }
         }),
         take(1),
+        finalize(() => this.switchLoading = false),
         takeUntil(this.unsubscribe$)
       ).subscribe();
     } else {

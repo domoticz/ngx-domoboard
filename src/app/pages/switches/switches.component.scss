@@ -3,6 +3,7 @@
 @include nb-install-component() {
 
   .switchType-container {
+    min-height: calc(100vh - 10rem);
 
     .switchType {
       font-size: nb-theme(text-heading-5-font-size);

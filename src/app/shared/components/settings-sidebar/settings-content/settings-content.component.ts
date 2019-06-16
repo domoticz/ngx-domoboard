@@ -6,7 +6,7 @@ import { DomoticzAuth, DomoticzSettings } from '@nd/core/models';
 @Component({
   selector: 'nd-settings-content',
   template: `
-    <div class="content-container" [formGroup]="parent">
+    <div class="content-container" [formGroup]="parent" [nbSpinner]="loading">
       <div class="form-container">
         <div class="form-group">
           <nb-checkbox [status]="connected ? 'success' : 'warning'" formControlName="ssl">
@@ -102,6 +102,8 @@ export class SettingsContentComponent implements OnDestroy {
     this._settings = value;
   }
   get settings() { return this._settings; }
+
+  @Input() loading: boolean;
 
   credentials: FormGroup;
 

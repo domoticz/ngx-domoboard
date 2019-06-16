@@ -43,7 +43,7 @@ export class SwitchesService extends DataService {
   }
 
   getSwitches(): Observable<DomoticzResponse> {
-    return this.get<DomoticzResponse>(Api.switches).pipe(
+    return this.get<DomoticzResponse>(Api.switches, true).pipe(
       tap((resp: DomoticzResponse) =>
         !!resp ? this.subject.next({
           ...this.subject.value, switches: resp.result, lastUpdate: resp.ActTime.toString(),

@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormControl, ValidatorFn, FormGroup, ValidationErrors } from '@angular/forms';
 
-import { filter, switchMap, catchError, tap, distinctUntilChanged } from 'rxjs/operators';
+import { filter, switchMap, catchError, tap, distinctUntilChanged, finalize } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 
 import { DomoticzSettings, DomoticzAuth } from '@nd/core/models';
@@ -21,7 +21,8 @@ const oneFilledOutValidator: ValidatorFn = (group: FormGroup): ValidationErrors 
       </nd-toggle-settings-button>
       <div class="settings-container {{ animationState }}">
         <nd-settings-content *ngIf="showContent" class="sidebar-content"
-          [parent]="settingsForm" [auth]="auth$ | async" [settings]="settings$ | async">
+          [parent]="settingsForm" [auth]="auth$ | async" [settings]="settings$ | async"
+          [loading]="loading">
         </nd-settings-content>
       </div>
     </div>
@@ -38,6 +39,8 @@ export class SettingsSidebarComponent implements OnInit {
   settings$ = this.dbService.store;
 
   portPattern = '([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])';
+
+  loading: boolean;
 
   settingsForm = this.fb.group({
     ssl: [null],
@@ -57,8 +60,9 @@ export class SettingsSidebarComponent implements OnInit {
       }
     }),
     filter(() => this.settingsForm.valid),
-    switchMap(value =>
-      this.service.getAuth(value as DomoticzSettings).pipe(
+    switchMap(value => {
+      this.loading = true;
+      return this.service.getAuth(value as DomoticzSettings).pipe(
         tap(auth => {
           if (auth.status === 'OK' && auth.rights > -1) {
             this.dbService.addSettings(value as DomoticzSettings).then(s => {
@@ -76,8 +80,10 @@ export class SettingsSidebarComponent implements OnInit {
         catchError(e => {
           this.dbService.setSettings(value);
           return of({} as DomoticzAuth);
-        })
-      ))
+        }),
+        finalize(() => this.loading = false)
+      );
+    })
   );
 
   constructor(

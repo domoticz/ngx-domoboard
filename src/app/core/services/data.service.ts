@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { of, BehaviorSubject } from 'rxjs';
+import { switchMap, distinctUntilChanged, tap } from 'rxjs/operators';
 
 import { DomoticzSettings } from '@nd/core/models';
 
@@ -11,18 +11,30 @@ import { DBService } from './db.service';
 @Injectable({providedIn: 'root'})
 export abstract class DataService {
 
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  loading$ = this.loadingSubject.asObservable().pipe(distinctUntilChanged());
+
   constructor(
     private httpClient: HttpClient,
     private dbService: DBService
   ) { }
 
-  protected get<T>(relativeUrl: string) {
+  protected get<T>(relativeUrl: string, spinner?: boolean) {
     return this.dbService.store.pipe(
-      switchMap(settings => !!settings ? this.httpClient.get<T>(
-        `${settings.ssl ? 'https' : 'http'}://${settings.domain}:${settings.port}/${ relativeUrl }`,
-        !!settings.credentials && !!Object.keys(settings.credentials).every(key => settings.credentials[key] !== null) ?
-          this.getAuthOption(settings) : {}
-      ) : of(null))
+      switchMap(settings => {
+        if (!!settings) {
+          if (spinner) {
+            this.loadingSubject.next(true);
+          }
+          return this.httpClient.get<T>(
+            `${settings.ssl ? 'https' : 'http'}://${settings.domain}:${settings.port}/${ relativeUrl }`,
+            !!settings.credentials && !!Object.keys(settings.credentials).every(key => settings.credentials[key] !== null) ?
+              this.getAuthOption(settings) : {}
+            ).pipe(tap(() => this.loadingSubject.next(false)));
+        } else {
+          return of(null);
+        }
+      })
     );
   }
 

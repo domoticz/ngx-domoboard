@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { NbMenuItem } from '@nebular/theme';
 
 @Component({
   selector: 'nd-menu-sidebar',
   template: `
-    <div class="sidebar-container">
+    <div class="sidebar-container {{ animationState }}">
       <nb-menu class="menu" tag="menu" [items]="items"></nb-menu>
     </div>
   `,
@@ -14,11 +14,13 @@ import { NbMenuItem } from '@nebular/theme';
 
 export class MenuSidebarComponent {
 
+  @Input() animationState: string;
+
   items: NbMenuItem[] = [
     {
       title: 'Switches',
       link: '/switches',
-      // icon: 'nb-danger'
+      icon: 'toggle-left-outline'
     }
   ];
 

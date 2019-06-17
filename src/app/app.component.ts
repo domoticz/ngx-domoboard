@@ -1,15 +1,15 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { SwUpdate } from '@angular/service-worker';
 
 import { NbThemeService, NbToastrService, NbDialogService } from '@nebular/theme';
+import { NbToastrConfig } from '@nebular/theme/components/toastr/toastr-config';
 
 import { Observable } from 'rxjs';
 import { tap, filter } from 'rxjs/operators';
 
 import { NotificationService } from '@nd/core/services';
 
-import { NbToastrConfig } from '@nebular/theme/components/toastr/toastr-config';
 import { environment } from 'environments/environment';
-import { SwUpdate } from '@angular/service-worker';
 
 @Component({
   selector: 'nd-root',
@@ -24,6 +24,10 @@ export class AppComponent implements OnInit {
 
   version = environment.version;
 
+  showMenu: boolean;
+
+  menuState = 'out';
+
   notification$: Observable<string> = this.notifService.notification.pipe(
     filter(message => !!message),
     tap(message => this.toastrService.show(
@@ -37,7 +41,8 @@ export class AppComponent implements OnInit {
     private notifService: NotificationService,
     private toastrService: NbToastrService,
     private dialogService: NbDialogService,
-    private update: SwUpdate
+    private update: SwUpdate,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -58,6 +63,19 @@ export class AppComponent implements OnInit {
 
   closeDialog() {
     window.location.reload();
+  }
+
+  onMenuToggle() {
+    if (!this.showMenu) {
+      this.menuState = 'in';
+      this.showMenu = true;
+    } else {
+      this.menuState = 'out';
+      setTimeout(() => {
+        this.showMenu = false;
+        this.cd.detectChanges();
+      }, 400);
+    }
   }
 
 }

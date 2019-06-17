@@ -1,4 +1,5 @@
-@import 'src/_themes.scss';
+@import '../../../../themes';
+@import '../../../../animations';
 
 @include nb-install-component() { }
 
@@ -33,25 +34,5 @@
     .sidebar-content {
       min-width: 17.25rem;
     }
-  }
-}
-
-@keyframes slidein {
-  from {
-    max-width: 0;
-  }
-
-  to {
-    max-width: 100%;
-  }
-}
-
-@keyframes slideout {
-  from {
-    max-width: 100%;
-  }
-
-  to {
-    max-width: 0;
   }
 }

@@ -1,4 +1,5 @@
-@import 'src/_themes.scss';
+@import '../../../../themes';
+@import '../../../../animations';
 
 @include nb-install-component() {
 
@@ -14,6 +15,16 @@
   position: fixed;
   top: 0;
   left: 0;
+  animation-duration: 500ms;
+  overflow: hidden;
+
+  &.in {
+    animation-name: slidein;
+  }
+
+  &.out {
+    animation-name: slideout;
+  }
 
   .menu {
     margin: 5rem 0 0 0;

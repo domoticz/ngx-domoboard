@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { NbTabsetModule, NbCardModule, NbInputModule, NbCheckboxModule,
-  NbSpinnerModule, NbMenuModule } from '@nebular/theme';
+  NbSpinnerModule, NbMenuModule, NbIconModule } from '@nebular/theme';
+
+import { NbEvaIconsModule } from '@nebular/eva-icons';
 
 import { sharedComponents } from './components';
 
@@ -18,7 +20,9 @@ import { SafePipe } from './pipes';
     NbInputModule,
     NbCheckboxModule,
     NbSpinnerModule,
-    NbMenuModule.forRoot()
+    NbMenuModule.forRoot(),
+    NbEvaIconsModule,
+    NbIconModule
   ],
   exports: [
     sharedComponents,

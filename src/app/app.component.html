@@ -1,6 +1,6 @@
 <nb-layout>
   <nb-layout-header class="header" fixed>
-    <nd-header></nd-header>
+    <nd-header (menuToggle)="onMenuToggle()"></nd-header>
   </nb-layout-header>
 
   <nb-layout-column>
@@ -12,7 +12,7 @@
   </nb-layout-footer>
 </nb-layout>
 
-<nd-menu-sidebar></nd-menu-sidebar>
+<nd-menu-sidebar *ngIf="showMenu" [animationState]="menuState"></nd-menu-sidebar>
 
 <nd-settings-sidebar></nd-settings-sidebar>
 

@@ -40,5 +40,10 @@ $nb-themes: nb-register-theme((
   checkbox-success-checked-checkmark-color: text-primary-color,
   checkbox-warning-checked-checkmark-color: text-primary-color,
 
-  text-control-color: #ffff
+  text-control-color: #ffff,
+
+  header-text-color: #ffff,
+
+  menu-text-font-size: 1.125rem,
+  menu-text-font-weight: 400
 ), custom-cosmic, cosmic);

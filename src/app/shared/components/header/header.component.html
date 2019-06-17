@@ -1,11 +1,10 @@
 <div class="header-container">
-
   <div class="logo-containter">
-    <div class="logo"><span>{{name}}</span></div>
+    <a class="navigation" (click)="menuToggle.emit()"><i class="nb-menu"></i></a>
+    <div class="logo"><span>{{ name }}</span></div>
   </div>
 
   <nb-tabset id="header-tabset" (changeTab)="onChangeTab($event)">
     <nb-tab *ngFor="let route of routes | keyvalue" tabTitle="{{ route.key }}"></nb-tab>
   </nb-tabset>
-
 </div>

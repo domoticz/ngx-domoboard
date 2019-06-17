@@ -5,7 +5,16 @@
   .header-container .logo-containter .logo {
     color: nb-theme(text-primary-color);
     font-weight: nb-theme(text-paragraph-font-weight);
-    @include nb-ltr(border-right, 1px solid nb-theme(divider-color));
+  }
+
+  .header-container {
+
+    .logo-containter {
+
+      .logo {
+        border-color: nb-theme(divider-color);
+      }
+    }
   }
 }
 
@@ -27,6 +36,41 @@
       padding: 0 1.25rem;
       font-size: 1.75rem;
       white-space: nowrap;
+      border-right: 1px solid;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+
+  .header-container {
+
+    #header-tabset {
+      display: none;
+    }
+
+    .logo-containter {
+      width: 100%;
+      font-size: 2.5rem;
+
+      .logo {
+        width: 100%;
+        border-right: none;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+
+  .header-container {
+
+    .logo-containter {
+
+      .navigation {
+        display: none;
+      }
     }
   }
 }

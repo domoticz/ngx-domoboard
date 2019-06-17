@@ -1,0 +1,21 @@
+@import 'src/_themes.scss';
+
+@include nb-install-component() {
+
+  .sidebar-container {
+    background: nb-theme(background-basic-color-2);
+  }
+}
+
+.sidebar-container {
+  display: flex;
+  justify-content: flex-start;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  .menu {
+    margin: 5rem 0 0 0;
+  }
+}

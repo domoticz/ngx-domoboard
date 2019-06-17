@@ -1,20 +1,18 @@
 <nb-layout>
-
-  <nb-layout-header fixed>
+  <nb-layout-header class="header" fixed>
     <nd-header></nd-header>
   </nb-layout-header>
 
   <nb-layout-column>
-
     <router-outlet></router-outlet>
-
   </nb-layout-column>
 
   <nb-layout-footer fixed>
     {{ version }}
   </nb-layout-footer>
-
 </nb-layout>
+
+<nd-menu-sidebar></nd-menu-sidebar>
 
 <nd-settings-sidebar></nd-settings-sidebar>
 

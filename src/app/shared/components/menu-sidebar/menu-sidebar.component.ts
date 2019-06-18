@@ -21,6 +21,11 @@ export class MenuSidebarComponent {
       title: 'Switches',
       link: '/switches',
       icon: 'toggle-left-outline'
+    },
+    {
+      title: 'Temperature',
+      link: '/temperature',
+      icon: 'thermometer-outline'
     }
   ];
 

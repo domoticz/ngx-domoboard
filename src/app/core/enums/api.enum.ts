@@ -3,5 +3,5 @@ export enum Api {
   switches = 'json.htm?type=devices&filter=light&used=true',
   devices = 'json.htm?type=devices&filter={filter}&used=true',
   switchLight = 'json.htm?type=command&param=switchlight&idx={idx}&switchcmd={switchcmd}',
-  refreshSwitches = 'json.htm?type=devices&filter=light&used=true&order=[Order]&lastupdate={lastupdate}&plan=0'
+  refreshDevices = 'json.htm?type=devices&filter={filter}&used=true&lastupdate={lastupdate}'
 }

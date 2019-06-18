@@ -5,7 +5,7 @@ import { tap, takeUntil, take, finalize } from 'rxjs/operators';
 
 import { Switch } from '@nd/core/models';
 
-import { SwitchesService } from '@nd/core/services';
+import { DevicesService, SwitchesService } from '@nd/core/services';
 
 @Component({
   selector: 'nd-switches',
@@ -16,9 +16,9 @@ export class SwitchesComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject();
 
-  switches$ = this.service.select<Switch[]>('switches');
+  switches$ = this.devicesService.select<Switch[]>('devices');
 
-  switchTypes$ = this.service.select<string[]>('switchTypes');
+  switchTypes$ = this.devicesService.select<string[]>('types');
 
   icon = {
     Fireplace: 'nd-fireplace',
@@ -26,20 +26,21 @@ export class SwitchesComponent implements OnInit, OnDestroy {
     Door: 'nd-door'
   };
 
-  loading$ = this.service.loading$;
+  loading$ = this.devicesService.loading$;
 
   switchLoading: boolean;
 
   clickedIdx: string;
 
   constructor(
-    private service: SwitchesService
+    private devicesService: DevicesService<Switch>,
+    private switchesService: SwitchesService
   ) { }
 
   ngOnInit() {
     merge(
-      this.service.getSwitches(),
-      this.service.refreshSwitches()
+      this.devicesService.getDevices('light'),
+      this.devicesService.refreshDevices('light')
     ).pipe(
       takeUntil(this.unsubscribe$)
     ).subscribe();
@@ -49,7 +50,7 @@ export class SwitchesComponent implements OnInit, OnDestroy {
     if (['On/Off', 'Dimmer'].includes(_switch.SwitchType)) {
       this.switchLoading = true;
       this.clickedIdx = _switch.idx;
-      this.service.switchLight(_switch.idx, event).pipe(
+      this.switchesService.switchLight(_switch.idx, event).pipe(
         tap(resp => {
           if (resp.status === 'OK') {
             _switch.Status = event;

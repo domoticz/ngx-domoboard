@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { BehaviorSubject, Observable } from 'rxjs';
-import { distinctUntilChanged, pluck, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, interval } from 'rxjs';
+import { distinctUntilChanged, pluck, tap, switchMap, filter } from 'rxjs/operators';
 
 import { DataService } from './data.service';
 import { DBService } from './db.service';
@@ -45,8 +45,8 @@ export class DevicesService<T> extends DataService {
     return this.store.pipe(pluck(...name));
   }
 
-  getDevices(filter: string): Observable<DomoticzResponse<T>> {
-    return this.get<DomoticzResponse<T>>(Api.devices.replace('{filter}', filter), true).pipe(
+  getDevices(_filter: string): Observable<DomoticzResponse<T>> {
+    return this.get<DomoticzResponse<T>>(Api.devices.replace('{filter}', _filter), true).pipe(
       tap((resp: DomoticzResponse<T>) =>
         !!resp ? this.subject.next({
           ...this.subject.value, devices: resp.result, lastUpdate: resp.ActTime.toString(),
@@ -59,6 +59,23 @@ export class DevicesService<T> extends DataService {
           }).filter((type, i, types) => types.indexOf(type) === i)]
           }) : this.clearStore()
       )
+    );
+  }
+
+  refreshDevices(_filter: string): Observable<DomoticzResponse<T>> {
+    return interval(10000).pipe(
+      switchMap(() =>
+        this.get<DomoticzResponse<T>>(Api.refreshDevices.replace('{lastupdate}', this.subject.value.lastUpdate)
+          .replace('{filter}', _filter))),
+      filter(resp => !!resp && !!resp.result),
+      tap(resp => this.subject.next({
+        ...this.subject.value, devices: this.subject.value.devices.map(device =>
+          resp.result.find(res => {
+            if (isSwitch(device) || isTemp(device)) {
+              return device.idx === res.idx;
+            }
+          }) || device), lastUpdate: resp.ActTime.toString()
+      }))
     );
   }
 

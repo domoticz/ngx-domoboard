@@ -1,4 +1,4 @@
-export interface DomoticzResponse {
+export interface DomoticzResponse<T> {
   ActTime?: number;
   AstrTwilightEnd?: string;
   AstrTwilightStart?: string;
@@ -12,7 +12,7 @@ export interface DomoticzResponse {
   Sunrise?: string;
   Sunset?: string;
   app_version?: string;
-  result?: any[];
+  result?: T[];
   status: string;
   title?: string;
   message?: string;

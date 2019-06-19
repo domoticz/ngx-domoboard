@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 
 import { NbThemeService, NbToastrService, NbDialogService } from '@nebular/theme';
@@ -42,13 +43,18 @@ export class AppComponent implements OnInit {
     private toastrService: NbToastrService,
     private dialogService: NbDialogService,
     private update: SwUpdate,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit() {
     this.enableDarkTheme();
     this.notification$.subscribe();
     this.manageUpdate();
+    this.router.events.pipe(
+      filter(evt => evt instanceof NavigationEnd && this.showMenu),
+      tap(() => this.onMenuToggle())
+    ).subscribe();
   }
 
   enableDarkTheme() {

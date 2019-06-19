@@ -119,6 +119,7 @@ nb-card {
     flex-direction: column;
     justify-content: center;
     height: 100%;
+    width: 55%;
     border-left: 1px solid transparent;
   }
 
@@ -130,4 +131,11 @@ nb-card {
     font-size: 1rem;
     text-transform: uppercase;
   }
+
+  .option-icon {
+    margin: .5rem .5rem auto auto;
+    width: 2rem;
+    height: 2rem;
+  }
+
 }

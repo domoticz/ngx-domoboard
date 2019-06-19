@@ -17,6 +17,8 @@ import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter } from 
         <div class="status">{{ status }}</div>
       </div>
 
+      <nb-icon class="option-icon" icon="plus-outline"></nb-icon>
+
     </nb-card>
   `,
   styleUrls: ['./status-card.component.scss'],

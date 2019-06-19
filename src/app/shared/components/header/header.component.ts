@@ -19,6 +19,7 @@ export class HeaderComponent {
 
   routes = {
     Switches: 'switches',
+    Temperature: 'temperature',
   };
 
   constructor(private router: Router) { }

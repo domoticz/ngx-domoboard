@@ -8,8 +8,20 @@
   }
 }
 
-nd-header {
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
+  z-index: 10001;
+
+  nd-header {
+    width: 100%;
+  }
+}
+
+.content {
+  margin: 5rem 0 0 0;
 }
 
 .center {

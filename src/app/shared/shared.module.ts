@@ -29,7 +29,8 @@ import { SafePipe } from './pipes';
     CommonModule,
     SafePipe,
     NbCardModule,
-    NbSpinnerModule
+    NbSpinnerModule,
+    NbIconModule
   ],
   declarations: [
     sharedComponents,

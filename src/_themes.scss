@@ -20,10 +20,9 @@ $nb-themes: nb-register-theme((
 
   text-primary-color: #ffff,
   text-primary-hover-color: text-primary-color,
-
   text-subtitle-font-weight: 500,
-
   text-paragraph-font-weight: 300,
+  text-control-color: #ffff,
 
   tabset-tab-active-underline-color-1: #00d977,
   tabset-tab-active-underline-color-2: #00d9bf,
@@ -40,10 +39,10 @@ $nb-themes: nb-register-theme((
   checkbox-success-checked-checkmark-color: text-primary-color,
   checkbox-warning-checked-checkmark-color: text-primary-color,
 
-  text-control-color: #ffff,
-
   header-text-color: #ffff,
 
   menu-text-font-size: 1.125rem,
-  menu-text-font-weight: 400
+  menu-text-font-weight: 400,
+  menu-item-icon-margin: 0 1rem 0 0,
+  menu-item-icon-width: 2rem
 ), custom-cosmic, cosmic);

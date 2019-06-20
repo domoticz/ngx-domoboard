@@ -136,6 +136,8 @@ nb-card {
     margin: .5rem .5rem auto auto;
     width: 2rem;
     height: 2rem;
+    cursor: pointer;
+    pointer-events: auto;
   }
 
 }

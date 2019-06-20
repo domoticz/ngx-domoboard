@@ -3,7 +3,7 @@
     <nd-header (menuToggle)="onMenuToggle()"></nd-header>
   </nb-layout-header>
 
-  <nb-layout-column class="content">
+  <nb-layout-column class="content {{ menuState }}">
     <router-outlet></router-outlet>
   </nb-layout-column>
 

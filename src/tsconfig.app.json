@@ -10,5 +10,8 @@
     "**/*.tns.ts",
     "**/*.android.ts",
     "**/*.ios.ts"
-  ]
+  ],
+  "angularCompilerOptions": {
+    "enableIvy": false
+  }
 }

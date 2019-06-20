@@ -4,31 +4,53 @@
 @include nb-install-component() {
 
   #menu-sidebar {
-    background: nb-theme(background-basic-color-2);
+
+    #menu-container {
+      background: nb-theme(background-basic-color-2);
+    }
   }
 }
 
 #menu-sidebar {
-  display: flex;
-  justify-content: flex-start;
-  height: 100%;
-  position: fixed;
-  top: 0;
+  background: rgba(0,0,0,0.7);
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
   left: 0;
   z-index: 10000;
   animation-duration: 500ms;
   overflow: hidden;
 
   &.in {
-    animation-name: slidein;
+    animation-name: backgroundin;
   }
 
   &.out {
-    animation-name: slideout;
+    animation-name: backgroundout;
   }
 
-  .menu {
-    margin: 5rem 0 0 0;
+  #menu-container {
+    display: flex;
+    justify-content: flex-start;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    animation-duration: 500ms;
+    overflow: hidden;
+
+    &.in {
+      animation-name: slidein;
+    }
+
+    &.out {
+      animation-name: slideout;
+    }
+
+    .menu {
+      margin: 5rem 0 0 0;
+    }
   }
 }
 

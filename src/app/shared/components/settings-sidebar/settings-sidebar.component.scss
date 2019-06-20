@@ -11,6 +11,7 @@
   top: 0;
   right: 0;
   z-index: 10000;
+  pointer-events: none;
 
   .settings-button {
     width: 2.75rem;
@@ -18,11 +19,13 @@
     position: relative;
     top: 50%;
     left: 0;
+    pointer-events: auto;
   }
 
   .settings-container {
     animation-duration: 500ms;
     overflow: hidden;
+    pointer-events: auto;
 
     &.in {
       animation-name: slidein;

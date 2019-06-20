@@ -8,7 +8,9 @@ import { tap, filter, takeUntil } from 'rxjs/operators';
   selector: 'nd-menu-sidebar',
   template: `
     <div id="menu-sidebar" class="{{ animationState }}">
-      <nb-menu class="menu" tag="menu" [items]="items"></nb-menu>
+      <div id="menu-container" class="{{ animationState }}">
+        <nb-menu class="menu" tag="menu" [items]="items"></nb-menu>
+      </div>
     </div>
   `,
   styleUrls: ['./menu-sidebar.component.scss']
@@ -42,7 +44,7 @@ export class MenuSidebarComponent implements OnInit, OnDestroy {
         event.stopPropagation();
       }),
       filter(event => this.animationState === 'in' && !event['path'].find(p =>
-        p.id === 'menu-sidebar' || p.id === 'menu-icon')),
+        p.id === 'menu-container' || p.id === 'menu-icon')),
       tap(() => this.outsideClick.emit()),
       takeUntil(this.unsubscribe$)
     ).subscribe();

@@ -17,7 +17,9 @@ import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter } from 
         <div class="status">{{ status }}</div>
       </div>
 
-      <nb-icon class="option-icon" icon="plus-outline"></nb-icon>
+      <nb-icon class="option-icon" icon="plus-outline"
+        (click)="onOptionsClick($event)">
+      </nb-icon>
 
     </nb-card>
   `,
@@ -46,10 +48,17 @@ export class StatusCardComponent {
 
   @Output() statusChanged = new EventEmitter<string>();
 
+  @Output() optionsClick = new EventEmitter();
+
   clickable: boolean;
 
   switchLight() {
     this.statusChanged.emit(this.on ? 'Off' : 'On');
+  }
+
+  onOptionsClick(evt: any) {
+    evt.stopPropagation();
+    this.optionsClick.emit();
   }
 
 }

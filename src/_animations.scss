@@ -17,3 +17,23 @@
     max-width: 0;
   }
 }
+
+@keyframes backgroundin {
+  from {
+    background: rgba(0,0,0,0);
+  }
+
+  to {
+    background: rgba(0,0,0,0.7);
+  }
+}
+
+@keyframes backgroundout {
+  from {
+    background: rgba(0,0,0,0.7);
+  }
+
+  to {
+    background: rgba(0,0,0,0);
+  }
+}

@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { Subject, merge } from 'rxjs';
 import { tap, takeUntil, take, finalize } from 'rxjs/operators';
@@ -34,7 +35,8 @@ export class SwitchesComponent implements OnInit, OnDestroy {
 
   constructor(
     private devicesService: DevicesService<Switch>,
-    private switchesService: SwitchesService
+    private switchesService: SwitchesService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -67,7 +69,12 @@ export class SwitchesComponent implements OnInit, OnDestroy {
     }
   }
 
+  onOptionsClick(idx: string) {
+    this.router.navigate(['options', idx]);
+  }
+
   ngOnDestroy() {
+    this.devicesService.clearStore();
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }

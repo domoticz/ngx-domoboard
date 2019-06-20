@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+
+import { merge, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { DevicesService } from '@nd/core/services';
 import { Temp } from '@nd/core/models';
-import { merge, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'nd-temperature',
@@ -16,7 +18,7 @@ import { takeUntil } from 'rxjs/operators';
           <ng-container *ngFor="let temp of (temps$ | async)">
             <div class="col-xxxl-3 col-md-6" *ngIf="temp.Type === type">
               <nd-status-card [title]="temp.Name" [disabled]="temp.HaveTimeout"
-                [status]="temp.Data">
+                [status]="temp.Data" (optionsClick)="onOptionsClick(temp.idx)">
                 <nb-icon class="temp-icon" icon="{{ temp.Temp ? 'thermometer-outline' : 'droplet-outline' }}">
                 </nb-icon>
               </nd-status-card>
@@ -38,13 +40,10 @@ export class TemperatureComponent implements OnInit, OnDestroy {
 
   temps$ = this.service.select<Temp[]>('devices');
 
-  icon = {
-    Fireplace: 'nd-fireplace',
-    Light: 'nb-lightbulb',
-    Door: 'nd-door'
-  };
-
-  constructor(private service: DevicesService<Temp>) { }
+  constructor(
+    private service: DevicesService<Temp>,
+    private router: Router
+    ) { }
 
   ngOnInit() {
     merge(
@@ -55,7 +54,12 @@ export class TemperatureComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
+  onOptionsClick(idx: string) {
+    this.router.navigate(['options', idx]);
+  }
+
   ngOnDestroy() {
+    this.service.clearStore();
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }

@@ -3,14 +3,9 @@
 @include nb-install-component() {
 
   .content-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100%;
     background: nb-theme(background-basic-color-2);
 
     .form-container {
-      margin: 15vh 20px;
 
       .form-control:focus {
         color: nb-theme(text-control-color);
@@ -56,6 +51,27 @@
 
     &.danger {
       border-color: nb-theme(input-danger-border-color);
+    }
+  }
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+
+  .form-container {
+    margin: 15vh 20px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .content-container {
+
+    .form-container {
+      margin: 2rem 20px 5rem 20px;
     }
   }
 }

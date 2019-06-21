@@ -18,6 +18,26 @@
   }
 }
 
+@keyframes slidedown {
+  from {
+    max-height: 0;
+  }
+
+  to {
+    max-height: calc(100vh - 2.75rem);
+  }
+}
+
+@keyframes slideup {
+  from {
+    max-height: calc(100vh - 2.75rem);
+  }
+
+  to {
+    max-height: 0;
+  }
+}
+
 @keyframes backgroundin {
   from {
     background: rgba(0,0,0,0);

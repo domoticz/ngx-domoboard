@@ -40,3 +40,30 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+
+  .sidebar-container {
+    margin: 4.75rem 0 0 0;
+    flex-direction: column-reverse;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+
+    .settings-button {
+      bottom: 0;
+      left: calc(50% - 1.375rem);
+    }
+
+    .settings-container {
+
+      &.in {
+        animation-name: slidedown;
+      }
+
+      &.out {
+        animation-name: slideup;
+      }
+    }
+  }
+}

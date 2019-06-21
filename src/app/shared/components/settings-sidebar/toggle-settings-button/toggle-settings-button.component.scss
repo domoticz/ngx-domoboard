@@ -39,3 +39,11 @@
     transform: scale3d(.8, .8, .8);
   }
 }
+
+@media (max-width: 768px) {
+
+  .toggle-settings {
+    border-top-left-radius: 0 !important;
+    border-bottom-right-radius: .5rem;
+  }
+}

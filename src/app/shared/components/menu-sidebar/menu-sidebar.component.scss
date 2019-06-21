@@ -5,7 +5,7 @@
 
   #menu-sidebar {
 
-    #menu-container {
+    .menu-container {
       background: nb-theme(background-basic-color-2);
     }
   }
@@ -30,7 +30,7 @@
     animation-name: backgroundout;
   }
 
-  #menu-container {
+  .menu-container {
     display: flex;
     justify-content: flex-start;
     height: 100%;
@@ -48,7 +48,7 @@
       animation-name: slideout;
     }
 
-    .menu {
+    #menu {
       margin: 5rem 0 0 0;
     }
   }

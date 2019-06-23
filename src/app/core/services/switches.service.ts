@@ -20,8 +20,8 @@ export class SwitchesService extends DataService {
     super(httpClient, dbService);
   }
 
-  switchLight(idx: string, cmd: string): Observable<DomoticzResponse<Switch>> {
-    return this.get<DomoticzResponse<Switch>>(
+  switchLight(idx: string, cmd: string): Observable<DomoticzResponse<any>> {
+    return this.get<DomoticzResponse<any>>(
       Api.switchLight.replace('{idx}', idx).replace('{switchcmd}', cmd)
     );
   }

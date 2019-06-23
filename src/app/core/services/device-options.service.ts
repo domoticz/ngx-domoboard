@@ -10,8 +10,6 @@ import { DBService } from './db.service';
 import { DomoticzResponse, Switch, Temp } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
 
-const isDevice = (device: any): device is Switch | Temp => device.idx !== undefined;
-
 interface State<T> {
   device: T;
 }
@@ -41,14 +39,14 @@ export class DeviceOptionsService<T> extends DataService {
 
   getDevice(idx: string): Observable<DomoticzResponse<T>> {
     return this.get<DomoticzResponse<T>>(Api.device.replace('{idx}', idx)).pipe(
-      filter(() => {
-        const device = this.subject.value.device;
-        return isDevice(device) ? device.idx !== idx : !!device ? true : false;
-      }),
       tap((resp: DomoticzResponse<T>) => !!resp ? this.subject.next({
         ...this.subject.value, device: resp.result[0]
       }) : this.clearStore())
     );
+  }
+
+  renameDevice(idx: string, name: string): Observable<DomoticzResponse<any>> {
+    return this.get<DomoticzResponse<any>>(Api.renameDevice.replace('{idx}', idx).replace('{name}', name));
   }
 
   clearStore() {

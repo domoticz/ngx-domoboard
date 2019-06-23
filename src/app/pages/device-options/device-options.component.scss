@@ -1,15 +1,65 @@
 @import 'src/_themes.scss';
 
-@include nb-install-component() { }
+@include nb-install-component() {
+
+  .options-container {
+
+    .name-form-container {
+
+      .name-form {
+
+        .form-control:focus {
+          color: nb-theme(text-control-color);
+          background-color: nb-theme(background-basic-color-2);
+        }
+      }
+
+      .name-form:focus-within {
+        border-color: nb-theme(input-focus-border-color);
+        box-shadow: 0 0 0 0.375rem nb-theme(color-basic-700);
+      }
+    }
+  }
+}
 
 .options-container {
   display: flex;
   flex-direction: column;
 
   .close-icon {
-    margin: 0 0 0 auto;
+    margin: 0 0 2rem auto;
     width: 2rem;
     height: 2rem;
     cursor: pointer;
+  }
+
+  .name-form-container {
+    display: flex;
+    justify-content: center;
+
+    .name-form {
+      display: flex;
+      justify-content: center;
+      border-radius: 0.5rem;
+    }
+
+    .name-form:focus-within {
+      outline: none;
+    }
+
+    .name-input {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .name-btn {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+
+    .name-input:focus, .name-btn:focus {
+      border-color: none;
+      box-shadow: none;
+    }
   }
 }

@@ -24,7 +24,7 @@ export class HeaderComponent {
 
   constructor(private router: Router) { }
 
-  onChangeTab(event) {
+  onChangeTab(event: any) {
     this.router.navigate([this.routes[event.tabTitle]]);
   }
 

@@ -69,9 +69,10 @@
 @media (max-width: 768px) {
 
   .content-container {
+    height: calc(100vh - 7.5rem);
 
     .form-container {
-      margin: 2rem 20px 5rem 20px;
+      margin: 6vh 20px;
     }
   }
 }

@@ -8,6 +8,8 @@ import { SharedModule } from '@nd/shared/shared.module';
 
 import { DeviceOptionsComponent } from './device-options.component';
 import { routes } from './device-options.routes';
+import { NameComponent } from './name/name.component';
+import { NotificationsComponent } from './notifications/notifications.component';
 
 @NgModule({
   imports: [
@@ -18,7 +20,11 @@ import { routes } from './device-options.routes';
     NbInputModule
   ],
   exports: [],
-  declarations: [DeviceOptionsComponent],
+  declarations: [
+    DeviceOptionsComponent,
+    NameComponent,
+    NotificationsComponent
+  ],
   providers: [],
 })
 export class DeviceOptionsModule { }

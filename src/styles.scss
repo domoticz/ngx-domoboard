@@ -4,6 +4,18 @@
 
 @import './app/shared/components/header/header-theme';
 
+.no-devices {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1rem;
+  font-size: nb-theme(text-heading-1-font-size);
+  line-height: nb-theme(text-heading-1-line-height);
+  font-weight: nb-theme(text-heading-1-font-weight);
+}
+
 @include nb-install() {
   @include nb-theme-global();
 };

@@ -10,7 +10,8 @@ import { Temp } from '@nd/core/models';
 @Component({
   selector: 'nd-temperature',
   template: `
-    <div class="type-container" [nbSpinner]="loading$ | async">
+    <div class="type-container" *ngIf="!!(temps$ | async).length; else noDevices"
+      [nbSpinner]="loading$ | async">
       <ng-container *ngFor="let type of (types$ | async)">
         <span class="type">{{ type }}</span>
 
@@ -27,6 +28,14 @@ import { Temp } from '@nd/core/models';
         </div>
       </ng-container>
     </div>
+
+    <ng-template #noDevices>
+      <div class="no-devices">
+        <span>No</span>
+        <span>devices</span>
+        <span>found</span>
+      </div>
+    </ng-template>
   `,
   styleUrls: ['./temperature.component.scss']
 })

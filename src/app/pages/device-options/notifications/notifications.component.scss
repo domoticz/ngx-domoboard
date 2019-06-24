@@ -1,0 +1,27 @@
+@import 'src/_themes.scss';
+
+@include nb-install-component() {
+
+  .notifs-container {
+
+    .title {
+      font-size: nb-theme(text-heading-6-font-size);
+    }
+  }
+}
+
+.notifs-container {
+  margin: 2rem 0 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .title {
+    margin: 0 0 1rem 0;
+  }
+
+  .btn-container {
+    display: flex;
+    justify-content: center;
+  }
+}

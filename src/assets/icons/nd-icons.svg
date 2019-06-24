@@ -14,11 +14,23 @@
   <svg id="nd-door-closed" viewBox="0 0 210 297">
     <g transform="matrix(1.4832 0 0 1.4832 -55.225 -79.913)">
       <rect x="56.749" y="89.694" width="106.37" height="137.61" fill="none" stroke-width="5.3823" style="paint-order:markers fill stroke"/>
-      <rect x="63.127" y="95.635" width="93.615" height="125.73" fill="none" stroke-width="4.8264" style="paint-order:markers fill stroke"/>
+      <rect x="63.127" y="95.635" width="93.615" height="125.73" fill="#fff" stroke-width="4.8264" style="paint-order:markers fill stroke"/>
       <g>
         <rect x="57.415" y="106.24" width="4.7625" height="9.2604" style="paint-order:markers fill stroke"/>
         <rect x="57.415" y="197.78" width="4.7625" height="9.2604" style="paint-order:markers fill stroke"/>
         <rect x="133.48" y="155.85" width="15.346" height="5.2917" ry="2.3812" style="paint-order:markers fill stroke"/>
+      </g>
+    </g>
+  </svg>
+  <svg id="nd-door-open" viewBox="0 0 210 297">
+    <g>
+      <rect x="28.945" y="36.55" width="157.77" height="204.1" fill="none" stroke-width="7.983" style="paint-order:markers fill stroke"/>
+      <path d="m37.916 44.873 102.95-22.985v233.97l-102.95-23.52z" fill="#fff" stroke-width="6.18" style="paint-order:markers fill stroke"/>
+      <g fill="none" stroke-width="1.4832">
+        <rect x="29.933" y="61.091" width="7.0637" height="13.735" style="paint-order:markers fill stroke"/>
+        <rect x="29.933" y="196.86" width="7.0637" height="13.735" style="paint-order:markers fill stroke"/>
+        <path d="m105.12 133.6 15.163-1.6036c1.9458-0.20578 4.0663 3.1788 4.0663 5.1354v0.78505c0 1.9566-2.6559 5.3486-4.6009 5.1354l-14.629-1.6036c-1.945-0.21321-3.5318-1.5752-3.5318-3.5318v-0.78505c0-1.9566 1.586-3.326 3.5318-3.5318z" style="paint-order:markers fill stroke"/>
+        <path d="m105.12 133.6 15.163-1.6036c1.9458-0.20578 4.0663 3.1788 4.0663 5.1354v0.78505c0 1.9566-2.6559 5.3486-4.6009 5.1354l-14.629-1.6036c-1.945-0.21321-3.5318-1.5752-3.5318-3.5318v-0.78505c0-1.9566 1.586-3.326 3.5318-3.5318z" style="paint-order:markers fill stroke"/>
       </g>
     </g>
   </svg>

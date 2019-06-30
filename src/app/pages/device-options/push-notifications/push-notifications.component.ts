@@ -13,14 +13,14 @@ import { SwPush } from '@angular/service-worker';
       </div>
     </div>
   `,
-  styleUrls: ['./notifications.component.scss'],
+  styleUrls: ['./push-notifications.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NotificationsComponent {
+export class PushNotificationsComponent {
 
   title = 'PUSH NOTIFICATIONS:';
 
-  readonly VAPID_PUBLIC_KEY = 'BJoU2Li1UuV8A1t3FuCbINwWv3f5BHjkZvGJqWwPWSbsjc4X2o60koBzDuka2B8oZeoTJKkAvK-hPpPtDnH7Lps';
+  readonly VAPID_PUBLIC_KEY = 'BG-zibiw-dk6bhrbwLMicGYXna-WwoNqsF8FLKdDUzqhOKvfrH3jYG-UnaYNss45AMDqfJC_GgskDpx8lycjQ0Y';
 
   constructor(private swPush: SwPush) { }
 

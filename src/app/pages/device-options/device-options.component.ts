@@ -3,10 +3,10 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { Observable, Subject } from 'rxjs';
-import { switchMap, takeUntil, finalize, take, delay } from 'rxjs/operators';
+import { switchMap, takeUntil, finalize, take } from 'rxjs/operators';
 
-import { DeviceOptionsService } from '@nd/core/services';
-import { Temp, Switch } from '@nd/core/models';
+import { DeviceOptionsService, DBService } from '@nd/core/services';
+import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
 
 @Component({
   selector: 'nd-device-options',
@@ -18,7 +18,8 @@ import { Temp, Switch } from '@nd/core/models';
       <nd-name [device]="device$ | async" [loading]="renameLoading"
         (nameClick)="onRenameClick($event)">
       </nd-name>
-      <nd-notifications></nd-notifications>
+      <nd-notifications [device]="device$ | async" [settings]="settings$ | async">
+      </nd-notifications>
     </div>
   `,
   styleUrls: ['./device-options.component.scss']
@@ -29,12 +30,15 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   device$: Observable<Temp | Switch> = this.service.select<Temp | Switch>('device');
 
+  settings$: Observable<DomoticzSettings> = this.dbService.store;
+
   renameLoading: boolean;
 
   constructor(
     private route: ActivatedRoute,
     private location: Location,
-    private service: DeviceOptionsService<Temp | Switch>
+    private service: DeviceOptionsService<Temp | Switch>,
+    private dbService: DBService
   ) { }
 
   ngOnInit() {

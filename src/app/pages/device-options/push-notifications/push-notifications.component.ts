@@ -4,15 +4,15 @@ import { SwPush } from '@angular/service-worker';
 import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
 import { PushNotificationsService } from '@nd/core/services/push-notifications.service';
-import { take } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'nd-notifications',
   template: `
     <div class="notifs-container">
       <span class="title">{{ title }}</span>
-      <div *ngIf="(isSubscribed$ | async) as isSubscribed" class="btn-container">
-        <button nbButton status="primary" (click)="onSubscribeClick(isSubscribed)">
+      <div class="btn-container">
+        <button nbButton status="primary" (click)="onSubscribeClick()">
           {{ !isSubscribed ? 'Subscribe' : 'Unsubscribe' }}
         </button>
       </div>
@@ -23,11 +23,22 @@ import { take } from 'rxjs/operators';
 })
 export class PushNotificationsComponent {
 
-  @Input() device: Switch;
+  private _device: Switch;
+  @Input()
+  set device(value) {
+    if (!!value) {
+      this.service.isSubscribed(value.idx).pipe(
+        tap(resp => this.isSubscribed = resp),
+        take(1)
+      ).subscribe();
+      this._device = value;
+    }
+  }
+  get device() { return this._device; }
 
   @Input() settings: DomoticzSettings;
 
-  isSubscribed$ = this.service.isSubscribed();
+  isSubscribed: boolean;
 
   title = 'PUSH NOTIFICATIONS:';
 
@@ -38,8 +49,8 @@ export class PushNotificationsComponent {
     private service: PushNotificationsService
   ) { }
 
-  onSubscribeClick(isSubscribed: boolean) {
-    if (!isSubscribed) {
+  onSubscribeClick() {
+    if (!this.isSubscribed) {
       this.swPush.requestSubscription({
         serverPublicKey: this.VAPID_PUBLIC_KEY
       })
@@ -54,7 +65,10 @@ export class PushNotificationsComponent {
       })
       .catch(err => console.error('Could not subscribe to notifications', err));
     } else {
-      this.service.stopSubscription().pipe(take(1)).subscribe();
+      this.service.stopSubscription(this.device.idx).pipe(
+        tap(() => this.isSubscribed = false),
+        take(1)
+      ).subscribe();
     }
   }
 

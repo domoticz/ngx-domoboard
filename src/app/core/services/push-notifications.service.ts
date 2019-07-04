@@ -19,14 +19,15 @@ export class PushNotificationsService {
     return this.httpClient.post(`${PushApi.server}${PushApi.monitor}`, payload);
   }
 
-  isSubscribed(): Observable<boolean> {
-    return this.httpClient.get<boolean>(`${PushApi.server}${PushApi.isMonitoring}`).pipe(
-      map((resp: any) => resp.isMonitoring)
-    );
+  isSubscribed(idx: string): Observable<boolean> {
+    return this.httpClient.post<boolean>(`${PushApi.server}${PushApi.isMonitoring}`, { idx: idx })
+      .pipe(
+        map((resp: any) => resp.isMonitoring)
+      );
   }
 
-  stopSubscription(): Observable<any> {
-    return this.httpClient.get<boolean>(`${PushApi.server}${PushApi.stop}`);
+  stopSubscription(idx: string): Observable<any> {
+    return this.httpClient.post<boolean>(`${PushApi.server}${PushApi.stop}`, { idx: idx });
   }
 
 }

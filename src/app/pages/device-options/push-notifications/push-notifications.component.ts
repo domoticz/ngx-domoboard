@@ -11,9 +11,9 @@ import { take } from 'rxjs/operators';
   template: `
     <div class="notifs-container">
       <span class="title">{{ title }}</span>
-      <div class="btn-container">
-        <button nbButton status="primary" (click)="subscribeToNotifications()">
-          Subscribe
+      <div *ngIf="(isSubscribed$ | async) as isSubscribed" class="btn-container">
+        <button nbButton status="primary" (click)="onSubscribeClick(isSubscribed)">
+          {{ !isSubscribed ? 'Subscribe' : 'Unsubscribe' }}
         </button>
       </div>
     </div>
@@ -27,6 +27,8 @@ export class PushNotificationsComponent {
 
   @Input() settings: DomoticzSettings;
 
+  isSubscribed$ = this.service.isSubscribed();
+
   title = 'PUSH NOTIFICATIONS:';
 
   readonly VAPID_PUBLIC_KEY = 'BG-zibiw-dk6bhrbwLMicGYXna-WwoNqsF8FLKdDUzqhOKvfrH3jYG-UnaYNss45AMDqfJC_GgskDpx8lycjQ0Y';
@@ -36,20 +38,24 @@ export class PushNotificationsComponent {
     private service: PushNotificationsService
   ) { }
 
-  subscribeToNotifications() {
-    this.swPush.requestSubscription({
-      serverPublicKey: this.VAPID_PUBLIC_KEY
-    })
-    .then(sub => {
-      const payload = {
-        currentStatus: this.device.Status,
-        statusUrl: `${this.settings.ssl ? 'https' : 'http'}://` +
-          `${this.settings.domain}:${this.settings.port}/${Api.device.replace('{idx}', this.device.idx)}`,
-        sub: sub
-      };
-      this.service.subscribeToNotifications(payload).pipe(take(1)).subscribe();
-    })
-    .catch(err => console.error('Could not subscribe to notifications', err));
+  onSubscribeClick(isSubscribed: boolean) {
+    if (!isSubscribed) {
+      this.swPush.requestSubscription({
+        serverPublicKey: this.VAPID_PUBLIC_KEY
+      })
+      .then(sub => {
+        const payload = {
+          device: this.device,
+          statusUrl: `${this.settings.ssl ? 'https' : 'http'}://` +
+            `${this.settings.domain}:${this.settings.port}/${Api.device.replace('{idx}', this.device.idx)}`,
+          sub: sub
+        };
+        this.service.subscribeToNotifications(payload).pipe(take(1)).subscribe();
+      })
+      .catch(err => console.error('Could not subscribe to notifications', err));
+    } else {
+      this.service.stopSubscription().pipe(take(1)).subscribe();
+    }
   }
 
 }

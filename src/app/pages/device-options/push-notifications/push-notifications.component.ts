@@ -1,10 +1,6 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
-import { SwPush } from '@angular/service-worker';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 
 import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
-import { Api } from '@nd/core/enums/api.enum';
-import { PushNotificationsService } from '@nd/core/services/push-notifications.service';
-import { take, tap } from 'rxjs/operators';
 
 @Component({
   selector: 'nd-notifications',
@@ -23,53 +19,22 @@ import { take, tap } from 'rxjs/operators';
 })
 export class PushNotificationsComponent {
 
-  private _device: Switch;
-  @Input()
-  set device(value) {
-    if (!!value) {
-      this.service.isSubscribed(value.idx).pipe(
-        tap(resp => this.isSubscribed = resp),
-        take(1)
-      ).subscribe();
-      this._device = value;
-    }
-  }
-  get device() { return this._device; }
+  @Input() device: Switch | Temp;
 
   @Input() settings: DomoticzSettings;
 
-  isSubscribed: boolean;
+  @Input() isSubscribed: boolean;
+
+  @Output() subscribeClick = new EventEmitter<any>();
 
   title = 'PUSH NOTIFICATIONS:';
 
-  readonly VAPID_PUBLIC_KEY = 'BG-zibiw-dk6bhrbwLMicGYXna-WwoNqsF8FLKdDUzqhOKvfrH3jYG-UnaYNss45AMDqfJC_GgskDpx8lycjQ0Y';
-
-  constructor(
-    private swPush: SwPush,
-    private service: PushNotificationsService
-  ) { }
-
   onSubscribeClick() {
-    if (!this.isSubscribed) {
-      this.swPush.requestSubscription({
-        serverPublicKey: this.VAPID_PUBLIC_KEY
-      })
-      .then(sub => {
-        const payload = {
-          device: this.device,
-          statusUrl: `${this.settings.ssl ? 'https' : 'http'}://` +
-            `${this.settings.domain}:${this.settings.port}/${Api.device.replace('{idx}', this.device.idx)}`,
-          sub: sub
-        };
-        this.service.subscribeToNotifications(payload).pipe(take(1)).subscribe();
-      })
-      .catch(err => console.error('Could not subscribe to notifications', err));
-    } else {
-      this.service.stopSubscription(this.device.idx).pipe(
-        tap(() => this.isSubscribed = false),
-        take(1)
-      ).subscribe();
-    }
+    this.subscribeClick.emit({
+      device: this.device,
+      isSubscribed: this.isSubscribed,
+      settings: this.settings
+    });
   }
 
 }

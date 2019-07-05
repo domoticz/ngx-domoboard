@@ -10,7 +10,7 @@ import { Temp } from '@nd/core/models';
 @Component({
   selector: 'nd-temperature',
   template: `
-    <div class="type-container" *ngIf="!!(temps$ | async).length && !(loading$ | async); else noDevices"
+    <div class="type-container" *ngIf="!!(temps$ | async).length || (loading$ | async); else noDevices"
       [nbSpinner]="loading$ | async">
       <ng-container *ngFor="let type of (types$ | async)">
         <span class="type">{{ type }}</span>

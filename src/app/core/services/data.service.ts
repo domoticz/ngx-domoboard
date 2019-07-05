@@ -15,8 +15,8 @@ export abstract class DataService {
   loading$ = this.loadingSubject.asObservable().pipe(distinctUntilChanged());
 
   constructor(
-    private httpClient: HttpClient,
-    private dbService: DBService
+    protected httpClient: HttpClient,
+    protected dbService: DBService
   ) { }
 
   protected get<T>(relativeUrl: string, spinner?: boolean) {

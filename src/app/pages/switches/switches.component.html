@@ -1,4 +1,4 @@
-<div class="switchType-container" *ngIf="!!(switches$ | async).length && !(loading$ | async); else noDevices"
+<div class="switchType-container" *ngIf="!!(switches$ | async).length || (loading$ | async); else noDevices"
   [nbSpinner]="loading$ | async">
   <ng-container *ngFor="let switchType of (switchTypes$ | async)">
     <span class="switchType">{{ switchType }}</span>

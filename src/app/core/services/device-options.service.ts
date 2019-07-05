@@ -9,18 +9,18 @@ import { DBService } from './db.service';
 
 import { DomoticzResponse, Switch, Temp } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
+import { environment } from 'environments/environment';
 
 interface State<T> {
   device: T;
   isSubscribed: boolean;
 }
 
-enum PushApi {
-  // server = 'https://zg9tbw.duckdns.org:5035/api',
-  server = 'http://localhost:8081/api',
-  monitor = '/monitor-device',
-  stop = '/stop-monitoring',
-  isMonitoring = '/is-monitoring'
+const pushApi = {
+  server: environment.pushServer,
+  monitor: '/monitor-device',
+  stop: '/stop-monitoring',
+  isMonitoring: '/is-monitoring'
 }
 
 const isSwitch = (device: any): device is Switch => device.SwitchType !== undefined;
@@ -65,7 +65,7 @@ export class DeviceOptionsService<T> extends DataService {
 
   isSubscribed(): Observable<any> {
     const device = this.subject.value.device;
-    return this.httpClient.post<boolean>(`${PushApi.server}${PushApi.isMonitoring}`,
+    return this.httpClient.post<boolean>(`${pushApi.server}${pushApi.isMonitoring}`,
       { idx: isSwitch(device) || isTemp(device) ? device.idx : null }).pipe(
         tap((resp: any) => {
           if (resp.status === 'OK') {
@@ -76,7 +76,7 @@ export class DeviceOptionsService<T> extends DataService {
   }
 
   subscribeToNotifications(payload: any): Observable<any> {
-    return this.httpClient.post(`${PushApi.server}${PushApi.monitor}`, payload).pipe(
+    return this.httpClient.post(`${pushApi.server}${pushApi.monitor}`, payload).pipe(
       tap((resp: any) => {
         if (resp.status === 'OK') {
           this.syncIsSubscribed(true);
@@ -86,7 +86,7 @@ export class DeviceOptionsService<T> extends DataService {
   }
 
   stopSubscription(idx: string): Observable<any> {
-    return this.httpClient.post<boolean>(`${PushApi.server}${PushApi.stop}`, { idx: idx }).pipe(
+    return this.httpClient.post<boolean>(`${pushApi.server}${pushApi.stop}`, { idx: idx }).pipe(
       tap((resp: any) => {
         if (resp.status === 'OK') {
           this.syncIsSubscribed(false);

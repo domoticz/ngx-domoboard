@@ -6,7 +6,8 @@ import { version, name } from './version';
 export const environment = {
   production: false,
   version: version,
-  name: name
+  name: name,
+  pushServer: 'http://localhost:8081/api'
 };
 
 /*

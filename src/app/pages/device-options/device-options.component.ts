@@ -3,8 +3,8 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Location } from '@angular/common';
 import { SwPush } from '@angular/service-worker';
 
-import { Observable, Subject, concat } from 'rxjs';
-import { switchMap, takeUntil, finalize, take, concatMap } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil, finalize, take, concatMap } from 'rxjs/operators';
 
 import { DeviceOptionsService, DBService } from '@nd/core/services';
 import { Temp, Switch, DomoticzSettings } from '@nd/core/models';

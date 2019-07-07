@@ -112,7 +112,7 @@ export class DBService {
     const req = this.getObjectStore(this.PUSHSUB_STORE, 'readonly').get(1);
     req.onsuccess = ((evt: any) => {
       this.subject.next({
-        ...this.subject.value, pushEndpoint: evt.target.result
+        ...this.subject.value, pushEndpoint: evt.target.result.endpoint
       });
     }).bind(this);
     req.onerror = ((evt: any) => {

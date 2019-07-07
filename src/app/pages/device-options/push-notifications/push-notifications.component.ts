@@ -19,21 +19,21 @@ import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
 })
 export class PushNotificationsComponent {
 
-  private _device: Switch | Temp;
-  @Input()
-  set device(value) {
-    if (!!value) {
-      this.checkSubscription.emit(this.pushEndpoint);
-      this._device = value;
-    }
-  }
-  get device() { return this._device; }
+  @Input() device: Switch | Temp;
 
   @Input() settings: DomoticzSettings;
 
   @Input() isSubscribed: boolean;
 
-  @Input() pushEndpoint: string;
+  private _pushEndpoint: string;
+  @Input()
+  set pushEndpoint(value) {
+    if (!!value) {
+      this.checkSubscription.emit(value);
+      this._pushEndpoint = value;
+    }
+  }
+  get pushEndpoint() { return this._pushEndpoint; }
 
   @Output() subscribeClick = new EventEmitter<any>();
 

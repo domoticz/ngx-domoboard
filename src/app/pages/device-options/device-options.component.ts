@@ -38,7 +38,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   settings$ = this.dbService.select<DomoticzSettings>('settings');
 
-  pushSub$ = this.dbService.select<PushSubscription>('pushSubscription');
+  pushEndpoint$ = this.dbService.select<string>('pushEndpoint');
 
   renameLoading: boolean;
 
@@ -90,8 +90,8 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
         };
         this.service.subscribeToNotifications(payload).pipe(take(1)).subscribe();
         try {
-          const msg = await this.dbService.addPushSub(sub);
-          this.dbService.syncPushSub(sub);
+          const msg = await this.dbService.addPushSub(sub.endpoint);
+          this.dbService.syncPushSub(sub.endpoint);
           console.log(msg);
         } catch (error) {
           this.dbService.syncPushSub(null);

@@ -7,7 +7,7 @@ import { DomoticzSettings } from '@nd/core/models';
 
 interface State {
   settings: DomoticzSettings;
-  pushSubscription: PushSubscription;
+  pushEndpoint: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -80,10 +80,9 @@ export class DBService {
     });
   }
 
-  addPushSub(pushSub: PushSubscription): Promise<any> {
+  addPushSub(pushEndpoint: string): Promise<any> {
     const store = this.getObjectStore(this.PUSHSUB_STORE, 'readwrite');
-    pushSub['id'] = 1;
-    const req = store.put({ ...pushSub });
+    const req = store.put({ id: 1, endpoint: pushEndpoint });
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = function (evt: any) {
         resolve('addPushSub: ' + evt.type);
@@ -109,17 +108,17 @@ export class DBService {
     }
   }
 
-  syncPushSub(pushSub: PushSubscription) {
+  syncPushSub(pushEndpoint: string) {
     const req = this.getObjectStore(this.PUSHSUB_STORE, 'readonly').get(1);
     req.onsuccess = ((evt: any) => {
       this.subject.next({
-        ...this.subject.value, pushSubscription: evt.target.result
+        ...this.subject.value, pushEndpoint: evt.target.result
       });
     }).bind(this);
     req.onerror = ((evt: any) => {
       console.log(evt.target.error.message);
       this.subject.next({
-        ...this.subject.value, pushSubscription: pushSub
+        ...this.subject.value, pushEndpoint: pushEndpoint
       });
     }).bind(this);
   }

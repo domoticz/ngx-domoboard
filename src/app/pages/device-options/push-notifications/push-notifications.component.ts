@@ -25,7 +25,7 @@ export class PushNotificationsComponent implements OnInit {
 
   @Input() isSubscribed: boolean;
 
-  @Input() pushSubscription: PushSubscription;
+  @Input() pushEndpoint: string;
 
   @Output() subscribeClick = new EventEmitter<any>();
 
@@ -34,9 +34,7 @@ export class PushNotificationsComponent implements OnInit {
   title = 'PUSH NOTIFICATIONS:';
 
   ngOnInit() {
-    if (!!this.pushSubscription) {
-      this.checkSubscription.emit(this.pushSubscription.endpoint);
-    }
+    this.checkSubscription.emit(this.pushEndpoint);
   }
 
   onSubscribeClick() {
@@ -44,7 +42,7 @@ export class PushNotificationsComponent implements OnInit {
       device: this.device,
       isSubscribed: this.isSubscribed,
       settings: this.settings,
-      pushEndpoint: !!this.pushSubscription ? this.pushSubscription.endpoint : null
+      pushEndpoint: this.pushEndpoint
     });
   }
 

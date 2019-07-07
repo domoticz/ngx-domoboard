@@ -44,7 +44,7 @@ export class PushNotificationsComponent implements OnInit {
       device: this.device,
       isSubscribed: this.isSubscribed,
       settings: this.settings,
-      pushEndpoint: this.pushSubscription.endpoint
+      pushEndpoint: !!this.pushSubscription ? this.pushSubscription.endpoint : null
     });
   }
 

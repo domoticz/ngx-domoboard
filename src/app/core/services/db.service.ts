@@ -4,12 +4,16 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, pluck } from 'rxjs/operators';
 
 import { DomoticzSettings } from '@nd/core/models';
-import { Credentials } from '../models/credentials.interface';
+
+interface State {
+  settings: DomoticzSettings;
+  pushSubscription: PushSubscription;
+}
 
 @Injectable({ providedIn: 'root' })
 export class DBService {
 
-  private subject = new BehaviorSubject<DomoticzSettings>(null);
+  private subject = new BehaviorSubject<State>({} as State);
   store = this.subject.asObservable().pipe(
     distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y))
   );
@@ -20,7 +24,9 @@ export class DBService {
 
   DB_VERSION = 1;
 
-  DB_STORE_NAME = 'domoticz_settings';
+  SETTINGS_STORE = 'domoticz_settings';
+
+  PUSHSUB_STORE = 'push_subscription';
 
   select<T>(...name: string[]): Observable<T> {
     return this.store.pipe(pluck(...name));
@@ -39,7 +45,10 @@ export class DBService {
 
       req.onupgradeneeded = function (evt) {
         evt.currentTarget['result'].createObjectStore(
-          this.DB_STORE_NAME, { keyPath: 'id' }
+          this.SETTINGS_STORE, { keyPath: 'id' }
+        );
+        evt.currentTarget['result'].createObjectStore(
+          this.PUSHSUB_STORE, { keyPath: 'id' }
         );
       }.bind(this);
     });
@@ -51,7 +60,7 @@ export class DBService {
   }
 
   addSettings(settings: DomoticzSettings): Promise<any> {
-    const store = this.getObjectStore(this.DB_STORE_NAME, 'readwrite');
+    const store = this.getObjectStore(this.SETTINGS_STORE, 'readwrite');
     try {
       if (!!Object.keys(settings.credentials).every(key => settings.credentials[key] !== null)) {
         const authToken = btoa(`${settings.credentials.username}:${settings.credentials.password}`);
@@ -71,15 +80,48 @@ export class DBService {
     });
   }
 
-  setSettings(settings?: DomoticzSettings) {
+  addPushSub(pushSub: PushSubscription): Promise<any> {
+    const store = this.getObjectStore(this.PUSHSUB_STORE, 'readwrite');
+    const req = store.put({ id: 1, ...pushSub});
+    return new Promise<any>((resolve, reject) => {
+      req.onsuccess = function (evt: any) {
+        resolve('addPushSub: ' + evt.type);
+
+      };
+      req.onerror = function (evt) {
+        reject('addPushSub: ' + evt.target['error'].message);
+      };
+    });
+  }
+
+  syncSettings(settings?: DomoticzSettings) {
     if (!!settings) {
-      this.subject.next(null);
+      this.subject.next({
+        ...this.subject.value, settings: null
+      });
     } else {
-      const req = this.getObjectStore(this.DB_STORE_NAME, 'readonly').get(1);
+      const req = this.getObjectStore(this.SETTINGS_STORE, 'readonly').get(1);
       req.onsuccess = ((evt: any) => {
-        this.subject.next(this.decodeSettings(evt.target.result));
+        this.subject.next({
+          ...this.subject.value, settings: this.decodeSettings(evt.target.result)
+        });
       }).bind(this);
     }
+  }
+
+  syncPushSub(pushSub: PushSubscription) {
+    const req = this.getObjectStore(this.PUSHSUB_STORE, 'readonly').get(1);
+    req.onsuccess = ((evt: any) => {
+      this.subject.next({
+        ...this.subject.value, pushSubscription: evt.target.result
+      });
+    }).bind(this);
+    req.onerror = ((evt: any) => {
+      console.log(evt.target.error.message);
+      this.subject.next({
+        ...this.subject.value, pushSubscription: pushSub
+      });
+    }).bind(this);
   }
 
   decodeSettings(settings: DomoticzSettings): DomoticzSettings {

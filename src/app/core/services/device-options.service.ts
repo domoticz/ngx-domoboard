@@ -21,7 +21,7 @@ const pushApi = {
   monitor: '/monitor-device',
   stop: '/stop-monitoring',
   isMonitoring: '/is-monitoring'
-}
+};
 
 const isSwitch = (device: any): device is Switch => device.SwitchType !== undefined;
 const isTemp = (device: any): device is Temp =>
@@ -63,10 +63,13 @@ export class DeviceOptionsService<T> extends DataService {
     return this.get<DomoticzResponse<any>>(Api.renameDevice.replace('{idx}', idx).replace('{name}', name));
   }
 
-  isSubscribed(): Observable<any> {
+  isSubscribed(pushEndpoint: string): Observable<any> {
     const device = this.subject.value.device;
     return this.httpClient.post<boolean>(`${pushApi.server}${pushApi.isMonitoring}`,
-      { idx: isSwitch(device) || isTemp(device) ? device.idx : null }).pipe(
+      {
+        idx: isSwitch(device) || isTemp(device) ? device.idx : null,
+        pushEndpoint: pushEndpoint
+      }).pipe(
         tap((resp: any) => {
           if (resp.status === 'OK') {
             this.syncIsSubscribed(resp.isMonitoring);
@@ -85,8 +88,11 @@ export class DeviceOptionsService<T> extends DataService {
     );
   }
 
-  stopSubscription(idx: string): Observable<any> {
-    return this.httpClient.post<boolean>(`${pushApi.server}${pushApi.stop}`, { idx: idx }).pipe(
+  stopSubscription(idx: string, pushEndpoint: string): Observable<any> {
+    return this.httpClient.post<boolean>(`${pushApi.server}${pushApi.stop}`, {
+      idx: idx,
+      pushEndpoint: pushEndpoint
+    }).pipe(
       tap((resp: any) => {
         if (resp.status === 'OK') {
           this.syncIsSubscribed(false);

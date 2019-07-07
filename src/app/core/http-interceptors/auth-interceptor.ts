@@ -5,14 +5,17 @@ import { Observable } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 
 import { DBService } from '../services';
+import { DomoticzSettings } from '../models';
 
 @Injectable({providedIn: 'root'})
 export class AuthInterceptor implements HttpInterceptor {
 
+  settings$ = this.dbService.select<DomoticzSettings>('settings');
+
   constructor(private dbService: DBService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return this.dbService.store.pipe(
+    return this.settings$.pipe(
       map(settings => {
         try {
           if (!!Object.keys(settings.credentials).every(key => settings.credentials[key] !== null)) {

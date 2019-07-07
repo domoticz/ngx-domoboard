@@ -36,7 +36,7 @@ export class SettingsSidebarComponent implements OnInit {
 
   showContent: boolean;
 
-  settings$ = this.dbService.store;
+  settings$ = this.dbService.select<DomoticzSettings>('settings');
 
   portPattern = '([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])';
 
@@ -56,7 +56,7 @@ export class SettingsSidebarComponent implements OnInit {
     distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y)),
     tap(value => {
       if (this.settingsForm.invalid) {
-        this.dbService.setSettings(value);
+        this.dbService.syncSettings(value);
       }
     }),
     filter(() => this.settingsForm.valid),
@@ -66,19 +66,19 @@ export class SettingsSidebarComponent implements OnInit {
         tap(auth => {
           if (auth.status === 'OK' && auth.rights > -1) {
             this.dbService.addSettings(value as DomoticzSettings).then(s => {
-              this.dbService.setSettings();
+              this.dbService.syncSettings();
               console.log(s);
             }).catch(e => {
-              this.dbService.setSettings();
+              this.dbService.syncSettings();
               console.log(e);
             });
           } else {
-            this.dbService.setSettings(value);
+            this.dbService.syncSettings(value);
             this.settingsForm.get('credentials').setErrors({ 'invalid': true });
           }
         }),
         catchError(e => {
-          this.dbService.setSettings(value);
+          this.dbService.syncSettings(value);
           return of({} as DomoticzAuth);
         }),
         finalize(() => this.loading = false)
@@ -94,7 +94,7 @@ export class SettingsSidebarComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.dbService.openDb().then(() => this.dbService.setSettings());
+    this.dbService.openDb().then(() => this.dbService.syncSettings());
   }
 
   getControl(name: string) {

@@ -21,7 +21,8 @@ import { Api } from '@nd/core/enums/api.enum';
         (nameClick)="onRenameClick($event)">
       </nd-name>
       <nd-notifications [device]="device$ | async" [settings]="settings$ | async"
-        [isSubscribed]="isSubscribed$ | async" (subscribeClick)="onSubscribeClick($event)">
+        [isSubscribed]="isSubscribed$ | async" (subscribeClick)="onSubscribeClick($event)"
+        (checkSubscription)="onCheckSubscription($event)">
       </nd-notifications>
     </div>
   `,
@@ -35,7 +36,9 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   isSubscribed$: Observable<boolean> = this.service.select<boolean>('isSubscribed');
 
-  settings$: Observable<DomoticzSettings> = this.dbService.store;
+  settings$ = this.dbService.select<DomoticzSettings>('settings');
+
+  pushSub$ = this.dbService.select<PushSubscription>('pushSubscription');
 
   renameLoading: boolean;
 
@@ -52,9 +55,12 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.route.paramMap.pipe(
       concatMap((params: ParamMap) => this.service.getDevice(params.get('idx'))),
-      concatMap(() => this.service.isSubscribed()),
       takeUntil(this.unsubscribe$)
     ).subscribe();
+  }
+
+  onCheckSubscription(pushEndpoint: string) {
+    this.service.isSubscribed(pushEndpoint).pipe(take(1)).subscribe();
   }
 
   onCloseClick() {
@@ -83,10 +89,11 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
           sub: sub
         };
         this.service.subscribeToNotifications(payload).pipe(take(1)).subscribe();
+        this.dbService.syncPushSub(sub);
       })
       .catch(err => console.error('Could not subscribe to notifications', err));
     } else {
-      this.service.stopSubscription(event.device.idx).pipe(take(1)).subscribe();
+      this.service.stopSubscription(event.device.idx, event.pushEndpoint).pipe(take(1)).subscribe();
     }
   }
 

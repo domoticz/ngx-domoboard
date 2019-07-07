@@ -14,13 +14,15 @@ export abstract class DataService {
   private loadingSubject = new BehaviorSubject<boolean>(false);
   loading$ = this.loadingSubject.asObservable().pipe(distinctUntilChanged());
 
+  settings$ = this.dbService.select<DomoticzSettings>('settings');
+
   constructor(
     protected httpClient: HttpClient,
     protected dbService: DBService
   ) { }
 
   protected get<T>(relativeUrl: string, spinner?: boolean) {
-    return this.dbService.store.pipe(
+    return this.settings$.pipe(
       switchMap(settings => {
         if (!!settings) {
           if (spinner) {
@@ -39,7 +41,7 @@ export abstract class DataService {
   }
 
   protected post<T>(relativeUrl: string, data: any) {
-    return this.dbService.store.pipe(
+    return this.settings$.pipe(
       switchMap(settings => !!settings ? this.httpClient.post<T>(
       `${settings.ssl ? 'https' : 'http'}://${settings.domain}:${settings.port}/${ relativeUrl }`,
       data

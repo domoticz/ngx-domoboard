@@ -82,8 +82,8 @@ export class DBService {
 
   addPushSub(pushSub: PushSubscription): Promise<any> {
     const store = this.getObjectStore(this.PUSHSUB_STORE, 'readwrite');
-    console.log(pushSub);
-    const req = store.put({ id: 1, ...pushSub});
+    pushSub['id'] = 1;
+    const req = store.put(pushSub);
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = function (evt: any) {
         resolve('addPushSub: ' + evt.type);

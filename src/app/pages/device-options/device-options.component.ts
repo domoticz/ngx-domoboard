@@ -81,7 +81,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
       this.swPush.requestSubscription({
         serverPublicKey: this.VAPID_PUBLIC_KEY
       })
-      .then(sub => {
+      .then(async sub => {
         const payload = {
           device: event.device,
           statusUrl: `${event.settings.ssl ? 'https' : 'http'}://` +
@@ -89,7 +89,14 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
           sub: sub
         };
         this.service.subscribeToNotifications(payload).pipe(take(1)).subscribe();
-        this.dbService.syncPushSub(sub);
+        try {
+          const msg = await this.dbService.addPushSub(sub);
+          this.dbService.syncPushSub(sub);
+          console.log(msg);
+        } catch (error) {
+          this.dbService.syncPushSub(null);
+          console.log(error);
+        }
       })
       .catch(err => console.error('Could not subscribe to notifications', err));
     } else {

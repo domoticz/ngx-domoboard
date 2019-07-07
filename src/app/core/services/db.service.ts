@@ -86,7 +86,6 @@ export class DBService {
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = function (evt: any) {
         resolve('addPushSub: ' + evt.type);
-
       };
       req.onerror = function (evt) {
         reject('addPushSub: ' + evt.target['error'].message);

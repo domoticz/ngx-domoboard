@@ -25,19 +25,9 @@ export class PushNotificationsComponent {
 
   @Input() isSubscribed: boolean;
 
-  private _pushEndpoint: string;
-  @Input()
-  set pushEndpoint(value) {
-    if (!!value) {
-      this.checkSubscription.emit(value);
-      this._pushEndpoint = value;
-    }
-  }
-  get pushEndpoint() { return this._pushEndpoint; }
+  @Input() pushEndpoint: string;
 
   @Output() subscribeClick = new EventEmitter<any>();
-
-  @Output() checkSubscription = new EventEmitter<string>();
 
   title = 'PUSH NOTIFICATIONS:';
 

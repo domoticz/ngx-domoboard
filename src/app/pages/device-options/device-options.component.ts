@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { SwPush } from '@angular/service-worker';
 
 import { Observable, Subject } from 'rxjs';
-import { takeUntil, finalize, take, concatMap, tap } from 'rxjs/operators';
+import { takeUntil, finalize, take, concatMap, tap, switchMap } from 'rxjs/operators';
 
 import { DeviceOptionsService, DBService } from '@nd/core/services';
 import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
@@ -22,7 +22,7 @@ import { Api } from '@nd/core/enums/api.enum';
       </nd-name>
       <nd-notifications [device]="device$ | async" [settings]="settings$ | async"
         [isSubscribed]="isSubscribed$ | async" (subscribeClick)="onSubscribeClick($event)"
-        (checkSubscription)="onCheckSubscription($event)" [pushEndpoint]="pushEndpoint$ | async">
+        [pushEndpoint]="pushEndpoint$ | async">
       </nd-notifications>
     </div>
   `,
@@ -54,14 +54,12 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.paramMap.pipe(
-      concatMap((params: ParamMap) => this.service.getDevice(params.get('idx'))),
+      switchMap((params: ParamMap) => this.service.getDevice(params.get('idx'))),
       tap(() => this.dbService.syncPushSub(null)),
+      switchMap(() => this.pushEndpoint$),
+      tap((pushEndpoint: string) => this.service.isSubscribed(pushEndpoint)),
       takeUntil(this.unsubscribe$)
     ).subscribe();
-  }
-
-  onCheckSubscription(pushEndpoint: string) {
-    this.service.isSubscribed(pushEndpoint).pipe(take(1)).subscribe();
   }
 
   onCloseClick() {

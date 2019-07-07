@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 
 import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
 
@@ -17,9 +17,17 @@ import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
   styleUrls: ['./push-notifications.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PushNotificationsComponent implements OnInit {
+export class PushNotificationsComponent {
 
-  @Input() device: Switch | Temp;
+  private _device: Switch | Temp;
+  @Input()
+  set device(value) {
+    if (!!value) {
+      this.checkSubscription.emit(this.pushEndpoint);
+      this._device = value;
+    }
+  }
+  get device() { return this._device; }
 
   @Input() settings: DomoticzSettings;
 
@@ -32,10 +40,6 @@ export class PushNotificationsComponent implements OnInit {
   @Output() checkSubscription = new EventEmitter<string>();
 
   title = 'PUSH NOTIFICATIONS:';
-
-  ngOnInit() {
-    this.checkSubscription.emit(this.pushEndpoint);
-  }
 
   onSubscribeClick() {
     this.subscribeClick.emit({

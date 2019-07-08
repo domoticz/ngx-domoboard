@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { SwPush } from '@angular/service-worker';
 
-import { Observable, Subject, merge, combineLatest, zip } from 'rxjs';
-import { takeUntil, finalize, take, concatMap, tap, switchMap, withLatestFrom } from 'rxjs/operators';
+import { Observable, Subject, merge, zip } from 'rxjs';
+import { takeUntil, finalize, take, switchMap } from 'rxjs/operators';
 
 import { DeviceOptionsService, DBService } from '@nd/core/services';
 import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
@@ -22,7 +22,7 @@ import { Api } from '@nd/core/enums/api.enum';
       </nd-name>
       <nd-notifications [device]="device$ | async" [settings]="settings$ | async"
         [isSubscribed]="isSubscribed$ | async" (subscribeClick)="onSubscribeClick($event)"
-        [pushEndpoint]="pushEndpoint$ | async">
+        [pushEndpoint]="pushEndpoint$ | async" [loading]="pushLoading">
       </nd-notifications>
     </div>
   `,
@@ -42,6 +42,8 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   renameLoading: boolean;
 
+  pushLoading: boolean;
+
   readonly VAPID_PUBLIC_KEY = 'BG-zibiw-dk6bhrbwLMicGYXna-WwoNqsF8FLKdDUzqhOKvfrH3jYG-UnaYNss45AMDqfJC_GgskDpx8lycjQ0Y';
 
   constructor(
@@ -53,7 +55,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.dbService.syncPushSub(null);
+    this.pushLoading = true;
     zip(
       this.route.paramMap,
       this.pushEndpoint$
@@ -64,6 +66,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
           this.service.isSubscribed(params.get('idx'), pushEndpoint)
         );
       }),
+      finalize(() => this.pushLoading = false),
       take(2)
     ).subscribe();
   }
@@ -82,6 +85,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   }
 
   async onSubscribeClick(event: any) {
+    this.pushLoading = true;
     if (!event.isSubscribed) {
       try {
         const pushSub: PushSubscription =
@@ -103,9 +107,14 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
         }
       } catch (error) {
         console.error('Could not subscribe to notifications', error);
+      } finally {
+        this.pushLoading = false;
       }
     } else {
-      this.service.stopSubscription(event.device.idx, event.pushEndpoint).pipe(take(1)).subscribe();
+      this.service.stopSubscription(event.device.idx, event.pushEndpoint).pipe(
+        finalize(() => this.pushLoading = false),
+        take(1)
+      ).subscribe();
     }
   }
 

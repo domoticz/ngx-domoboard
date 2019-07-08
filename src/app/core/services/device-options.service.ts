@@ -69,7 +69,8 @@ export class DeviceOptionsService<T> extends DataService {
       {
         idx: idx,
         pushEndpoint: pushEndpoint
-      }).pipe(
+      }
+      ).pipe(
         tap((resp: any) => {
           if (resp.status === 'OK') {
             this.syncIsSubscribed(resp.isMonitoring);

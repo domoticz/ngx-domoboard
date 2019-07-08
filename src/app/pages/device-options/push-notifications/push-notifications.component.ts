@@ -8,7 +8,8 @@ import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
     <div class="notifs-container">
       <span class="title">{{ title }}</span>
       <div class="btn-container">
-        <button nbButton status="primary" (click)="onSubscribeClick()">
+        <button nbButton status="primary" (click)="onSubscribeClick()"
+          [nbSpinner]="loading">
           {{ !isSubscribed ? 'Subscribe' : 'Unsubscribe' }}
         </button>
       </div>
@@ -26,6 +27,8 @@ export class PushNotificationsComponent {
   @Input() isSubscribed: boolean;
 
   @Input() pushEndpoint: string;
+
+  @Input() loading: boolean;
 
   @Output() subscribeClick = new EventEmitter<any>();
 

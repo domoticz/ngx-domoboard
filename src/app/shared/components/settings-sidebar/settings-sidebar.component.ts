@@ -94,7 +94,10 @@ export class SettingsSidebarComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.dbService.openDb().then(() => this.dbService.syncSettings());
+    this.dbService.openDb().then(() => {
+      this.dbService.syncSettings();
+      this.dbService.syncPushSub(null);
+    });
   }
 
   getControl(name: string) {

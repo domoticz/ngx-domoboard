@@ -23,10 +23,6 @@ const pushApi = {
   isMonitoring: '/is-monitoring'
 };
 
-const isSwitch = (device: any): device is Switch => device.SwitchType !== undefined;
-const isTemp = (device: any): device is Temp =>
-  device.Temp !== undefined || device.Humidity !== undefined;
-
 @Injectable({providedIn: 'root'})
 export class DeviceOptionsService<T> extends DataService {
 
@@ -64,19 +60,18 @@ export class DeviceOptionsService<T> extends DataService {
   }
 
   isSubscribed(idx: string, pushEndpoint: string): Observable<any> {
-    const device = this.subject.value.device;
     return this.httpClient.post<boolean>(`${pushApi.server}${pushApi.isMonitoring}`,
       {
         idx: idx,
         pushEndpoint: pushEndpoint
       }
-      ).pipe(
-        tap((resp: any) => {
-          if (resp.status === 'OK') {
-            this.syncIsSubscribed(resp.isMonitoring);
-          }
-        })
-      );
+    ).pipe(
+      tap((resp: any) => {
+        if (resp.status === 'OK') {
+          this.syncIsSubscribed(resp.isMonitoring);
+        }
+      })
+    );
   }
 
   subscribeToNotifications(payload: any): Observable<any> {

@@ -17,7 +17,7 @@
         stroke: nb-theme(text-basic-color);
       }
 
-      &.Closed {
+      &.Closed, &.Open {
         fill: nb-theme(text-basic-color);
         stroke: nb-theme(text-basic-color);
         pointer-events: none;

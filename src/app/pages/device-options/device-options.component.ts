@@ -3,8 +3,8 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Location } from '@angular/common';
 import { SwPush } from '@angular/service-worker';
 
-import { Observable, Subject } from 'rxjs';
-import { takeUntil, finalize, take, concatMap, tap, switchMap } from 'rxjs/operators';
+import { Observable, Subject, merge, combineLatest } from 'rxjs';
+import { takeUntil, finalize, take, concatMap, tap, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { DeviceOptionsService, DBService } from '@nd/core/services';
 import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
@@ -53,11 +53,17 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.route.paramMap.pipe(
-      switchMap((params: ParamMap) => this.service.getDevice(params.get('idx'))),
-      tap(() => this.dbService.syncPushSub(null)),
-      switchMap(() => this.pushEndpoint$),
-      tap((pushEndpoint: string) => this.service.isSubscribed(pushEndpoint)),
+    this.dbService.syncPushSub(null);
+    combineLatest([
+      this.route.paramMap,
+      this.pushEndpoint$
+    ]).pipe(
+      switchMap(([params, pushEndpoint]) => {
+        return merge(
+          this.service.getDevice(params.get('idx')),
+          this.service.isSubscribed(params.get('idx'), pushEndpoint)
+        );
+      }),
       takeUntil(this.unsubscribe$)
     ).subscribe();
   }

@@ -111,15 +111,15 @@ export class DBService {
   syncPushSub(pushEndpoint: string) {
     const req = this.getObjectStore(this.PUSHSUB_STORE, 'readonly').get(1);
     req.onsuccess = ((evt: any) => {
-      this.subject.next({
-        ...this.subject.value, pushEndpoint: evt.target.result.endpoint
-      });
-    }).bind(this);
-    req.onerror = ((evt: any) => {
-      console.log(evt.target.error.message);
-      this.subject.next({
-        ...this.subject.value, pushEndpoint: pushEndpoint
-      });
+      if (!!evt.target.result) {
+        this.subject.next({
+          ...this.subject.value, pushEndpoint: evt.target.result.endpoint
+        });
+      } else {
+        this.subject.next({
+          ...this.subject.value, pushEndpoint: pushEndpoint
+        });
+      }
     }).bind(this);
   }
 

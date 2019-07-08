@@ -63,11 +63,11 @@ export class DeviceOptionsService<T> extends DataService {
     return this.get<DomoticzResponse<any>>(Api.renameDevice.replace('{idx}', idx).replace('{name}', name));
   }
 
-  isSubscribed(pushEndpoint: string): Observable<any> {
+  isSubscribed(idx: string, pushEndpoint: string): Observable<any> {
     const device = this.subject.value.device;
     return this.httpClient.post<boolean>(`${pushApi.server}${pushApi.isMonitoring}`,
       {
-        idx: isSwitch(device) || isTemp(device) ? device.idx : null,
+        idx: idx,
         pushEndpoint: pushEndpoint
       }).pipe(
         tap((resp: any) => {

@@ -3,7 +3,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Location } from '@angular/common';
 import { SwPush } from '@angular/service-worker';
 
-import { Observable, Subject, merge, combineLatest } from 'rxjs';
+import { Observable, Subject, merge, combineLatest, zip } from 'rxjs';
 import { takeUntil, finalize, take, concatMap, tap, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { DeviceOptionsService, DBService } from '@nd/core/services';
@@ -54,17 +54,17 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.dbService.syncPushSub(null);
-    combineLatest([
+    zip(
       this.route.paramMap,
       this.pushEndpoint$
-    ]).pipe(
+    ).pipe(
       switchMap(([params, pushEndpoint]) => {
         return merge(
           this.service.getDevice(params.get('idx')),
           this.service.isSubscribed(params.get('idx'), pushEndpoint)
         );
       }),
-      takeUntil(this.unsubscribe$)
+      take(2)
     ).subscribe();
   }
 

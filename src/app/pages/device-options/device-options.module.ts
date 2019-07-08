@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import { NbButtonModule, NbInputModule } from '@nebular/theme';
+import { NbInputModule } from '@nebular/theme';
 
 import { SharedModule } from '@nd/shared/shared.module';
 
@@ -16,7 +16,6 @@ import { PushNotificationsComponent } from './push-notifications/push-notificati
     RouterModule.forChild(routes),
     SharedModule,
     FormsModule,
-    NbButtonModule,
     NbInputModule
   ],
   exports: [],

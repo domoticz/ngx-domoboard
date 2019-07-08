@@ -8,6 +8,7 @@ import { DomoticzAuth, DomoticzSettings } from '@nd/core/models';
   template: `
     <div class="content-container" [formGroup]="parent" [nbSpinner]="loading">
       <div class="form-container">
+        <button nbButton outline status="primary" class="clear-btn">clear settings</button>
         <div class="form-group">
           <nb-checkbox [status]="connected ? 'success' : 'warning'" formControlName="ssl">
             SSL (mandatory for service worker support)

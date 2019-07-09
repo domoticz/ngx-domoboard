@@ -5,15 +5,19 @@ import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
 @Component({
   selector: 'nd-notifications',
   template: `
-    <div class="notifs-container">
-      <span class="title">{{ title }}</span>
-      <div class="btn-container">
-        <button nbButton status="primary" (click)="onSubscribeClick()"
-          [nbSpinner]="loading">
-          {{ !isSubscribed ? 'Subscribe' : 'Unsubscribe' }}
-        </button>
-      </div>
-    </div>
+    <nb-card>
+      <nb-card-body>
+        <div class="notifs-container">
+          <span class="title">{{ title }}</span>
+          <div class="btn-container">
+            <button nbButton status="primary" (click)="onSubscribeClick()"
+              [nbSpinner]="loading">
+              {{ !isSubscribed ? 'Subscribe' : 'Unsubscribe' }}
+            </button>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
   `,
   styleUrls: ['./push-notifications.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

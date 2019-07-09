@@ -5,14 +5,18 @@ import { Temp, Switch } from '@nd/core/models';
 @Component({
   selector: 'nd-name',
   template: `
-    <div class="name-form-container">
-      <div class="name-form" [nbSpinner]="loading">
-        <input class="name-input" nbInput type="text" [(ngModel)]="device.Name">
-        <button class="name-btn" nbButton status="primary" (click)="nameClick.emit(device)">
-          <nb-icon icon="checkmark-outline"></nb-icon>
-        </button>
-      </div>
-    </div>
+    <nb-card>
+      <nb-card-body>
+        <div class="name-form-container">
+          <div class="name-form" [nbSpinner]="loading">
+            <input class="name-input" nbInput type="text" [(ngModel)]="device.Name">
+            <button class="name-btn" nbButton status="primary" (click)="nameClick.emit(device)">
+              <nb-icon icon="checkmark-outline"></nb-icon>
+            </button>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
   `,
   styleUrls: ['./name.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

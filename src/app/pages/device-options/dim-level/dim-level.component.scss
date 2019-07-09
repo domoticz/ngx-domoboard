@@ -2,7 +2,7 @@
 
 @include nb-install-component() {
 
-  .notifs-container {
+  .dim-container {
 
     .title {
       font-size: nb-theme(text-heading-6-font-size);
@@ -10,17 +10,20 @@
   }
 }
 
-.notifs-container {
+.dim-container {
+  margin: 0 0 2rem 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
 
   .title {
-    margin: 0 0 1rem 0;
+    margin: 0 0 1.5rem 0;
   }
 
-  .btn-container {
-    display: flex;
-    justify-content: center;
+  .radio-btn {
+    position: absolute;
+    height: 2.2rem;
+    width: 2.2rem;
+    pointer-events: none;
   }
 }

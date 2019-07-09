@@ -8,7 +8,7 @@ import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
         <div class="dim-container">
           <span class="title">{{ title + level + '%' }}</span>
           <nb-progress-bar id="dim-progress" [value]="level" [status]="'info'"
-            (click)="onBarClick($event)">
+            (click)="onBarClick($event)" size="tiny">
             <div class="radio-btn" [ngStyle]="{ 'left': level + '%' }">
               <svg viewBox="0 0 100 100">
                 <defs>
@@ -37,8 +37,6 @@ export class DimLevelComponent {
   title = `DIM LEVEL: ` ;
 
   onBarClick(event: any) {
-    event.preventDefault();
-    event.stopPropagation();
     console.log(event);
     console.log(event.offsetX / event.target.clientWidth * 100);
   }

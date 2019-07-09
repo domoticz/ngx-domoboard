@@ -108,6 +108,19 @@ export class DBService {
     }
   }
 
+  clearSettings() {
+    const store = this.getObjectStore(this.SETTINGS_STORE, 'readwrite');
+    const req = store.clear();
+    return new Promise<any>((resolve, reject) => {
+      req.onsuccess = function (evt: any) {
+        resolve('clearSettings: ' + evt.type);
+      };
+      req.onerror = function (evt) {
+        reject('clearSettings: ' + evt.target['error'].message);
+      };
+    });
+  }
+
   syncPushSub(pushEndpoint: string) {
     const req = this.getObjectStore(this.PUSHSUB_STORE, 'readonly').get(1);
     req.onsuccess = ((evt: any) => {

@@ -1,16 +1,19 @@
-import { Component, ChangeDetectionStrategy, Input, OnDestroy } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { Component, ChangeDetectionStrategy, Input, OnDestroy, Output, EventEmitter, ViewChild } from '@angular/core';
+import { FormGroup, FormControl, FormGroupDirective } from '@angular/forms';
 
 import { DomoticzAuth, DomoticzSettings } from '@nd/core/models';
 
 @Component({
   selector: 'nd-settings-content',
   template: `
-    <div class="content-container" [formGroup]="parent" [nbSpinner]="loading">
-      <div class="form-container">
-        <button nbButton outline status="primary" class="clear-btn">clear settings</button>
+    <div class="content-container" [nbSpinner]="loading">
+      <div class="form-container" [formGroup]="parent">
+        <button type="reset" nbButton outline status="primary" class="clear-btn"
+          (click)="onClearClick()">
+          clear settings
+        </button>
         <div class="form-group">
-          <nb-checkbox [status]="connected ? 'success' : 'warning'" formControlName="ssl">
+          <nb-checkbox formControlName="ssl" status="{{ connected ? 'success' : 'warning' }}">
             SSL (mandatory for service worker support)
           </nb-checkbox>
         </div>
@@ -106,6 +109,8 @@ export class SettingsContentComponent implements OnDestroy {
 
   @Input() loading: boolean;
 
+  @Output() clearClick = new EventEmitter();
+
   credentials: FormGroup;
 
   connected: boolean;
@@ -116,6 +121,10 @@ export class SettingsContentComponent implements OnDestroy {
 
   getInvalid(name: string) {
     return this.getControl(name).invalid && !!this.getControl(name).value;
+  }
+
+  onClearClick() {
+    this.clearClick.emit();
   }
 
   ngOnDestroy() {

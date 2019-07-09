@@ -22,7 +22,7 @@ const oneFilledOutValidator: ValidatorFn = (group: FormGroup): ValidationErrors 
       <div class="settings-container {{ animationState }}">
         <nd-settings-content *ngIf="showContent" class="sidebar-content"
           [parent]="settingsForm" [auth]="auth$ | async" [settings]="settings$ | async"
-          [loading]="loading">
+          [loading]="loading" (clearClick)="onClearClick()">
         </nd-settings-content>
       </div>
     </div>
@@ -118,6 +118,20 @@ export class SettingsSidebarComponent implements OnInit {
       this.showContent = false;
       this.cd.detectChanges();
     }, 400);
+  }
+
+  async onClearClick() {
+    const msg = await this.dbService.clearSettings();
+    console.log(msg);
+    Object.keys(this.settingsForm.controls).forEach(key => {
+      if (key !== 'credentials') {
+        this.settingsForm.controls[key].setValue(null);
+      } else {
+        Object.keys((this.settingsForm.controls[key] as FormGroup).controls).forEach(_key => {
+          (this.settingsForm.controls[key] as FormGroup).controls[_key].setValue(null);
+        });
+      }
+    });
   }
 
 }

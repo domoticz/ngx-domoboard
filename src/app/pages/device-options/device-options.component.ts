@@ -27,7 +27,7 @@ const isSwitch = (device: any): device is Switch => device.SwitchType !== undefi
         (subscribeClick)="onSubscribeClick($event)" [pushEndpoint]="pushEndpoint$ | async"
         [loading]="pushLoading">
       </nd-notifications>
-      <nd-dim-level *ngIf="device['HaveDimmer']"></nd-dim-level>
+      <nd-dim-level *ngIf="device['HaveDimmer']" [level]="device.Level"></nd-dim-level>
     </div>
   `,
   styleUrls: ['./device-options.component.scss']

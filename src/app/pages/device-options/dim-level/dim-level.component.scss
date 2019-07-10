@@ -10,22 +10,38 @@
   }
 }
 
-.dim-container {
-  margin: 0 0 2rem 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.card-body {
+  overflow: hidden;
 
-  .title {
-    margin: 0 0 1.5rem 0;
-  }
+  .dim-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 
-  .radio-btn {
-    position: absolute;
-    height: 2.2rem;
-    width: 2.2rem;
-    border-radius: 2.2rem;
-    box-shadow: 0 8px 20px 0 rgba(40, 37, 89, 0.6);
-    cursor: pointer;
+    .title {
+      margin: 0 0 1.5rem 0;
+    }
+
+    .radio-container {
+      display: flex;
+
+      .radio-content {
+        width: 100%;
+
+        .radio-btn {
+          position: relative;
+          height: 2.2rem;
+          width: 2.2rem;
+          border-radius: 2.2rem;
+          box-shadow: 0 8px 20px 0 rgba(40, 37, 89, 0.6);
+          cursor: pointer;
+          bottom: 1.6rem;
+          left: -1.1rem;
+          right: -1.1rem;
+          transition-duration: 400ms;
+          transition-property: margin-left;
+        }
+      }
+    }
   }
 }

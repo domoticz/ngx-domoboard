@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { SwPush } from '@angular/service-worker';
 
 import { Observable, Subject, merge, zip } from 'rxjs';
-import { takeUntil, finalize, take, switchMap, tap } from 'rxjs/operators';
+import { takeUntil, finalize, take, tap, mergeMap } from 'rxjs/operators';
 
 import { DeviceOptionsService, DBService } from '@nd/core/services';
 import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
@@ -27,7 +27,7 @@ const isSwitch = (device: any): device is Switch => device.SwitchType !== undefi
         (subscribeClick)="onSubscribeClick($event)" [pushEndpoint]="pushEndpoint$ | async"
         [loading]="pushLoading">
       </nd-notifications>
-      <nd-dim-level *ngIf="device['HaveDimmer']" [level]="device.Level"></nd-dim-level>
+      <nd-dim-level *ngIf="device['HaveDimmer']"></nd-dim-level>
     </div>
   `,
   styleUrls: ['./device-options.component.scss']
@@ -68,7 +68,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
       this.route.paramMap,
       this.pushEndpoint$
     ).pipe(
-      switchMap(([params, pushEndpoint]) => {
+      mergeMap(([params, pushEndpoint]) => {
         return merge(
           this.service.getDevice(params.get('idx')),
           this.service.isSubscribed(params.get('idx'), pushEndpoint)

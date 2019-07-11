@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'nd-dim-level',
@@ -40,6 +40,8 @@ export class DimLevelComponent implements OnInit {
 
   @Input() level: number;
 
+  @Output() levelSet = new EventEmitter<number>();
+
   title = `DIM LEVEL: ` ;
 
   isMouseDown: boolean;
@@ -58,6 +60,7 @@ export class DimLevelComponent implements OnInit {
     } else if (event.target.className === 'progress-value') {
       this.level = Math.round(event.offsetX / event.target.parentNode.clientWidth * 100);
     }
+    this.initLevel = this.level.valueOf();
   }
 
   onMouseDown(event: any, isMobile?: boolean) {
@@ -76,6 +79,7 @@ export class DimLevelComponent implements OnInit {
     }
   }
 
+  // TODO: move outside of circle
   onMouseMove(event: any, isMobile?: boolean) {
     if (this.isMouseDown) {
       const posDelta = (!isMobile ? event.clientX : event.targetTouches[0].clientX) - this.posMouseDown;

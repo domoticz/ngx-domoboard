@@ -1,4 +1,6 @@
-import { Component, ChangeDetectionStrategy, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { fromEvent, Subject } from 'rxjs';
+import { tap, filter, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'nd-dim-level',
@@ -15,7 +17,7 @@ import { Component, ChangeDetectionStrategy, Input, OnInit, Output, EventEmitter
               <svg class="radio-btn" viewBox="0 0 100 100"
                 [ngStyle]="{ 'margin-left': level > 100 ? '100%' : level < 0 ? '0' : level + '%' }"
                 (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)"
-                (mousemove)="onMouseMove($event)" (touchstart)="onMouseDown($event, true)"
+                (touchstart)="onMouseDown($event, true)"
                 (touchend)="onMouseUp($event)" (touchmove)="onMouseMove($event, true)">
                 <defs>
                   <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
@@ -36,7 +38,9 @@ import { Component, ChangeDetectionStrategy, Input, OnInit, Output, EventEmitter
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class DimLevelComponent implements OnInit {
+export class DimLevelComponent implements OnInit, OnDestroy {
+
+  private unsubscribe$ = new Subject();
 
   @Input() level: number;
 
@@ -52,6 +56,11 @@ export class DimLevelComponent implements OnInit {
 
   ngOnInit() {
     this.initLevel = this.level.valueOf();
+    fromEvent(document, 'mousemove').pipe(
+      filter(() => this.isMouseDown),
+      tap((event: any) => this.onMouseMove(event)),
+      takeUntil(this.unsubscribe$)
+    ).subscribe();
   }
 
   onBarClick(event: any) {
@@ -95,6 +104,11 @@ export class DimLevelComponent implements OnInit {
         this.level = 0;
       }
     }
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
 }

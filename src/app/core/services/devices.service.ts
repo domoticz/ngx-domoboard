@@ -48,7 +48,7 @@ export class DevicesService<T> extends DataService {
   getDevices(_filter: string): Observable<DomoticzResponse<T>> {
     return this.get<DomoticzResponse<T>>(Api.devices.replace('{filter}', _filter), true).pipe(
       tap((resp: DomoticzResponse<T>) =>
-        !!resp ? this.subject.next({
+        !!resp && !!resp.result ? this.subject.next({
           ...this.subject.value, devices: resp.result, lastUpdate: resp.ActTime.toString(),
           types: [...resp.result.map(d => {
             if (isSwitch(d)) {

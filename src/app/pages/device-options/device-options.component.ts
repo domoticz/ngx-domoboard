@@ -15,7 +15,8 @@ const isSwitch = (device: any): device is Switch => device.SwitchType !== undefi
 @Component({
   selector: 'nd-device-options',
   template: `
-    <div *ngIf="(device$ | async) as device" class="options-container">
+    <div *ngIf="(device$ | async) as device" class="options-container"
+      [nbSpinner]="pushLoading">
       <nb-icon class="close-icon" icon="close-outline"
         (click)="onCloseClick()">
       </nb-icon>
@@ -27,7 +28,9 @@ const isSwitch = (device: any): device is Switch => device.SwitchType !== undefi
         (subscribeClick)="onSubscribeClick($event)" [pushEndpoint]="pushEndpoint$ | async"
         [loading]="pushLoading">
       </nd-notifications>
-      <nd-dim-level *ngIf="device['HaveDimmer']" [level]="device.Level"></nd-dim-level>
+      <nd-dim-level *ngIf="device.SwitchType === 'Dimmer'" [device]="device$ | async"
+        (levelSet)="onLevelSet($event)">
+      </nd-dim-level>
     </div>
   `,
   styleUrls: ['./device-options.component.scss']
@@ -86,7 +89,6 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   onRenameClick(device: Temp | Switch) {
     this.renameLoading = true;
     this.service.renameDevice(device.idx, device.Name).pipe(
-      take(1),
       finalize(() => this.renameLoading = false),
       takeUntil(this.unsubscribe$)
     ).subscribe();
@@ -124,6 +126,12 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
         take(1)
       ).subscribe();
     }
+  }
+
+  onLevelSet(device: Switch) {
+    this.service.setDimLevel(device.idx, device.Level).pipe(
+      takeUntil(this.unsubscribe$)
+    ).subscribe();
   }
 
   ngOnDestroy() {

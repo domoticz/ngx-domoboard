@@ -7,7 +7,7 @@
       <ng-container *ngFor="let switch of (switches$ | async)">
         <div class="col-xxxl-3 col-md-6" *ngIf="switch.SwitchType === switchType">
           <nd-status-card [title]="switch.Name" (statusChanged)="statusChanged($event, switch)"
-            [on]="switch.Status === 'On'" [disabled]="switch.HaveTimeout" [status]="switch.Status"
+            [on]="isSwitchOn(switch)" [disabled]="switch.HaveTimeout" [status]="switch.Status"
             [loading]="switchLoading && clickedIdx === switch.idx" (optionsClick)="onOptionsClick(switch.idx)">
             <i *ngIf="icon[switch.Image]?.startsWith('nb'); else svgIcon" [ngClass]="icon[switch.Image]"></i>
 

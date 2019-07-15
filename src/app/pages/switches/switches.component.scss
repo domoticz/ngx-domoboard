@@ -1,4 +1,5 @@
 @import 'src/_themes.scss';
+@import '../../../animations';
 
 @include nb-install-component() {
 
@@ -35,6 +36,10 @@
   min-height: calc(100vh - 10rem);
   display: flex;
   flex-direction: column;
+  animation-name: enterleft;
+  animation-duration: 400ms;
+  animation-timing-function: ease-in-out;
+  position: relative;
 
   .switchType {
     margin: 1rem 0;

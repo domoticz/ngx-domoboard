@@ -40,8 +40,8 @@ export class StatusCardComponent {
 
   private _status: string;
   @Input()
-  set status(value: string) {
-    this.clickable = ['On', 'Off'].includes(value);
+  set status(value) {
+    this.clickable = ['On', 'Off', 'Level'].some(s => value.includes(s));
     this._status = value;
   }
   get status() { return this._status; }

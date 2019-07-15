@@ -48,6 +48,10 @@ export class SwitchesComponent implements OnInit, OnDestroy {
     ).subscribe();
   }
 
+  isSwitchOn(_switch: Switch): boolean {
+    return !['Off', 'Closed'].some(s => _switch.Status.includes(s));
+  }
+
   statusChanged(event: any, _switch: Switch) {
     if (['On/Off', 'Dimmer'].includes(_switch.SwitchType)) {
       this.switchLoading = true;

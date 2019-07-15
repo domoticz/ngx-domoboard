@@ -1,15 +1,16 @@
 import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 
-import { NbMenuItem } from '@nebular/theme';
+import { NbMenuItem, NbMenuService } from '@nebular/theme';
 import { fromEvent, Subject } from 'rxjs';
-import { tap, filter, takeUntil } from 'rxjs/operators';
+import { tap, filter, takeUntil, take } from 'rxjs/operators';
 
 @Component({
   selector: 'nd-menu-sidebar',
   template: `
     <div id="menu-sidebar" class="{{ animationState }}">
       <div class="menu-container {{ animationState }}">
-        <nb-menu id="menu" tag="menu" [items]="items"></nb-menu>
+        <nb-menu id="menu" tag="menu" [items]="items">
+        </nb-menu>
       </div>
     </div>
   `,
@@ -27,15 +28,15 @@ export class MenuSidebarComponent implements OnInit, OnDestroy {
   items: NbMenuItem[] = [
     {
       title: 'Switches',
-      link: '/switches',
       icon: 'toggle-left-outline'
     },
     {
       title: 'Temperature',
-      link: '/temperature',
       icon: 'thermometer-outline'
     }
   ];
+
+  constructor(private menuService: NbMenuService) { }
 
   ngOnInit() {
     fromEvent(document, 'click').pipe(
@@ -47,6 +48,9 @@ export class MenuSidebarComponent implements OnInit, OnDestroy {
         event.target.id !== 'menu-icon'),
       tap(() => this.outsideClick.emit()),
       takeUntil(this.unsubscribe$)
+    ).subscribe();
+    this.menuService.getSelectedItem('menu').pipe(
+      tap(item => console.log(item)),
     ).subscribe();
   }
 

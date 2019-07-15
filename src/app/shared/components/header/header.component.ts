@@ -25,7 +25,7 @@ export class HeaderComponent {
   constructor(private router: Router) { }
 
   onChangeTab(event: any) {
-    this.router.navigate([this.routes[event.tabTitle]]);
+    setTimeout(() => this.router.navigate([this.routes[event.tabTitle]]), 400);
   }
 
 }

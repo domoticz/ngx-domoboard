@@ -1,25 +1,25 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Subject, merge } from 'rxjs';
+import { Subject } from 'rxjs';
 import { tap, takeUntil, take, finalize } from 'rxjs/operators';
 
-import { Switch } from '@nd/core/models';
+import { Switch, Temp } from '@nd/core/models';
 
 import { DevicesService, SwitchesService } from '@nd/core/services';
 
 @Component({
   selector: 'nd-switches',
-  templateUrl: './switches.component.html',
-  styleUrls: ['./switches.component.scss']
+  templateUrl: './devices.component.html',
+  styleUrls: ['./devices.component.scss']
 })
-export class SwitchesComponent implements OnInit, OnDestroy {
+export class DevicesComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject();
 
-  switches$ = this.devicesService.select<Switch[]>('devices');
+  switches$ = this.service.select<Switch[] | Temp[]>('devices');
 
-  switchTypes$ = this.devicesService.select<string[]>('types');
+  switchTypes$ = this.service.select<string[]>('types');
 
   icon = {
     Fireplace: 'nd-fireplace',
@@ -27,23 +27,18 @@ export class SwitchesComponent implements OnInit, OnDestroy {
     Door: 'nd-door'
   };
 
-  loading$ = this.devicesService.loading$;
-
   switchLoading: boolean;
 
   clickedIdx: string;
 
   constructor(
-    private devicesService: DevicesService<Switch>,
+    private service: DevicesService,
     private switchesService: SwitchesService,
     private router: Router
   ) { }
 
   ngOnInit() {
-    merge(
-      this.devicesService.getDevices('light'),
-      this.devicesService.refreshDevices('light')
-    ).pipe(
+    this.service.refreshDevices('light').pipe(
       takeUntil(this.unsubscribe$)
     ).subscribe();
   }
@@ -78,7 +73,7 @@ export class SwitchesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.devicesService.clearStore();
+    this.service.clearStore();
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }

@@ -21,15 +21,15 @@ interface State<T> {
 }
 
 @Injectable({providedIn: 'root'})
-export class DevicesService<T> extends DataService {
+export class DevicesService extends DataService {
 
-  initialState: State<T> = {
+  initialState: State<Switch | Temp> = {
     types: [],
     devices: [],
     lastUpdate: ''
   };
 
-  private subject = new BehaviorSubject<State<T>>(this.initialState);
+  private subject = new BehaviorSubject<State<Switch | Temp>>(this.initialState);
   store = this.subject.asObservable().pipe(
     distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y))
   );
@@ -41,15 +41,15 @@ export class DevicesService<T> extends DataService {
     super(httpClient, dbService);
   }
 
-  select<T1>(...name: string[]): Observable<T1> {
+  select<T>(...name: string[]): Observable<T> {
     return this.store.pipe(pluck(...name));
   }
 
-  getDevices(_filter: string): Observable<DomoticzResponse<T>> {
+  getDevices<T>(_filter: string): Observable<DomoticzResponse<T>> {
     return this.get<DomoticzResponse<T>>(Api.devices.replace('{filter}', _filter), true).pipe(
       tap((resp: DomoticzResponse<T>) =>
         !!resp && !!resp.result ? this.subject.next({
-          ...this.subject.value, devices: resp.result, lastUpdate: resp.ActTime.toString(),
+          ...this.subject.value, devices: resp.result as any[], lastUpdate: resp.ActTime.toString(),
           types: [...resp.result.map(d => {
             if (isSwitch(d)) {
               return d.SwitchType;
@@ -62,11 +62,12 @@ export class DevicesService<T> extends DataService {
     );
   }
 
-  refreshDevices(_filter: string): Observable<DomoticzResponse<T>> {
+  refreshDevices<T>(_filter: string): Observable<DomoticzResponse<T>> {
     return interval(10000).pipe(
-      switchMap(() =>
-        this.get<DomoticzResponse<T>>(Api.refreshDevices.replace('{lastupdate}', this.subject.value.lastUpdate)
-          .replace('{filter}', _filter))),
+      switchMap(() => this.get<DomoticzResponse<T>>(
+        Api.refreshDevices.replace('{lastupdate}', this.subject.value.lastUpdate)
+          .replace('{filter}', _filter))
+      ),
       filter(resp => !!resp && !!resp.result),
       tap(resp => this.subject.next({
         ...this.subject.value, devices: this.subject.value.devices.map(device =>

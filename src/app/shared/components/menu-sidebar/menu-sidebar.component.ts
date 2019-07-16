@@ -9,7 +9,8 @@ import { tap, filter, takeUntil, take } from 'rxjs/operators';
   template: `
     <div id="menu-sidebar" class="{{ animationState }}">
       <div class="menu-container {{ animationState }}">
-        <nb-menu id="menu" tag="menu" [items]="items">
+        <nb-menu id="menu" tag="menu" [items]="items"
+          (click)="onItemClick($event)">
         </nb-menu>
       </div>
     </div>
@@ -49,9 +50,16 @@ export class MenuSidebarComponent implements OnInit, OnDestroy {
       tap(() => this.outsideClick.emit()),
       takeUntil(this.unsubscribe$)
     ).subscribe();
-    this.menuService.getSelectedItem('menu').pipe(
-      tap(item => console.log(item)),
-    ).subscribe();
+  }
+
+  onItemClick(event: any) {
+    event.preventDefault();
+    event.stopPropagation();
+    setTimeout(() => {
+      this.menuService.getSelectedItem('menu').pipe(
+        tap(menuBag => console.log(menuBag)),
+      ).subscribe();
+    }, 500);
   }
 
   ngOnDestroy() {

@@ -18,14 +18,14 @@ export class HeaderComponent {
   name = environment.name;
 
   routes = {
-    Switches: 'switches',
+    Switches: 'devices/switches',
     Temperature: 'temperature',
   };
 
   constructor(private router: Router) { }
 
   onChangeTab(event: any) {
-    setTimeout(() => this.router.navigate([this.routes[event.tabTitle]]), 400);
+    this.router.navigate([this.routes[event.tabTitle]]);
   }
 
 }

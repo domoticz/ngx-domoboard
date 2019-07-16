@@ -10,8 +10,7 @@ import { Temp } from '@nd/core/models';
 @Component({
   selector: 'nd-temperature',
   template: `
-    <div class="type-container" *ngIf="!!(temps$ | async).length || (loading$ | async); else noDevices"
-      [nbSpinner]="loading$ | async">
+    <div class="type-container" *ngIf="!!(temps$ | async).length || (loading$ | async); else noDevices">
       <ng-container *ngFor="let type of (types$ | async)">
         <span class="type">{{ type }}</span>
 
@@ -50,7 +49,7 @@ export class TemperatureComponent implements OnInit, OnDestroy {
   temps$ = this.service.select<Temp[]>('devices');
 
   constructor(
-    private service: DevicesService<Temp>,
+    private service: DevicesService,
     private router: Router
     ) { }
 
@@ -68,7 +67,7 @@ export class TemperatureComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.service.clearStore();
+    // this.service.clearStore();
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }

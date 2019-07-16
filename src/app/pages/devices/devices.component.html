@@ -1,19 +1,19 @@
-<ng-container *ngIf="(switches$ | async) as switches">
-  <div class="switchType-container" *ngIf="!!switches.length; else noDevices">
-    <ng-container *ngFor="let switchType of (switchTypes$ | async)">
-      <span class="switchType">{{ switchType }}</span>
+<ng-container *ngIf="(devices$ | async) as devices">
+  <div class="type-container" *ngIf="!!devices.length; else noDevices">
+    <ng-container *ngFor="let type of (types$ | async)">
+      <span class="type">{{ type }}</span>
 
       <div class="row">
-        <ng-container *ngFor="let switch of switches">
-          <div class="col-xxxl-3 col-md-6" *ngIf="switch.SwitchType === switchType">
-            <nd-status-card [title]="switch.Name" (statusChanged)="statusChanged($event, switch)"
-              [on]="isSwitchOn(switch)" [disabled]="switch.HaveTimeout" [status]="switch.Status"
-              [loading]="switchLoading && clickedIdx === switch.idx" (optionsClick)="onOptionsClick(switch.idx)">
-              <i *ngIf="icon[switch.Image]?.startsWith('nb'); else svgIcon" [ngClass]="icon[switch.Image]"></i>
+        <ng-container *ngFor="let device of devices">
+          <div class="col-xxxl-3 col-md-6" *ngIf="device.SwitchType === type">
+            <nd-status-card [title]="device.Name" (statusChanged)="statusChanged($event, device)"
+              [on]="isSwitchOn(device)" [disabled]="device.HaveTimeout" [status]="device.Status"
+              [loading]="switchLoading && clickedIdx === device.idx" (optionsClick)="onOptionsClick(device.idx)">
+              <i *ngIf="icon[device.Image]?.startsWith('nb'); else svgIcon" [ngClass]="icon[device.Image]"></i>
 
               <ng-template #svgIcon>
-                <nd-svg-icon class="nd-icon {{ switch.Status }}" [name]="icon[switch.Image]"
-                  [status]="switch.Status">
+                <nd-svg-icon class="nd-icon {{ device.Status }}" [name]="icon[device.Image]"
+                  [status]="device.Status">
                 </nd-svg-icon>
               </ng-template>
             </nd-status-card>

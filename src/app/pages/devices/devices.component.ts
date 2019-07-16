@@ -9,7 +9,7 @@ import { Switch, Temp } from '@nd/core/models';
 import { DevicesService, SwitchesService } from '@nd/core/services';
 
 @Component({
-  selector: 'nd-switches',
+  selector: 'nd-devices',
   templateUrl: './devices.component.html',
   styleUrls: ['./devices.component.scss']
 })
@@ -17,9 +17,9 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject();
 
-  switches$ = this.service.select<Switch[] | Temp[]>('devices');
+  devices$ = this.service.select<Switch[] | Temp[]>('devices');
 
-  switchTypes$ = this.service.select<string[]>('types');
+  types$ = this.service.select<string[]>('types');
 
   icon = {
     Fireplace: 'nd-fireplace',
@@ -73,7 +73,6 @@ export class DevicesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.service.clearStore();
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }

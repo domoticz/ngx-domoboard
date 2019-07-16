@@ -3,9 +3,9 @@
 
 @include nb-install-component() {
 
-  .switchType-container {
+  .type-container {
 
-    .switchType {
+    .type {
       font-size: nb-theme(text-heading-5-font-size);
     }
 
@@ -32,16 +32,16 @@
   }
 }
 
-.switchType-container {
+.type-container {
   min-height: calc(100vh - 10rem);
   display: flex;
   flex-direction: column;
-  animation-name: enterleft;
+  animation-name: enterright;
   animation-duration: 400ms;
   animation-timing-function: ease-in-out;
   position: relative;
 
-  .switchType {
+  .type {
     margin: 1rem 0;
     text-transform: uppercase;
   }

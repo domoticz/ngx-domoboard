@@ -40,13 +40,28 @@
   animation-timing-function: ease-in-out;
   position: relative;
 
-  &.in {
-    animation-name: enterleft;
+  &.light {
+
+    &.in {
+      animation-name: enterleft;
+    }
+
+    &.out {
+      animation-name: exitleft;
+      left: calc(-100% - 1.5rem);
+    }
   }
 
-  &.out {
-    animation-name: exitleft;
-    left: calc(-100% - 1.5rem);
+  &.temp {
+
+    &.in {
+      animation-name: enterright;
+    }
+
+    &.out {
+      animation-name: exitright;
+      right: calc(-100% - 1.5rem);
+    }
   }
 
   .type {

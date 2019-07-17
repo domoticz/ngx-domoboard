@@ -37,6 +37,13 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   loading: boolean;
 
+  get filter() {
+    switch (this.path) {
+      case 'temperature': return 'temp';
+      case 'switches': return 'light';
+    }
+  }
+
   constructor(
     private service: DevicesService,
     private switchesService: SwitchesService,
@@ -45,7 +52,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.service.refreshDevices('light').pipe(
+    this.service.refreshDevices(this.filter).pipe(
       takeUntil(this.unsubscribe$)
     ).subscribe();
     this.router.events.pipe(
@@ -61,6 +68,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
   }
 
   isSwitchOn(_switch: Switch): boolean {
+    if (this.filter !== 'light') { return; }
     return !['Off', 'Closed'].some(s => _switch.Status.includes(s));
   }
 

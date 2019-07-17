@@ -1,11 +1,11 @@
 <ng-container *ngIf="(devices$ | async) as devices">
-  <div class="type-container {{ navState }}" *ngIf="!!devices.length || loading; else noDevices">
+  <div class="type-container {{ filter }} {{ navState }}" *ngIf="!!devices.length || loading; else noDevices">
     <ng-container *ngFor="let type of (types$ | async)">
       <span class="type">{{ type }}</span>
 
       <div class="row">
         <ng-container *ngFor="let device of devices">
-          <div class="col-xxxl-3 col-md-6" *ngIf="device.SwitchType === type">
+          <div class="col-xxxl-3 col-md-6" *ngIf="device.SwitchType === type || device.Type === type">
             <nd-status-card [title]="device.Name" (statusChanged)="statusChanged($event, device)"
               [on]="isSwitchOn(device)" [disabled]="device.HaveTimeout" [status]="device.Status"
               [loading]="switchLoading && clickedIdx === device.idx" (optionsClick)="onOptionsClick(device.idx)">

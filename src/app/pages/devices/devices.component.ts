@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, ActivatedRouteSnapshot, NavigationStart, NavigationEnd } from '@angular/router';
 
 import { Subject } from 'rxjs';
 import { tap, takeUntil, take, finalize } from 'rxjs/operators';
@@ -31,15 +31,32 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   clickedIdx: string;
 
+  path = this.route.snapshot.url[0].path;
+
+  navState = 'in';
+
+  loading: boolean;
+
   constructor(
     private service: DevicesService,
     private switchesService: SwitchesService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
     this.service.refreshDevices('light').pipe(
       takeUntil(this.unsubscribe$)
+    ).subscribe();
+    this.router.events.pipe(
+      tap(event => {
+        if (event instanceof NavigationStart) {
+          this.navState = 'out';
+          setTimeout(() => this.loading = true, 400);
+        } else if (event instanceof NavigationEnd) {
+          this.loading = true;
+        }
+      })
     ).subscribe();
   }
 

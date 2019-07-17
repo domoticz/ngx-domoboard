@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Resolve, ActivatedRouteSnapshot } from '@angular/router';
 
-import { Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { Observable, timer } from 'rxjs';
+import { take, concatMap } from 'rxjs/operators';
 
 import { DomoticzResponse } from '../models';
 import { DevicesService } from '../services';
@@ -19,7 +19,11 @@ export class DevicesResolver implements Resolve<Observable<DomoticzResponse<any>
     } else if (route.url[0].path === 'temperature') {
       filter = 'temp';
     }
-    return this.service.getDevices(filter).pipe(take(1));
+
+    return timer(300).pipe(
+      concatMap(() => this.service.getDevices(filter)),
+      take(1)
+    );
   }
 
 }

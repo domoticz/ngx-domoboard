@@ -36,13 +36,52 @@
   min-height: calc(100vh - 10rem);
   display: flex;
   flex-direction: column;
-  animation-name: enterright;
   animation-duration: 400ms;
   animation-timing-function: ease-in-out;
   position: relative;
 
+  &.in {
+    animation-name: enterleft;
+  }
+
+  &.out {
+    animation-name: exitleft;
+    left: calc(-100% - 1.5rem);
+  }
+
   .type {
     margin: 1rem 0;
     text-transform: uppercase;
+  }
+}
+
+.spinner-container {
+  height: 75vh;
+  width: 90%;
+  position: absolute;
+  top: 6.5rem;
+  left: 5%;
+  overflow: hidden;
+}
+
+.no-devices {
+  animation-duration: 400ms;
+  animation-timing-function: ease-in-out;
+  position: relative;
+
+  &.temp {
+
+    &.in {
+      animation-name: enterright;
+    }
+
+    &.out {
+      animation-name: exitright;
+      right: calc(-100% - 1.5rem);
+    }
+  }
+
+  &.switches {
+    animation-name: enterleft;
   }
 }

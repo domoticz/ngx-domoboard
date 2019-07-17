@@ -1,5 +1,5 @@
 <ng-container *ngIf="(devices$ | async) as devices">
-  <div class="type-container" *ngIf="!!devices.length; else noDevices">
+  <div class="type-container {{ navState }}" *ngIf="!!devices.length || loading; else noDevices">
     <ng-container *ngFor="let type of (types$ | async)">
       <span class="type">{{ type }}</span>
 
@@ -24,8 +24,10 @@
   </div>
 </ng-container>
 
+<div class="spinner-container" [nbSpinner]="loading"></div>
+
 <ng-template #noDevices>
-  <div class="no-devices">
+  <div class="no-devices {{ path === 'temperature' ? 'temp' : 'switches' }} {{ navState }}">
     <span>No</span>
     <span>devices</span>
     <span>found</span>

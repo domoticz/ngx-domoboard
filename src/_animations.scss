@@ -68,6 +68,26 @@
   }
 }
 
+@keyframes exitright {
+  from {
+    right: 0;
+  }
+
+  to {
+    right: -100%;
+  }
+}
+
+@keyframes enterleft {
+  from {
+    left: -100%;
+  }
+
+  to {
+    left: 0;
+  }
+}
+
 @keyframes exitleft {
   from {
     left: 0;

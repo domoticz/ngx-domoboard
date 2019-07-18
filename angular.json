@@ -30,11 +30,18 @@
             "styles": [
               "src/styles.scss",
               "./node_modules/nebular-icons/scss/nebular-icons.scss",
-              "./node_modules/bootstrap/dist/css/bootstrap.css"
+              "./node_modules/bootstrap/dist/css/bootstrap.css",
+              "./node_modules/pace-js/themes/green/pace-theme-minimal.css"
             ],
             "scripts": [
               {
                 "input": "node_modules/document-register-element/build/document-register-element.js"
+              },
+              {
+                "input": "./pace-options.js"
+              },
+              {
+                "input": "./node_modules/pace-js/pace.js"
               }
             ]
           },

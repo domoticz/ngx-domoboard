@@ -19,3 +19,10 @@
 @include nb-install() {
   @include nb-theme-global();
 };
+
+.pace {
+
+  .pace-progress {
+    z-index: 10002 !important;
+  }
+}

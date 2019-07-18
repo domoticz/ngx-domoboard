@@ -44,6 +44,13 @@ export class DevicesComponent implements OnInit, OnDestroy {
     }
   }
 
+  get statusKey() {
+    switch (this.filter) {
+      case 'light': return 'Status';
+      case 'temp': return 'Data';
+    }
+  }
+
   constructor(
     private service: DevicesService,
     private switchesService: SwitchesService,
@@ -60,8 +67,6 @@ export class DevicesComponent implements OnInit, OnDestroy {
         if (event instanceof NavigationStart) {
           this.navState = 'out';
           setTimeout(() => this.loading = true, 400);
-        } else if (event instanceof NavigationEnd) {
-          this.loading = true;
         }
       })
     ).subscribe();

@@ -7,7 +7,7 @@
         <ng-container *ngFor="let device of devices">
           <div class="col-xxxl-3 col-md-6" *ngIf="device.SwitchType === type || device.Type === type">
             <nd-status-card [title]="device.Name" (statusChanged)="statusChanged($event, device)"
-              [on]="isSwitchOn(device)" [disabled]="device.HaveTimeout" [status]="device.Status"
+              [on]="isSwitchOn(device)" [disabled]="device.HaveTimeout" [status]="device[statusKey]"
               [loading]="switchLoading && clickedIdx === device.idx" (optionsClick)="onOptionsClick(device.idx)">
               <i *ngIf="icon[device.Image]?.startsWith('nb'); else svgIcon" [ngClass]="icon[device.Image]"></i>
 
@@ -23,8 +23,6 @@
     </ng-container>
   </div>
 </ng-container>
-
-<div class="spinner-container" [nbSpinner]="loading"></div>
 
 <ng-template #noDevices>
   <div class="no-devices {{ path === 'temperature' ? 'temp' : 'switches' }} {{ navState }}">

@@ -24,14 +24,14 @@ const pushApi = {
 };
 
 @Injectable({providedIn: 'root'})
-export class DeviceOptionsService<T> extends DataService {
+export class DeviceOptionsService extends DataService {
 
-  initialState: State<T> = {
-    device: {} as T,
+  initialState: State<Temp | Switch> = {
+    device: {} as Temp | Switch,
     isSubscribed: false
   };
 
-  private subject = new BehaviorSubject<State<T>>(this.initialState);
+  private subject = new BehaviorSubject<State<Temp | Switch>>(this.initialState);
   store = this.subject.asObservable().pipe(
     distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y))
   );
@@ -43,14 +43,14 @@ export class DeviceOptionsService<T> extends DataService {
     super(httpClient, dbService);
   }
 
-  select<T1>(...name: string[]): Observable<T1> {
+  select<T>(...name: string[]): Observable<T> {
     return this.store.pipe(pluck(...name));
   }
 
-  getDevice(idx: string): Observable<DomoticzResponse<T>> {
+  getDevice<T>(idx: string): Observable<DomoticzResponse<T>> {
     return this.get<DomoticzResponse<T>>(Api.device.replace('{idx}', idx)).pipe(
       tap((resp: DomoticzResponse<T>) => !!resp ? this.subject.next({
-        ...this.subject.value, device: resp.result[0]
+        ...this.subject.value, device: resp.result[0] as any
       }) : this.clearStore())
     );
   }

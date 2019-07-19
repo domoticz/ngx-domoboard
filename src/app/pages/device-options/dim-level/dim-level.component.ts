@@ -80,7 +80,7 @@ export class DimLevelComponent implements OnInit, OnDestroy {
       takeUntil(this.unsubscribe$)
     ).subscribe();
     this.debouncer$.pipe(
-      debounceTime(1000),
+      debounceTime(100),
       tap(value => this.levelSet.emit(value)),
       takeUntil(this.unsubscribe$)
     ).subscribe();

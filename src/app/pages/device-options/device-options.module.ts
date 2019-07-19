@@ -11,6 +11,7 @@ import { routes } from './device-options.routes';
 import { NameComponent } from './name/name.component';
 import { PushNotificationsComponent } from './push-notifications/push-notifications.component';
 import { DimLevelComponent } from './dim-level/dim-level.component';
+import { DeviceIconComponent } from './device-icon/device-icon.component';
 
 @NgModule({
   imports: [
@@ -24,7 +25,8 @@ import { DimLevelComponent } from './dim-level/dim-level.component';
     DeviceOptionsComponent,
     NameComponent,
     PushNotificationsComponent,
-    DimLevelComponent
+    DimLevelComponent,
+    DeviceIconComponent
   ],
   providers: [],
 })

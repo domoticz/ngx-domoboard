@@ -8,6 +8,7 @@ import { DomoticzSettings } from '@nd/core/models';
 interface State {
   settings: DomoticzSettings;
   pushEndpoint: string;
+  deviceIcon: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -27,6 +28,8 @@ export class DBService {
   SETTINGS_STORE = 'domoticz_settings';
 
   PUSHSUB_STORE = 'push_subscription';
+
+  ICON_STORE = 'device_icon';
 
   select<T>(...name: string[]): Observable<T> {
     return this.store.pipe(pluck(...name));
@@ -49,6 +52,9 @@ export class DBService {
         );
         evt.currentTarget['result'].createObjectStore(
           this.PUSHSUB_STORE, { keyPath: 'id' }
+        );
+        evt.currentTarget['result'].createObjectStore(
+          this.ICON_STORE, { keyPath: 'idx' }
         );
       }.bind(this);
     });
@@ -93,6 +99,19 @@ export class DBService {
     });
   }
 
+  addDeviceIcon(idx: string, icon: string) {
+    const store = this.getObjectStore(this.ICON_STORE, 'readwrite');
+    const req = store.add({ idx: idx, deviceIcon: icon });
+    return new Promise<any>((resolve, reject) => {
+      req.onsuccess = function (evt: any) {
+        resolve('addDeviceIcon: ' + evt.type);
+      };
+      req.onerror = function (evt) {
+        reject('addDeviceIcon: ' + evt.target['error'].message);
+      };
+    });
+  }
+
   syncSettings(settings?: DomoticzSettings) {
     if (!!settings) {
       this.subject.next({
@@ -131,6 +150,21 @@ export class DBService {
       } else {
         this.subject.next({
           ...this.subject.value, pushEndpoint: pushEndpoint
+        });
+      }
+    }).bind(this);
+  }
+
+  syncDeviceIcon(idx: string, icon: string) {
+    const req = this.getObjectStore(this.PUSHSUB_STORE, 'readonly').get(idx || '');
+    req.onsuccess = ((evt: any) => {
+      if (!!evt.target.result) {
+        this.subject.next({
+          ...this.subject.value, pushEndpoint: evt.target.result.deviceIcon
+        });
+      } else {
+        this.subject.next({
+          ...this.subject.value, pushEndpoint: icon
         });
       }
     }).bind(this);

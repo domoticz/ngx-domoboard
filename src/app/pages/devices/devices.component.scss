@@ -68,15 +68,11 @@
     margin: 1rem 0;
     text-transform: uppercase;
   }
-}
 
-.spinner-container {
-  height: 75vh;
-  width: 90%;
-  position: absolute;
-  top: 6.5rem;
-  left: 5%;
-  overflow: hidden;
+  .temp-icon {
+    width: 60%;
+    height: 60%;
+  }
 }
 
 .no-devices {

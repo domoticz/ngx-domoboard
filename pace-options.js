@@ -4,5 +4,6 @@ window.paceOptions = {
   restartOnRequestAfter: true,
   ajax: {
     ignoreURLs: ['lastupdate']
-  }
+  },
+  restartOnPushState: false
 }

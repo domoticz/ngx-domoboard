@@ -97,6 +97,7 @@ export class SettingsSidebarComponent implements OnInit {
     this.dbService.openDb().then(() => {
       this.dbService.syncSettings();
       this.dbService.syncPushSub(null);
+      // this.dbService.syncDeviceIcon(null, null);
     });
   }
 

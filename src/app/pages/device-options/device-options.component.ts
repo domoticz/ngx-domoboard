@@ -49,6 +49,8 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   pushEndpoint$ = this.dbService.select<string>('pushEndpoint');
 
+  deviceIcon$ = this.dbService.select<string>('deviceIcon');
+
   renameLoading: boolean;
 
   pushLoading: boolean;
@@ -60,7 +62,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private location: Location,
-    private service: DeviceOptionsService<Temp | Switch>,
+    private service: DeviceOptionsService,
     private dbService: DBService,
     private swPush: SwPush
   ) { }

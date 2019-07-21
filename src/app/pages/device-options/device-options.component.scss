@@ -1,4 +1,5 @@
 @import 'src/_themes.scss';
+@import '../../../animations';
 
 @include nb-install-component() { }
 
@@ -6,6 +7,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  animation: appear 400ms ease-in-out;
 
   .close-icon {
     margin: 0 0 2rem auto;

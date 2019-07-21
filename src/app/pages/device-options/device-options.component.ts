@@ -1,9 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { SwPush } from '@angular/service-worker';
 
-import { Observable, Subject, merge, zip } from 'rxjs';
+import { Observable, Subject, zip } from 'rxjs';
 import { takeUntil, finalize, take, tap, mergeMap } from 'rxjs/operators';
 
 import { DeviceOptionsService, DBService } from '@nd/core/services';
@@ -20,15 +19,18 @@ const isSwitch = (device: any): device is Switch => device.SwitchType !== undefi
       <nb-icon class="close-icon" icon="close-outline"
         (click)="onCloseClick()">
       </nb-icon>
-      <nd-name [device]="device$ | async" [loading]="renameLoading"
+      <nd-name [device]="device" [loading]="renameLoading"
         (nameClick)="onRenameClick($event)">
       </nd-name>
-      <nd-notifications *ngIf="notificationsSupport" [device]="device$ | async"
+      <nd-device-icon [idx]="device.idx" [deviceIcon]="deviceIcon$ | async"
+        (saveIconClick)="onSaveIconClick($event)" [loading]="iconLoading">
+      </nd-device-icon>
+      <nd-notifications *ngIf="notificationsSupport" [device]="device"
         [settings]="settings$ | async" [isSubscribed]="isSubscribed$ | async"
         (subscribeClick)="onSubscribeClick($event)" [pushEndpoint]="pushEndpoint$ | async"
         [loading]="pushLoading">
       </nd-notifications>
-      <nd-dim-level *ngIf="device.SwitchType === 'Dimmer'" [device]="device$ | async"
+      <nd-dim-level *ngIf="device.SwitchType === 'Dimmer'" [device]="device"
         (levelSet)="onLevelSet($event)">
       </nd-dim-level>
     </div>
@@ -40,7 +42,10 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject();
 
   device$: Observable<Temp | Switch> = this.service.select<Temp | Switch>('device').pipe(
-    tap(device => this.notificationsSupport = 'Notification' in window && isSwitch(device))
+    tap(device => {
+      this.notificationsSupport = 'Notification' in window && isSwitch(device);
+      this.dbService.syncDeviceIcon(device.idx, null);
+    })
   );
 
   isSubscribed$: Observable<boolean> = this.service.select<boolean>('isSubscribed');
@@ -55,12 +60,13 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   pushLoading: boolean;
 
+  iconLoading: boolean;
+
   readonly VAPID_PUBLIC_KEY = 'BG-zibiw-dk6bhrbwLMicGYXna-WwoNqsF8FLKdDUzqhOKvfrH3jYG-UnaYNss45AMDqfJC_GgskDpx8lycjQ0Y';
 
   notificationsSupport: boolean;
 
   constructor(
-    private route: ActivatedRoute,
     private location: Location,
     private service: DeviceOptionsService,
     private dbService: DBService,
@@ -70,17 +76,13 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.pushLoading = true;
     zip(
-      this.route.paramMap,
+      this.device$,
       this.pushEndpoint$
     ).pipe(
-      mergeMap(([params, pushEndpoint]) => {
-        return merge(
-          this.service.getDevice(params.get('idx')),
-          this.service.isSubscribed(params.get('idx'), pushEndpoint)
-        );
-      }),
+      mergeMap(([device, pushEndpoint]) =>
+        this.service.isSubscribed(device.idx, pushEndpoint)),
       finalize(() => this.pushLoading = false),
-      take(2)
+      take(1)
     ).subscribe();
   }
 
@@ -94,6 +96,19 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
       finalize(() => this.renameLoading = false),
       takeUntil(this.unsubscribe$)
     ).subscribe();
+  }
+
+  async onSaveIconClick(event: any) {
+    this.iconLoading = true;
+    try {
+      const msg = await this.dbService.addDeviceIcon(event.idx, event.evaIcon);
+      console.log(msg);
+      this.dbService.syncDeviceIcon(event.idx, event.evaIcon);
+    } catch (error) {
+      console.error('Could not save device icon', error);
+    } finally {
+      setTimeout(() => this.iconLoading = false, 500);
+    }
   }
 
   async onSubscribeClick(event: any) {

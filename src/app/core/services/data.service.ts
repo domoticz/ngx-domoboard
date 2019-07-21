@@ -30,9 +30,10 @@ export abstract class DataService {
           }
           return this.httpClient.get<T>(
             `${settings.ssl ? 'https' : 'http'}://${settings.domain}:${settings.port}/${ relativeUrl }`,
-            !!settings.credentials && !!Object.keys(settings.credentials).every(key => settings.credentials[key] !== null) ?
-              this.getAuthOption(settings) : {}
-            ).pipe(tap(() => this.loadingSubject.next(false)));
+            !!settings.credentials ? this.getAuthOption(settings) : {}
+            ).pipe(
+              tap(() => this.loadingSubject.next(false))
+            );
         } else {
           return of(null);
         }

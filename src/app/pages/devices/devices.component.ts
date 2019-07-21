@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, ActivatedRouteSnapshot, NavigationStart, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 
-import { Subject } from 'rxjs';
-import { tap, takeUntil, take, finalize } from 'rxjs/operators';
+import { Subject, merge } from 'rxjs';
+import { tap, takeUntil, take, finalize, mergeMap } from 'rxjs/operators';
 
 import { Switch, Temp } from '@nd/core/models';
 
@@ -59,21 +59,25 @@ export class DevicesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    this.service.refreshDevices(this.filter).pipe(
-      takeUntil(this.unsubscribe$)
-    ).subscribe();
-    this.router.events.pipe(
+    merge(
+      this.service.getDevices(this.filter),
+      this.service.refreshDevices(this.filter)
+    ).pipe(
+      mergeMap(() => this.router.events),
       tap(event => {
         if (event instanceof NavigationStart) {
-          this.navState = 'out';
+          if (!event.url.includes('options')) {
+            this.navState = 'out';
+          }
           setTimeout(() => this.loading = true, 400);
         }
-      })
+      }),
+      takeUntil(this.unsubscribe$)
     ).subscribe();
   }
 
   isSwitchOn(_switch: Switch): boolean {
-    if (this.filter !== 'light') { return; }
+    if (this.filter !== 'light' || !_switch.Status) { return; }
     return !['Off', 'Closed'].some(s => _switch.Status.includes(s));
   }
 
@@ -90,8 +94,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
           }
         }),
         take(1),
-        finalize(() => this.switchLoading = false),
-        takeUntil(this.unsubscribe$)
+        finalize(() => this.switchLoading = false)
       ).subscribe();
     } else {
       throw new Error('Not a switchable device!');

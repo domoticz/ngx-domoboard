@@ -101,7 +101,7 @@ export class DBService {
 
   addDeviceIcon(idx: string, icon: string) {
     const store = this.getObjectStore(this.ICON_STORE, 'readwrite');
-    const req = store.add({ idx: idx, deviceIcon: icon });
+    const req = store.put({ idx: idx, deviceIcon: icon });
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = function (evt: any) {
         resolve('addDeviceIcon: ' + evt.type);
@@ -156,15 +156,15 @@ export class DBService {
   }
 
   syncDeviceIcon(idx: string, icon: string) {
-    const req = this.getObjectStore(this.PUSHSUB_STORE, 'readonly').get(idx || '');
+    const req = this.getObjectStore(this.ICON_STORE, 'readonly').get(idx);
     req.onsuccess = ((evt: any) => {
       if (!!evt.target.result) {
         this.subject.next({
-          ...this.subject.value, pushEndpoint: evt.target.result.deviceIcon
+          ...this.subject.value, deviceIcon: evt.target.result.deviceIcon
         });
       } else {
         this.subject.next({
-          ...this.subject.value, pushEndpoint: icon
+          ...this.subject.value, deviceIcon: icon
         });
       }
     }).bind(this);

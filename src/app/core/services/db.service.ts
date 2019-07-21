@@ -181,4 +181,16 @@ export class DBService {
     }
   }
 
+  getAllIcons() {
+    return this.getAllStore(this.ICON_STORE);
+  }
+
+  getAllStore(store: string) {
+    const req = this.getObjectStore(store, 'readonly').getAll();
+    return new Promise((resolve, reject) => {
+      req.onsuccess = ((evt: any) => resolve(evt.target.result || []));
+      req.onerror = ((evt: any) => reject(evt.target['error'].message));
+    });
+  }
+
 }

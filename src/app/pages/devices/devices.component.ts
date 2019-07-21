@@ -6,7 +6,7 @@ import { tap, takeUntil, take, finalize, mergeMap } from 'rxjs/operators';
 
 import { Switch, Temp } from '@nd/core/models';
 
-import { DevicesService, SwitchesService } from '@nd/core/services';
+import { DevicesService, SwitchesService, DBService } from '@nd/core/services';
 
 @Component({
   selector: 'nd-devices',
@@ -55,7 +55,8 @@ export class DevicesComponent implements OnInit, OnDestroy {
     private service: DevicesService,
     private switchesService: SwitchesService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private dbService: DBService
   ) { }
 
   ngOnInit() {
@@ -74,6 +75,17 @@ export class DevicesComponent implements OnInit, OnDestroy {
       }),
       takeUntil(this.unsubscribe$)
     ).subscribe();
+    this.getAllIcons();
+  }
+
+  async getAllIcons() {
+    try {
+      const icons = await this.dbService.getAllIcons();
+      console.log(icons);
+      return icons;
+    } catch (error) {
+      console.error('Could not retrieve device icons', error);
+    }
   }
 
   isSwitchOn(_switch: Switch): boolean {

@@ -58,23 +58,23 @@ export class DevicesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    // Re-initialize devices when settings are changed in sidebar
-    this.service.settings$.pipe(
-      skip(1),
-      switchMap(() => this.service.getDevices(this.filter)),
-      takeUntil(this.unsubscribe$)
-    ).subscribe();
-    this.service.refreshDevices(this.filter).pipe(
-      takeUntil(this.unsubscribe$)
-    ).subscribe();
-    this.router.events.pipe(
-      tap(event => {
-        if (event instanceof NavigationStart) {
-          if (!event.url.includes('options')) {
-            this.navState = 'out';
+    merge(
+      // Re-initialize devices when settings are changed in sidebar
+      this.service.settings$.pipe(
+        skip(1),
+        switchMap(() => this.service.getDevices(this.filter))
+      ),
+      this.service.refreshDevices(this.filter),
+      this.router.events.pipe(
+        tap(event => {
+          if (event instanceof NavigationStart) {
+            if (!event.url.includes('options')) {
+              this.navState = 'out';
+            }
           }
-        }
-      }),
+        })
+      )
+    ).pipe(
       takeUntil(this.unsubscribe$)
     ).subscribe();
     // this.getAllIcons();

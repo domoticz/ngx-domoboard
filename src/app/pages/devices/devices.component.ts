@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 
 import { Subject, merge } from 'rxjs';
-import { tap, takeUntil, take, finalize, mergeMap } from 'rxjs/operators';
+import { tap, takeUntil, take, finalize, mergeMap, skip, filter, switchMap } from 'rxjs/operators';
 
 import { Switch, Temp } from '@nd/core/models';
 
@@ -35,8 +35,6 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   navState = 'in';
 
-  loading: boolean;
-
   get filter() {
     switch (this.path) {
       case 'temperature': return 'temp';
@@ -60,22 +58,26 @@ export class DevicesComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    merge(
-      this.service.getDevices(this.filter),
-      this.service.refreshDevices(this.filter)
-    ).pipe(
-      mergeMap(() => this.router.events),
+    // Re-initialize devices when settings are changed in sidebar
+    this.service.settings$.pipe(
+      skip(1),
+      switchMap(() => this.service.getDevices(this.filter)),
+      takeUntil(this.unsubscribe$)
+    ).subscribe();
+    this.service.refreshDevices(this.filter).pipe(
+      takeUntil(this.unsubscribe$)
+    ).subscribe();
+    this.router.events.pipe(
       tap(event => {
         if (event instanceof NavigationStart) {
           if (!event.url.includes('options')) {
             this.navState = 'out';
           }
-          setTimeout(() => this.loading = true, 400);
         }
       }),
       takeUntil(this.unsubscribe$)
     ).subscribe();
-    this.getAllIcons();
+    // this.getAllIcons();
   }
 
   async getAllIcons() {

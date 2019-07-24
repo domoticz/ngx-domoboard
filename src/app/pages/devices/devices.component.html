@@ -1,5 +1,6 @@
 <ng-container *ngIf="(devices$ | async) as devices">
-  <div class="type-container {{ filter }} {{ navState }}" *ngIf="!!devices.length || loading; else noDevices">
+  <div class="type-container {{ filter }} {{ navState }}"
+    *ngIf="!!devices.length || navState === 'out'; else noDevices">
     <ng-container *ngFor="let type of (types$ | async)">
       <span class="type">{{ type }}</span>
 

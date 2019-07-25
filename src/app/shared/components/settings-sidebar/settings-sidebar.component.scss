@@ -1,7 +1,15 @@
 @import '../../../../themes';
 @import '../../../../animations';
 
-@include nb-install-component() { }
+@include nb-install-component() {
+
+  .sidebar-container {
+
+    .settings-container {
+      background: nb-theme(background-basic-color-2);
+    }
+  }
+}
 
 .sidebar-container {
   display: flex;
@@ -56,6 +64,7 @@
     }
 
     .settings-container {
+      overflow-y: scroll;
 
       &.in {
         animation-name: slidedown;

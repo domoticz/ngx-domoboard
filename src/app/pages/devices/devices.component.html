@@ -11,7 +11,8 @@
             <nd-status-card [title]="device.Name" (statusChanged)="statusChanged($event, device)"
               [on]="isSwitchOn(device)" [disabled]="device.HaveTimeout" [status]="device[statusKey]"
               [loading]="switchLoading && clickedIdx === device.idx" (optionsClick)="onOptionsClick(device.idx)">
-              <nd-svg-icon *ngIf="(!!icon[device.Image] || type === 'Door Contact') else nbIcon"
+              <nd-svg-icon *ngIf="((!!icon[device.Image] || type === 'Door Contact') &&
+                getDeviceIcon(device.idx) === 'alert-triangle-outline') else nbIcon"
                 class="nd-icon {{ device[statusKey] }}" [name]="icon[device.Image]"
                 [status]="device[statusKey]">
               </nd-svg-icon>

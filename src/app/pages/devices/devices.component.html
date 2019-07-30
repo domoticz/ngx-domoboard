@@ -7,21 +7,20 @@
       <div class="row">
         <ng-container *ngFor="let device of devices">
           <div class="col-xxxl-3 col-md-6" *ngIf="device.SwitchType === type || device.Type === type">
+
             <nd-status-card [title]="device.Name" (statusChanged)="statusChanged($event, device)"
               [on]="isSwitchOn(device)" [disabled]="device.HaveTimeout" [status]="device[statusKey]"
               [loading]="switchLoading && clickedIdx === device.idx" (optionsClick)="onOptionsClick(device.idx)">
-
-              <i *ngIf="icon[device.Image]?.startsWith('nb')" [ngClass]="icon[device.Image]"></i>
-
-              <nd-svg-icon *ngIf="icon[device.Image]?.startsWith('nd')" class="nd-icon {{ device[statusKey] }}"
-                [name]="icon[device.Image]" [status]="device[statusKey]">
+              <nd-svg-icon *ngIf="(!!icon[device.Image] || type === 'Door Contact') else nbIcon"
+                class="nd-icon {{ device[statusKey] }}" [name]="icon[device.Image]"
+                [status]="device[statusKey]">
               </nd-svg-icon>
-
-              <nb-icon *ngIf="filter === 'temp'" class="temp-icon"
-                icon="{{ device.Temp ? 'thermometer-outline' : 'droplet-outline' }}">
-              </nb-icon>
-
+              <ng-template #nbIcon>
+                <nb-icon class="temp-icon" [icon]="getDeviceIcon(device.idx)">
+                </nb-icon>
+              </ng-template>
             </nd-status-card>
+
           </div>
         </ng-container>
       </div>

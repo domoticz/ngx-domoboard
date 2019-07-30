@@ -101,7 +101,8 @@ export class DBService {
 
   addDeviceIcon(idx: string, icon: string) {
     const store = this.getObjectStore(this.ICON_STORE, 'readwrite');
-    const req = store.put({ idx: idx, deviceIcon: icon });
+    const req = !!icon ? store.put({ idx: idx, deviceIcon: icon }) :
+      store.delete(idx);
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = function (evt: any) {
         resolve('addDeviceIcon: ' + evt.type);

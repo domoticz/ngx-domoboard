@@ -14,8 +14,7 @@ const isSwitch = (device: any): device is Switch => device.SwitchType !== undefi
 @Component({
   selector: 'nd-device-options',
   template: `
-    <div *ngIf="(device$ | async) as device" class="options-container"
-      [nbSpinner]="pushLoading">
+    <div *ngIf="(device$ | async) as device" class="options-container">
       <nb-icon class="close-icon" icon="close-outline"
         (click)="onCloseClick()">
       </nb-icon>

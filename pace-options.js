@@ -3,7 +3,7 @@ window.paceOptions = {
   // not every request (false)
   restartOnRequestAfter: true,
   ajax: {
-    ignoreURLs: ['lastupdate']
+    ignoreURLs: ['lastupdate', 'switchcmd']
   },
   restartOnPushState: false
 }

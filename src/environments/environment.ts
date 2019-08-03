@@ -7,7 +7,7 @@ export const environment = {
   production: false,
   version: version,
   name: name,
-  pushServer: 'http://localhost:8081/api'
+  pushServer: 'http://localhost/api'
 };
 
 /*

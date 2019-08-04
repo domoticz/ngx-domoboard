@@ -12,6 +12,8 @@ import { NotificationService } from '@nd/core/services';
 
 import { environment } from 'environments/environment';
 
+declare let fathom: Function;
+
 @Component({
   selector: 'nd-root',
   templateUrl: './app.component.html',
@@ -52,7 +54,9 @@ export class AppComponent implements OnInit {
     this.notification$.subscribe();
     this.manageUpdate();
     this.router.events.pipe(
-      filter(evt => evt instanceof NavigationEnd && this.showMenu),
+      filter(evt => evt instanceof NavigationEnd),
+      tap(() => fathom('trackPageview')),
+      filter(() => this.showMenu),
       tap(() => this.onMenuToggle())
     ).subscribe();
   }

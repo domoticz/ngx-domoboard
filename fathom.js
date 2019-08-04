@@ -8,4 +8,4 @@
 	m.parentNode.insertBefore(o,m)
 })(document, window, 'https://nd-api.duckdns.org:5035/fathom/tracker.js', 'fathom');
 fathom('set', 'siteId', 'KXECY');
-fathom('trackPageview');
+// fathom('trackPageview');

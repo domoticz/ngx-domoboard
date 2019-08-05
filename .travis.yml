@@ -10,6 +10,7 @@ before_script:
   - npm install -g @angular/cli
 script:
 - npm run build
+- cp dist/ngx-domoboard/index.html dist/ngx-domoboard/404.html
 deploy:
   provider: pages
   skip_cleanup: true

@@ -1,3 +1,13 @@
 language: node_js
 node_js:
   - "stable"
+dist: bionic
+sudo: required
+branches:
+  only:
+  - master
+before_script:
+  - npm install -g @angular/cli
+script:
+- ng lint
+- npm run build

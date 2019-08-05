@@ -15,5 +15,6 @@ deploy:
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
   local_dir: dist/ngx-domoboard
+  keep_history: true
   on:
     branch: master

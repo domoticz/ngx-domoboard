@@ -9,5 +9,11 @@ branches:
 before_script:
   - npm install -g @angular/cli
 script:
-- ng lint
 - npm run build
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  local_dir: dist/ngx-domoboard
+  on:
+    branch: master

@@ -37,3 +37,10 @@ Customizable admin dashboard template based on Angular 8+ and using Nebular.
 </p>
 
 - Fill the form with your server infos.
+- Once the app gets a valid response from the server, the form will turn green and Domoticz version and status will appear at the bottom:
+
+<p align="center">
+  <img src="https://github.com/6l3m/ngx-domoboard/blob/master/src/assets/images/ScreenND_4.png">
+</p>
+
+- Devices should now appear on pages Switches and/or Temperature.

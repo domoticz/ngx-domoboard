@@ -27,3 +27,13 @@ Customizable admin dashboard template based on Angular 8+ and using Nebular.
 
 - A [Domoticz](https://www.domoticz.com/) server running on your home network.
 - An access to the server over https with a valid certificate (https://www.domoticz.com/wiki/Native_secure_access_with_Lets_Encrypt).
+
+## Getting started
+
+- Click the green gear at the top (mobile) or right (desktop) of the screen:
+
+<p align="center">
+  <img src="https://github.com/6l3m/ngx-domoboard/blob/master/src/assets/images/ScreenND_3.PNG">
+</p>
+
+- Fill the form with your server infos.

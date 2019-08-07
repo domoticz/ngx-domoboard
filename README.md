@@ -1,8 +1,11 @@
-## ngx-domoboard [![Build Status](https://travis-ci.org/6l3m/ngx-domoboard.svg?branch=master)](https://travis-ci.org/6l3m/ngx-domoboard)
+![]()## ngx-domoboard [![Build Status](https://travis-ci.org/6l3m/ngx-domoboard.svg?branch=master)](https://travis-ci.org/6l3m/ngx-domoboard)
 
 # Manage your Domoticz devices
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+<p align="center">
+  <img src="https://github.com/6l3m/ngx-domoboard/blob/master/src/assets/images/ScreenND_1.PNG">
+  <img src="https://github.com/6l3m/ngx-domoboard/blob/master/src/assets/images/ScreenND_2.PNG">
+</p>
 
 ## Code scaffolding
 

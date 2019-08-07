@@ -15,14 +15,15 @@ Domoticz is a very light weight home automation system that lets you monitor and
 
 PWAs (Progressive Web Apps) are a mean to reach native-like experience with web-based technologies (HTML, JS, CSS). To know more about PWA: https://developers.google.com/web/progressive-web-apps/.
 
-## Running unit tests
+## [Nebular](https://akveo.github.io/nebular/)
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Nebular is a customizable Angular UI Library based on [Eva Design System](https://eva.design/) specifications, with 40+ UI components, 4 visual themes, Auth and Security modules.
 
-## Running end-to-end tests
+## [ngx-admin](https://akveo.github.io/ngx-admin/)
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Customizable admin dashboard template based on Angular 8+ and using Nebular.
 
-## Further help
+## Requirements
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+- A [Domoticz](https://www.domoticz.com/) server running on your home network.
+- An access to the server over https with a valid certificate (https://www.domoticz.com/wiki/Native_secure_access_with_Lets_Encrypt).

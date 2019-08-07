@@ -1,6 +1,6 @@
 ## ngx-domoboard [![Build Status](https://travis-ci.org/6l3m/ngx-domoboard.svg?branch=master)](https://travis-ci.org/6l3m/ngx-domoboard)
 
-# Manage your ![Domoticz](https://www.domoticz.com/) devices
+# Manage your [Domoticz](https://www.domoticz.com/) devices
 
 <p align="center">
   <img src="https://github.com/6l3m/ngx-domoboard/blob/master/src/assets/images/ScreenND_1.PNG">
@@ -11,9 +11,9 @@
 
 Domoticz is a very light weight home automation system that lets you monitor and configure various devices like: lights, switches, various sensors/meters like temperature, rainfall, wind, Ultraviolet (UV) radiation, electricity usage/production, gas consumption, water consumption and much more.
 
-## Build
+## PWA
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+PWAs (Progressive Web Apps) are a mean to reach native-like experience with web-based technologies (HTML, JS, CSS). To know more about PWA: https://developers.google.com/web/progressive-web-apps/.
 
 ## Running unit tests
 

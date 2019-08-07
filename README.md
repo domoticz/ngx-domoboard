@@ -7,6 +7,15 @@
   <img src="https://github.com/6l3m/ngx-domoboard/blob/master/src/assets/images/ScreenND_2.PNG">
 </p>
 
+# Table of contents
+
+- [Domoticz](#domoticz)
+- [PWA](#pwa)
+- [Nebular](#nebular)
+- [ngx-admin](#ngx-admin)
+- [Requirements](#requirements)
+- [Getting started](#getting-started)
+
 ## Domoticz
 
 Domoticz is a very light weight home automation system that lets you monitor and configure various devices like: lights, switches, various sensors/meters like temperature, rainfall, wind, Ultraviolet (UV) radiation, electricity usage/production, gas consumption, water consumption and much more.

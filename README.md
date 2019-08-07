@@ -16,7 +16,7 @@
 - [Requirements](#requirements)
 - [Getting started](#getting-started)
 
-## Domoticz
+## [Domoticz](https://www.domoticz.com/)
 
 Domoticz is a very light weight home automation system that lets you monitor and configure various devices like: lights, switches, various sensors/meters like temperature, rainfall, wind, Ultraviolet (UV) radiation, electricity usage/production, gas consumption, water consumption and much more.
 

@@ -15,6 +15,8 @@
 - [ngx-admin](#ngx-admin)
 - [Requirements](#requirements)
 - [Getting started](#getting-started)
+- [Features](#features)
+- [WIP Features](#wip-features)
 
 ## [Domoticz](https://www.domoticz.com/)
 
@@ -53,3 +55,16 @@ Customizable admin dashboard template based on Angular 8+ and using Nebular.
 </p>
 
 - Devices should now appear on pages Switches and/or Temperature.
+- To install the app, trigger the Add to Home Screen option on your device.
+
+## Features
+
+- Toggle switchable devices.
+- Change the name of your device on your [Domoticz](https://www.domoticz.com/) server.
+- Choose the app icon for your device in [Eva icons](https://akveo.github.io/eva-icons/#/).
+- Push Notifications on device status change (Windows and Android).
+- Dim level
+
+## WIP Features
+
+- Color picker

@@ -38,7 +38,7 @@ Customizable admin dashboard template based on Angular 8+ and using Nebular.
 ## Requirements
 
 - A [Domoticz](https://www.domoticz.com/) server running on your home network.
-- An access to the server over https with a valid certificate (https://www.domoticz.com/wiki/Native_secure_access_with_Lets_Encrypt).
+- An access to the server over https with a valid certificate (https://www.domoticz.com/wiki/Native_secure_access_with_Lets_Encrypt) if you want to access the [production](https://6l3m.github.io/ngx-domoboard/) app and unleash the power of PWA.
 
 ## Getting started
 

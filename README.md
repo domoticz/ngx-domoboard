@@ -17,6 +17,7 @@
 - [Getting started](#getting-started)
 - [Features](#features)
 - [WIP Features](#wip-features)
+- [BIY - Build It Yourself](#biy---build-it-yourself)
 
 ## [Domoticz](https://www.domoticz.com/)
 

@@ -77,6 +77,38 @@
                   "input": "./fathom.js"
                 }
               ]
+            },
+            "domoticz": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.domoticz.ts"
+                }
+              ],
+              "baseHref": "./",
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": true,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ],
+              "serviceWorker": true,
+              "ngswConfigPath": "src/ngsw-config.json",
+              "scripts": [
+                {
+                  "input": "./fathom.js"
+                }
+              ]
             }
           }
         },

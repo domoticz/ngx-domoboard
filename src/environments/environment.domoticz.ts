@@ -5,5 +5,5 @@ export const environment = {
   version: version,
   name: name,
   pushServer: 'https://nd-api.duckdns.org:5035/api',
-  domoticz: false
+  domoticz: true
 };

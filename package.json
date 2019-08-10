@@ -6,6 +6,7 @@
     "start": "node version.js && ng serve",
     "build": "node version.js && ng build --configuration production",
     "build:stats": "node version.js && ng build --configuration production --stats-json",
+    "build:domoticz": "node version.js && ng build --configuration domoticz",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",

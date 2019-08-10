@@ -7,7 +7,8 @@ export const environment = {
   production: false,
   version: version,
   name: name,
-  pushServer: 'http://localhost/api'
+  pushServer: 'http://localhost/api',
+  domoticz: false
 };
 
 /*

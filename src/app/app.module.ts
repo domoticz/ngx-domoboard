@@ -23,7 +23,7 @@ import { environment } from '../environments/environment';
   imports: [
     BrowserModule,
     HttpClientModule,
-    RouterModule.forRoot(routes),
+    RouterModule.forRoot(routes, { useHash: environment.domoticz }),
     BrowserAnimationsModule,
     NbThemeModule.forRoot({ name: 'custom-cosmic' }),
     NbLayoutModule,

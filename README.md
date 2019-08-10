@@ -92,3 +92,4 @@ You'll then have to copy the content of the 'dist' folder in the /domoticz/www/ 
 ```
 http(s)://ip_domoticz:port/ngx-domoboard/
 ```
+Note that you'll likely not be able to register the service worker by deploying in the domoticz web server. That means that your app will not have the features of a PWA like increase performance, automatic update notifications and push notifications.

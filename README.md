@@ -68,3 +68,26 @@ Customizable admin dashboard template based on Angular 8+ and using Nebular.
 ## WIP Features
 
 - Color picker
+
+## BIY - Build It Yourself
+
+Once you've cloned/downloaded the repo, you'll be able to generate a build and deploy the app on a web server. The build folder is called 'dist' and can be found at the root of the project. First, you'll need to install the dependencies powering the app by heading to the root of the project and run:
+````
+npm install
+````
+To start a dev environment, run:
+```
+npm run start
+```
+The app will be served at localhost:4200. To get the default production build that you can find at https://6l3m.github.io/ngx-domoboard/:
+```
+npm run build
+```
+Now, one of the motivation for a local build is to have your domoticz web server work the app. To get the domoticz-friendly build:
+```
+npm run build:domoticz
+```
+You'll then have to copy the content of the 'dist' folder in the /domoticz/www/ folder where your domoticz system is installed. You should then be able to access the app at:
+```
+http(s)://ip_domoticz:port/ngx-domoboard/
+```

@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1565254176303,
+  "timestamp": 1565459771281,
   "index": "https://6l3m.github.io/ngx-domoboard/index.html",
   "assetGroups": [
     {
@@ -14,7 +14,7 @@
         "https://6l3m.github.io/ngx-domoboard/common.aacec6ecd4ad51f91ea0.js",
         "https://6l3m.github.io/ngx-domoboard/favicon.ico",
         "https://6l3m.github.io/ngx-domoboard/index.html",
-        "https://6l3m.github.io/ngx-domoboard/main.6287c040770b07dc9435.js",
+        "https://6l3m.github.io/ngx-domoboard/main.f10758c3f8b2b694e6ef.js",
         "https://6l3m.github.io/ngx-domoboard/polyfills-es5.ee36f288ebe29b6d000e.js",
         "https://6l3m.github.io/ngx-domoboard/polyfills.392c7ecf8ff5a9480e0f.js",
         "https://6l3m.github.io/ngx-domoboard/runtime.c5fe2f935b0b73f1df57.js",
@@ -94,8 +94,8 @@
     "https://6l3m.github.io/ngx-domoboard/assets/icons/nd-icons.svg": "57a1fd3a54a376737a2fa2e5950a290b5b675b66",
     "https://6l3m.github.io/ngx-domoboard/common.aacec6ecd4ad51f91ea0.js": "8559e03d0e819c0105d3014bd0670c1b89c7b89b",
     "https://6l3m.github.io/ngx-domoboard/favicon.ico": "84161b857f5c547e3699ddfbffc6d8d737542e01",
-    "https://6l3m.github.io/ngx-domoboard/index.html": "45129fe777916240055be118754e9f84eb617416",
-    "https://6l3m.github.io/ngx-domoboard/main.6287c040770b07dc9435.js": "28e65f74251fd9281a7b9571e873a010534a844a",
+    "https://6l3m.github.io/ngx-domoboard/index.html": "215d09ab5c6bd9b056e763a8a5da20304433bb41",
+    "https://6l3m.github.io/ngx-domoboard/main.f10758c3f8b2b694e6ef.js": "15749b935c18a94bb0a81b19647166a70b198a78",
     "https://6l3m.github.io/ngx-domoboard/nebular.85e45e2f83750a4184af.eot": "290b6c75a0af38b8606a9d2b843e6b4af4dacf31",
     "https://6l3m.github.io/ngx-domoboard/nebular.e5b059e952431846f8ab.ttf": "9e89de0ceca347c2877748d84035e1b7910f82d0",
     "https://6l3m.github.io/ngx-domoboard/nebular.e7b6b47eeafe34432dca.woff": "ccef7bb01bbec4b2fd438dabf939d7036ed3b51d",

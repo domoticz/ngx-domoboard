@@ -3,8 +3,8 @@
 # Manage your [Domoticz](https://www.domoticz.com/) devices
 
 <p align="center">
-  <img src="https://github.com/6l3m/ngx-domoboard/blob/master/src/assets/images/ScreenND_1.PNG">
-  <img src="https://github.com/6l3m/ngx-domoboard/blob/master/src/assets/images/ScreenND_2.PNG">
+  <img src="https://github.com/domoticz/ngx-domoboard/blob/master/src/assets/images/ScreenND_1.PNG">
+  <img src="https://github.com/domoticz/ngx-domoboard/blob/master/src/assets/images/ScreenND_2.PNG">
 </p>
 
 # Table of contents
@@ -38,21 +38,21 @@ Customizable admin dashboard template based on Angular 8+ and using Nebular.
 ## Requirements
 
 - A [Domoticz](https://www.domoticz.com/) server running on your home network.
-- An access to the server over https with a valid certificate (https://www.domoticz.com/wiki/Native_secure_access_with_Lets_Encrypt) if you want to access the [production](https://6l3m.github.io/ngx-domoboard/) app and unleash the power of PWA.
+- An access to the server over https with a valid certificate (https://www.domoticz.com/wiki/Native_secure_access_with_Lets_Encrypt) if you want to access the [production](https://domoticz.github.io/ngx-domoboard/) app and unleash the power of PWA.
 
 ## Getting started
 
 - Click the green gear at the top (mobile) or right (desktop) of the screen:
 
 <p align="center">
-  <img src="https://github.com/6l3m/ngx-domoboard/blob/master/src/assets/images/ScreenND_3.PNG">
+  <img src="https://github.com/domoticz/ngx-domoboard/blob/master/src/assets/images/ScreenND_3.PNG">
 </p>
 
 - Fill the form with your server infos.
 - Once the app gets a valid response from the server, the form will turn green and Domoticz version and status will appear at the bottom:
 
 <p align="center">
-  <img src="https://github.com/6l3m/ngx-domoboard/blob/master/src/assets/images/ScreenND_4.png">
+  <img src="https://github.com/domoticz/ngx-domoboard/blob/master/src/assets/images/ScreenND_4.png">
 </p>
 
 - Devices should now appear on pages Switches and/or Temperature.
@@ -80,7 +80,7 @@ To start a dev environment, run:
 ```
 npm run start
 ```
-The app will be served at localhost:4200. To get the default production build that you can find at https://6l3m.github.io/ngx-domoboard/:
+The app will be served at localhost:4200. To get the default production build that you can find at https://domoticz.github.io/ngx-domoboard/:
 ```
 npm run build
 ```

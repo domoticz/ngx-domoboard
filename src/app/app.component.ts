@@ -55,7 +55,7 @@ export class AppComponent implements OnInit {
     this.manageUpdate();
     this.router.events.pipe(
       filter(evt => evt instanceof NavigationEnd),
-      tap(() => { if (environment.production) { fathom('trackPageview'); } }),
+      tap(() => { if (environment.production && !environment.domoticz) { fathom('trackPageview'); } }),
       filter(() => this.showMenu),
       tap(() => this.onMenuToggle())
     ).subscribe();

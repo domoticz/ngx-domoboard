@@ -103,12 +103,7 @@
                 }
               ],
               "serviceWorker": true,
-              "ngswConfigPath": "src/ngsw-config.json",
-              "scripts": [
-                {
-                  "input": "./fathom.js"
-                }
-              ]
+              "ngswConfigPath": "src/ngsw-config.json"
             }
           }
         },

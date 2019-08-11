@@ -5,7 +5,7 @@
   "background_color": "#7474bd",
   "display": "standalone",
   "scope": "/",
-  "start_url": "/ngx-domoboard",
+  "start_url": "/ngx-domoboard/",
   "icons": [
     {
       "src": "assets/icons/nd-icon-2-72x72.png",

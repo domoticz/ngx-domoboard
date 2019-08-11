@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1565532572781,
+  "timestamp": 1565550357670,
   "index": "https://domoticz.github.io/ngx-domoboard/index.html",
   "assetGroups": [
     {
@@ -14,7 +14,7 @@
         "https://domoticz.github.io/ngx-domoboard/common.aacec6ecd4ad51f91ea0.js",
         "https://domoticz.github.io/ngx-domoboard/favicon.ico",
         "https://domoticz.github.io/ngx-domoboard/index.html",
-        "https://domoticz.github.io/ngx-domoboard/main.f10758c3f8b2b694e6ef.js",
+        "https://domoticz.github.io/ngx-domoboard/main.4cc27ea847d6a4c50570.js",
         "https://domoticz.github.io/ngx-domoboard/polyfills-es5.ee36f288ebe29b6d000e.js",
         "https://domoticz.github.io/ngx-domoboard/polyfills.392c7ecf8ff5a9480e0f.js",
         "https://domoticz.github.io/ngx-domoboard/runtime.c5fe2f935b0b73f1df57.js",
@@ -94,8 +94,8 @@
     "https://domoticz.github.io/ngx-domoboard/assets/icons/nd-icons.svg": "57a1fd3a54a376737a2fa2e5950a290b5b675b66",
     "https://domoticz.github.io/ngx-domoboard/common.aacec6ecd4ad51f91ea0.js": "8559e03d0e819c0105d3014bd0670c1b89c7b89b",
     "https://domoticz.github.io/ngx-domoboard/favicon.ico": "84161b857f5c547e3699ddfbffc6d8d737542e01",
-    "https://domoticz.github.io/ngx-domoboard/index.html": "2e34cb6ce91514605a180914a005c68706fe71b5",
-    "https://domoticz.github.io/ngx-domoboard/main.f10758c3f8b2b694e6ef.js": "15749b935c18a94bb0a81b19647166a70b198a78",
+    "https://domoticz.github.io/ngx-domoboard/index.html": "3f685347eb43deda1e413baa2a255ff6dc0ae8e5",
+    "https://domoticz.github.io/ngx-domoboard/main.4cc27ea847d6a4c50570.js": "b08a43fffeb2bc897758a71123a86429a956de5a",
     "https://domoticz.github.io/ngx-domoboard/nebular.85e45e2f83750a4184af.eot": "290b6c75a0af38b8606a9d2b843e6b4af4dacf31",
     "https://domoticz.github.io/ngx-domoboard/nebular.e5b059e952431846f8ab.ttf": "9e89de0ceca347c2877748d84035e1b7910f82d0",
     "https://domoticz.github.io/ngx-domoboard/nebular.e7b6b47eeafe34432dca.woff": "ccef7bb01bbec4b2fd438dabf939d7036ed3b51d",

@@ -1,4 +1,4 @@
-## ngx-domoboard [![Build Status](https://travis-ci.org/6l3m/ngx-domoboard.svg?branch=master)](https://travis-ci.org/6l3m/ngx-domoboard)
+## ngx-domoboard [![Build Status](https://travis-ci.org/domoticz/ngx-domoboard.svg?branch=master)](https://travis-ci.org/domoticz/ngx-domoboard)
 
 # Manage your [Domoticz](https://www.domoticz.com/) devices
 

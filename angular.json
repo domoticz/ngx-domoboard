@@ -53,7 +53,7 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "baseHref": "https://6l3m.github.io/ngx-domoboard/",
+              "baseHref": "https://domoticz.github.io/ngx-domoboard/",
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,

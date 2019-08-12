@@ -32,7 +32,7 @@ const isSwitch = (device: any): device is Switch => device.SwitchType !== undefi
       <nd-dim-level *ngIf="device.SwitchType === 'Dimmer'" [device]="device"
         (levelSet)="onLevelSet($event)">
       </nd-dim-level>
-      <nd-color-picker *ngIf="device.SwitchType === 'Dimmer'"></nd-color-picker>
+      <nd-color-picker *ngIf="device.Type === 'Color Switch'"></nd-color-picker>
     </div>
   `,
   styleUrls: ['./device-options.component.scss']

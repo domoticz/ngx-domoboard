@@ -34,7 +34,7 @@ export class ColorPickerComponent implements AfterViewInit {
   }
 
   onColorChange(color, changes) {
-    console.log(color.hexString);
+    console.log(color.hsl);
   }
 
 }

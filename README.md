@@ -14,6 +14,7 @@
 - [Nebular](#nebular)
 - [ngx-admin](#ngx-admin)
 - [Requirements](#requirements)
+- [Personal data](#personal-data)
 - [Getting started](#getting-started)
 - [Features](#features)
 - [WIP Features](#wip-features)
@@ -39,6 +40,14 @@ Customizable admin dashboard template based on Angular 8+ and using Nebular.
 
 - A [Domoticz](https://www.domoticz.com/) server running on your home network.
 - An access to the server over https with a valid certificate (https://www.domoticz.com/wiki/Native_secure_access_with_Lets_Encrypt) if you want to access the [production](https://domoticz.github.io/ngx-domoboard/) app and unleash the power of PWA.
+
+## Personal data
+
+- The project is thought for personal data protection with the use of [Fathom](https://usefathom.com/), "a more privacy-focused alternative to Google Analytics".
+
+- Every user input is also stored locally in the browser for convenience, never in a database on a server located wherever in the world, which means that no one has access to the user data except for the user.
+
+- Self-hosted domoticz build does not include calls to the [Fathom](https://usefathom.com/) server.
 
 ## Getting started
 

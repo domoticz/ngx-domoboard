@@ -1,6 +1,7 @@
-import { Component, AfterViewInit, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, ChangeDetectionStrategy, ViewChild, ElementRef, Input } from '@angular/core';
 
 import iro from '@jaames/iro';
+import { DomoticzColor } from '@nd/core/models/domoticz-color.interface';
 
 @Component({
   selector: 'nd-color-picker',
@@ -20,6 +21,10 @@ export class ColorPickerComponent implements AfterViewInit {
 
   @ViewChild('container', { static: true }) container: ElementRef;
 
+  @Input() color: DomoticzColor;
+
+  @Input() lightness: number;
+
   title = 'COLOR & BRIGHTNESS:';
 
   colorPicker: any;
@@ -31,10 +36,17 @@ export class ColorPickerComponent implements AfterViewInit {
       wheelAngle: 0,
     });
     this.colorPicker.on('color:change', this.onColorChange);
+    if (!!this.color) {
+      const { m, t, cw, ww, ...color } = this.color;
+      this.colorPicker.color.set(color);
+    }
+    if (!!this.lightness) {
+      this.colorPicker.color.setChannel('hsl', 'l', this.lightness);
+    }
   }
 
   onColorChange(color, changes) {
-    console.log(color.hsl);
+    console.log(color.hsl.l);
   }
 
 }

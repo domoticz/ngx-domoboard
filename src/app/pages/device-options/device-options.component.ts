@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { SwPush } from '@angular/service-worker';
 
 import { Observable, Subject, zip } from 'rxjs';
-import { takeUntil, finalize, take, tap, mergeMap } from 'rxjs/operators';
+import { takeUntil, finalize, take, tap, mergeMap, map } from 'rxjs/operators';
 
 import { DeviceOptionsService, DBService } from '@nd/core/services';
 import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
@@ -29,10 +29,12 @@ const isSwitch = (device: any): device is Switch => device.SwitchType !== undefi
         (subscribeClick)="onSubscribeClick($event)" [pushEndpoint]="pushEndpoint$ | async"
         [loading]="pushLoading">
       </nd-notifications>
-      <nd-dim-level *ngIf="device.SwitchType === 'Dimmer'" [device]="device"
-        (levelSet)="onLevelSet($event)">
+      <nd-dim-level *ngIf="device.SwitchType === 'Dimmer' && device.Type !== 'Color Switch'"
+        [device]="device" (levelSet)="onLevelSet($event)">
       </nd-dim-level>
-      <nd-color-picker *ngIf="device.Type === 'Color Switch'"></nd-color-picker>
+      <nd-color-picker *ngIf="device.Type === 'Color Switch'" [color]="device.Color"
+        [lightness]="device.Level">
+      </nd-color-picker>
     </div>
   `,
   styleUrls: ['./device-options.component.scss']
@@ -45,7 +47,8 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
     tap(device => {
       this.notificationsSupport = 'Notification' in window && isSwitch(device);
       this.dbService.syncDeviceIcon(device.idx, null);
-    })
+    }),
+    map(device => isSwitch(device) ? { ...device, Color: JSON.parse(device.Color) } : device)
   );
 
   isSubscribed$: Observable<boolean> = this.service.select<boolean>('isSubscribed');

@@ -81,7 +81,7 @@ Customizable admin dashboard template based on Angular 8+ and using Nebular.
 
 ## BIY - Build It Yourself
 
-Once you've cloned/downloaded the repo, you'll be able to generate a build and deploy the app on a web server. The build folder is called 'dist' and can be found at the root of the project. First, you'll need to install the dependencies powering the app by heading to the root of the project and run:
+Once you've cloned/downloaded the repo, you'll be able to generate a build and deploy the app on a web server given you've already installed [nodejs](https://nodejs.org/en/) and npm. The build folder is called 'dist' and can be found at the root of the project. First, you'll need to install the dependencies powering the app by heading to the root of the project and run:
 ````
 npm install
 ````

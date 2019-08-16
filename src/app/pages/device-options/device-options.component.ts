@@ -109,6 +109,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   onRenameClick(device: Temp | Switch) {
     this.renameLoading = true;
     this.service.renameDevice(device.idx, device.Name).pipe(
+      take(1),
       finalize(() => this.renameLoading = false),
       takeUntil(this.unsubscribe$)
     ).subscribe();
@@ -155,20 +156,23 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
       }
     } else {
       this.service.stopSubscription(event.device.idx, event.pushEndpoint).pipe(
+        take(1),
         finalize(() => this.pushLoading = false),
-        take(1)
+        takeUntil(this.unsubscribe$)
       ).subscribe();
     }
   }
 
   onLevelSet(device: Switch) {
     this.service.setDimLevel(device.idx, device.Level).pipe(
+      take(1),
       takeUntil(this.unsubscribe$)
     ).subscribe();
   }
 
   onColorSet(idx: string, event: DomoticzColor) {
     this.service.setColorBrightness(idx, event).pipe(
+      take(1),
       takeUntil(this.unsubscribe$)
     ).subscribe();
   }

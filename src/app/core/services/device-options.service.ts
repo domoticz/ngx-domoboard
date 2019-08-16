@@ -7,7 +7,7 @@ import { distinctUntilChanged, tap, pluck, map } from 'rxjs/operators';
 import { DataService } from './data.service';
 import { DBService } from './db.service';
 
-import { DomoticzResponse, Switch, Temp } from '@nd/core/models';
+import { DomoticzResponse, Switch, Temp, DomoticzColor } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
 import { environment } from 'environments/environment';
 
@@ -61,6 +61,12 @@ export class DeviceOptionsService extends DataService {
 
   setDimLevel(idx: string, level: number): Observable<DomoticzResponse<any>> {
     return this.get<DomoticzResponse<any>>(Api.dimLevel.replace('{idx}', idx).replace('{level}', level.toString()));
+  }
+
+  setColorBrightness(idx: string, color: DomoticzColor): Observable<DomoticzResponse<any>> {
+    return this.get<DomoticzResponse<any>>(
+      Api.colorBrightness.replace('{idx}', idx).replace('{color}', JSON.stringify(color))
+    );
   }
 
   isSubscribed(idx: string, pushEndpoint: string): Observable<any> {

@@ -3,18 +3,20 @@ import { Location } from '@angular/common';
 import { SwPush } from '@angular/service-worker';
 
 import { Observable, Subject, zip } from 'rxjs';
-import { takeUntil, finalize, take, tap, mergeMap } from 'rxjs/operators';
+import { takeUntil, finalize, take, tap, mergeMap, map, filter } from 'rxjs/operators';
 
 import { DeviceOptionsService, DBService } from '@nd/core/services';
-import { Temp, Switch, DomoticzSettings } from '@nd/core/models';
+import { Temp, Switch, DomoticzSettings, DomoticzColor } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
+import { Router, NavigationStart } from '@angular/router';
+import { environment } from 'environments/environment';
 
 const isSwitch = (device: any): device is Switch => device.SwitchType !== undefined;
 
 @Component({
   selector: 'nd-device-options',
   template: `
-    <div *ngIf="(device$ | async) as device" class="options-container">
+    <div *ngIf="(device$ | async) as device" class="options-container {{ appearanceState }}">
       <nb-icon class="close-icon" icon="close-outline"
         (click)="onCloseClick()">
       </nb-icon>
@@ -29,9 +31,12 @@ const isSwitch = (device: any): device is Switch => device.SwitchType !== undefi
         (subscribeClick)="onSubscribeClick($event)" [pushEndpoint]="pushEndpoint$ | async"
         [loading]="pushLoading">
       </nd-notifications>
-      <nd-dim-level *ngIf="device.SwitchType === 'Dimmer'" [device]="device"
-        (levelSet)="onLevelSet($event)">
+      <nd-dim-level *ngIf="device.SwitchType === 'Dimmer' && device.Type !== 'Color Switch'"
+        [device]="device" (levelSet)="onLevelSet($event)">
       </nd-dim-level>
+      <nd-color-picker *ngIf="device.Type === 'Color Switch'" [color]="device.Color"
+        [level]="device.Level" (colorSet)="onColorSet(device.idx, $event)">
+      </nd-color-picker>
     </div>
   `,
   styleUrls: ['./device-options.component.scss']
@@ -42,9 +47,12 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   device$: Observable<Temp | Switch> = this.service.select<Temp | Switch>('device').pipe(
     tap(device => {
-      this.notificationsSupport = 'Notification' in window && isSwitch(device);
+      this.notificationsSupport = 'Notification' in window && isSwitch(device) &&
+        !environment.domoticz;
       this.dbService.syncDeviceIcon(device.idx, null);
-    })
+    }),
+    map(device => isSwitch(device) && !!device.Color ?
+      { ...device, Color: JSON.parse(device.Color) } : device)
   );
 
   isSubscribed$: Observable<boolean> = this.service.select<boolean>('isSubscribed');
@@ -65,11 +73,14 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   notificationsSupport: boolean;
 
+  appearanceState = 'appear';
+
   constructor(
     private location: Location,
     private service: DeviceOptionsService,
     private dbService: DBService,
-    private swPush: SwPush
+    private swPush: SwPush,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -83,9 +94,15 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
       finalize(() => this.pushLoading = false),
       take(1)
     ).subscribe();
+    this.router.events.pipe(
+      filter(evt => evt instanceof NavigationStart),
+      tap(() => scrollTo(0, 0)),
+      takeUntil(this.unsubscribe$)
+    ).subscribe();
   }
 
   onCloseClick() {
+    this.appearanceState = 'disappear';
     this.location.back();
   }
 
@@ -146,6 +163,12 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   onLevelSet(device: Switch) {
     this.service.setDimLevel(device.idx, device.Level).pipe(
+      takeUntil(this.unsubscribe$)
+    ).subscribe();
+  }
+
+  onColorSet(idx: string, event: DomoticzColor) {
+    this.service.setColorBrightness(idx, event).pipe(
       takeUntil(this.unsubscribe$)
     ).subscribe();
   }

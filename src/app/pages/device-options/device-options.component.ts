@@ -1,14 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Location } from '@angular/common';
 import { SwPush } from '@angular/service-worker';
 
 import { Observable, Subject, zip } from 'rxjs';
-import { takeUntil, finalize, take, tap, mergeMap, map, filter } from 'rxjs/operators';
+import { takeUntil, finalize, take, tap, mergeMap, map } from 'rxjs/operators';
 
 import { DeviceOptionsService, DBService } from '@nd/core/services';
 import { Temp, Switch, DomoticzSettings, DomoticzColor } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
-import { Router, NavigationStart } from '@angular/router';
+import { Router, UrlSegment } from '@angular/router';
 import { environment } from 'environments/environment';
 
 const isSwitch = (device: any): device is Switch => device.SwitchType !== undefined;
@@ -75,8 +74,9 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   appearanceState = 'appear';
 
+  previousUrl: UrlSegment[] = this.router.getCurrentNavigation().extras.state.previousUrl;
+
   constructor(
-    private location: Location,
     private service: DeviceOptionsService,
     private dbService: DBService,
     private swPush: SwPush,
@@ -94,16 +94,11 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
       finalize(() => this.pushLoading = false),
       take(1)
     ).subscribe();
-    this.router.events.pipe(
-      filter(evt => evt instanceof NavigationStart),
-      tap(() => scrollTo(0, 0)),
-      takeUntil(this.unsubscribe$)
-    ).subscribe();
   }
 
   onCloseClick() {
     this.appearanceState = 'disappear';
-    this.location.back();
+    this.router.navigate([`devices/${this.previousUrl[0].path}`]);
   }
 
   onRenameClick(device: Temp | Switch) {

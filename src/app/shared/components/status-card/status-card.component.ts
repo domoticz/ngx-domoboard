@@ -5,7 +5,6 @@ import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter } from 
   template: `
     <nb-card (click)="switchLight()" [ngClass]="{'off': !on, 'disabled': disabled,
       'no-event': !clickable}" [nbSpinner]="loading">
-
       <div class="icon-container">
         <div class="icon primary">
           <ng-content></ng-content>
@@ -20,7 +19,6 @@ import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter } from 
       <nb-icon class="option-icon" icon="plus-outline"
         (click)="onOptionsClick($event)">
       </nb-icon>
-
     </nb-card>
   `,
   styleUrls: ['./status-card.component.scss'],

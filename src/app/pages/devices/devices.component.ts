@@ -121,7 +121,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
   }
 
   onOptionsClick(idx: string) {
-    this.router.navigate(['options', idx]);
+    this.router.navigate(['options', idx], { state: { previousUrl: this.route.snapshot.url } });
   }
 
   ngOnDestroy() {

@@ -7,14 +7,16 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  animation-duration: 500ms;
+  animation-duration: 400ms;
   animation-timing-function: ease-in-out;
 
   &.appear {
+    opacity: 1;
     animation-name: appear;
   }
 
   &.disappear {
+    opacity: 0;
     animation-name: disappear;
   }
 

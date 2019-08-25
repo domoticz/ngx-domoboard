@@ -7,14 +7,26 @@ import { debounceTime, tap, takeUntil } from 'rxjs/operators';
 import iro from '@jaames/iro';
 
 import { DomoticzColor } from '@nd/core/models';
+import { NbTabComponent } from '@nebular/theme';
 
 @Component({
   selector: 'nd-color-picker',
   template: `
     <nb-card>
-      <nb-card-body>
-        <span class="title">{{ title }}</span>
-        <div class="color-picker-container" #container></div>
+      <nb-card-body class="card-body-container">
+        <nb-tabset fullWidth class="tabset-container" (changeTab)="onChangeTab($event)">
+          <nb-tab #colorTab tabTitle="Color & Brightness" tabIcon="color-picker-outline" responsive
+            class="{{ colorTab.active ? 'active' : 'inactive' }}">
+            <div *ngIf="colorActive" class="color-picker-container" #container></div>
+          </nb-tab>
+
+          <nb-tab #tempTab tabTitle="Temperature" tabIcon="thermometer-outline" responsive
+            class="{{ tempTab.active ? 'active' : 'inactive' }}">
+            <div *ngIf="tempActive" class="slider-container">
+              <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+            </div>
+          </nb-tab>
+        </nb-tabset>
       </nb-card-body>
     </nb-card>
   `,
@@ -36,9 +48,11 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Output() colorSet = new EventEmitter<DomoticzColor>();
 
-  title = 'COLOR & BRIGHTNESS:';
-
   colorPicker: any;
+
+  tempActive: boolean;
+
+  colorActive: boolean;
 
   ngOnInit() {
     this.debouncer$.pipe(
@@ -49,9 +63,9 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ngAfterViewInit() {
-    this.colorPicker = await this.colorPickerInit();
-    await this.colorInit();
-    this.colorPicker.on('color:change', this.onColorChange.bind(this));
+    // this.colorPicker = await this.colorPickerInit();
+    // await this.colorInit();
+    // this.colorPicker.on('color:change', this.onColorChange.bind(this));
   }
 
   async colorPickerInit() {
@@ -71,6 +85,17 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onColorChange(color: any) {
     this.debouncer$.next({ m: 3, t: 0, ...color.rgb, cw: 0, ww: 0 } as DomoticzColor);
+  }
+
+  onChangeTab(tab: NbTabComponent) {
+    console.log(tab);
+    if (tab.tabTitle === 'Temperature') {
+      this.colorActive = false;
+      setTimeout(() => this.tempActive = true, 1000);
+    } else if (tab.tabTitle === 'Color & Brightness') {
+      this.tempActive = false;
+      setTimeout(() => this.colorActive = true, 1000);
+    }
   }
 
   ngOnDestroy() {

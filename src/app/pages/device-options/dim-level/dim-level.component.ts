@@ -21,13 +21,6 @@ import { Switch } from '@nd/core/models';
                 [ngStyle]="{ 'margin-left': device.Level > 100 ? '100%' : device.Level < 0 ? '0' : device.Level + '%' }"
                 (mousedown)="onMouseDown($event)" (touchmove)="onMouseMove($event, true)"
                 (touchstart)="onMouseDown($event, true)" (touchend)="onMouseUp()">
-                <defs>
-                  <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                    <stop offset="0%" style="stop-color:rgb(255,255,255);
-                      stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:rgb(152,152,152);stop-opacity:1" />
-                  </radialGradient>
-                </defs>
                 <circle cx="50" cy="50" r="50" fill="url(#grad1)"/>
               </svg>
             </div>

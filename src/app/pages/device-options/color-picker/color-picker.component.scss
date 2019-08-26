@@ -10,28 +10,10 @@
   .tabset-container {
     padding: 0;
 
-    nb-tab {
-      overflow: hidden;
-      animation-duration: 2s;
-      animation-delay: 900ms;
-      animation-timing-function: ease-in-out;
-      transform: scaleY(0);
-
-      &.active {
-        animation-name: slidedown;
-        transform: scaleY(1);
-      }
-
-      &.inactive {
-        animation-name: slideup;
-      }
-    }
-
     .color-picker-container {
       display: flex;
       justify-content: center;
       margin: 1rem 0 0 0;
-      transform: scaleY(1);
     }
 
     .slider-container {

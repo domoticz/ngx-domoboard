@@ -1,5 +1,5 @@
 import { Component, AfterViewInit, ChangeDetectionStrategy, ViewChild,
-  ElementRef, Input, EventEmitter, OnInit, OnDestroy, Output, ChangeDetectorRef } from '@angular/core';
+  ElementRef, Input, EventEmitter, OnInit, OnDestroy, Output } from '@angular/core';
 
 import { Subject } from 'rxjs';
 import { debounceTime, tap, takeUntil } from 'rxjs/operators';
@@ -7,23 +7,21 @@ import { debounceTime, tap, takeUntil } from 'rxjs/operators';
 import iro from '@jaames/iro';
 
 import { DomoticzColor } from '@nd/core/models';
-import { NbTabComponent } from '@nebular/theme';
 
 @Component({
   selector: 'nd-color-picker',
   template: `
     <nb-card>
       <nb-card-body class="card-body-container">
-        <nb-tabset fullWidth class="tabset-container" (changeTab)="onChangeTab($event)">
-          <nb-tab #colorTab tabTitle="Color & Brightness" tabIcon="color-picker-outline" responsive
-            class="{{ colorTab.active ? 'active' : 'inactive' }}">
-            <div *ngIf="colorActive" class="color-picker-container" #container></div>
+        <nb-tabset fullWidth class="tabset-container">
+          <nb-tab #colorTab tabTitle="Color & Brightness" tabIcon="color-picker-outline" responsive>
+            <div class="color-picker-container" #container></div>
           </nb-tab>
 
-          <nb-tab #tempTab tabTitle="Temperature" tabIcon="thermometer-outline" responsive
-            class="{{ tempTab.active ? 'active' : 'inactive' }}">
-            <div *ngIf="true" class="slider-container">
-              <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+          <nb-tab #tempTab tabTitle="Temperature" tabIcon="thermometer-outline" responsive>
+            <div class="slider-container">
+              <input #myRange type="range" min="1" max="100" value="50" class="slider" id="myRange"
+                (input)="temperatureSet.emit(myRange.value)">
             </div>
           </nb-tab>
         </nb-tabset>
@@ -47,13 +45,13 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Output() colorSet = new EventEmitter<DomoticzColor>();
 
+  @Output() temperatureSet = new EventEmitter<string>();
+
   colorPicker: any;
 
   tempActive: boolean;
 
   colorActive: boolean;
-
-  constructor(private cd: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.debouncer$.pipe(
@@ -64,9 +62,9 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ngAfterViewInit() {
-    // this.colorPicker = await this.colorPickerInit();
-    // await this.colorInit();
-    // this.colorPicker.on('color:change', this.onColorChange.bind(this));
+    this.colorPicker = await this.colorPickerInit();
+    await this.colorInit();
+    this.colorPicker.on('color:change', this.onColorChange.bind(this));
   }
 
   async colorPickerInit() {
@@ -86,23 +84,6 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onColorChange(color: any) {
     this.debouncer$.next({ m: 3, t: 0, ...color.rgb, cw: 0, ww: 0 } as DomoticzColor);
-  }
-
-  onChangeTab(tab: NbTabComponent) {
-    console.log(tab);
-    if (tab.tabTitle === 'Temperature') {
-      this.colorActive = false;
-      setTimeout(() => {
-        this.tempActive = true;
-        this.cd.detectChanges();
-      }, 1000);
-    } else if (tab.tabTitle === 'Color & Brightness') {
-      this.tempActive = false;
-      setTimeout(() => {
-        this.colorActive = true;
-        this.cd.detectChanges();
-      }, 1000);
-    }
   }
 
   ngOnDestroy() {

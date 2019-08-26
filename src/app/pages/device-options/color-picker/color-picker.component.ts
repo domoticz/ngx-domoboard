@@ -1,5 +1,5 @@
 import { Component, AfterViewInit, ChangeDetectionStrategy, ViewChild,
-  ElementRef, Input, EventEmitter, OnInit, OnDestroy, Output } from '@angular/core';
+  ElementRef, Input, EventEmitter, OnInit, OnDestroy, Output, ChangeDetectorRef } from '@angular/core';
 
 import { Subject } from 'rxjs';
 import { debounceTime, tap, takeUntil } from 'rxjs/operators';
@@ -22,7 +22,7 @@ import { NbTabComponent } from '@nebular/theme';
 
           <nb-tab #tempTab tabTitle="Temperature" tabIcon="thermometer-outline" responsive
             class="{{ tempTab.active ? 'active' : 'inactive' }}">
-            <div *ngIf="tempActive" class="slider-container">
+            <div *ngIf="true" class="slider-container">
               <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
             </div>
           </nb-tab>
@@ -33,7 +33,6 @@ import { NbTabComponent } from '@nebular/theme';
   styleUrls: ['./color-picker.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-
 export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private unsubscribe$ = new Subject();
@@ -53,6 +52,8 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
   tempActive: boolean;
 
   colorActive: boolean;
+
+  constructor(private cd: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.debouncer$.pipe(
@@ -91,10 +92,16 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log(tab);
     if (tab.tabTitle === 'Temperature') {
       this.colorActive = false;
-      setTimeout(() => this.tempActive = true, 1000);
+      setTimeout(() => {
+        this.tempActive = true;
+        this.cd.detectChanges();
+      }, 1000);
     } else if (tab.tabTitle === 'Color & Brightness') {
       this.tempActive = false;
-      setTimeout(() => this.colorActive = true, 1000);
+      setTimeout(() => {
+        this.colorActive = true;
+        this.cd.detectChanges();
+      }, 1000);
     }
   }
 

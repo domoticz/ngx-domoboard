@@ -34,7 +34,8 @@ const isSwitch = (device: any): device is Switch => device.SwitchType !== undefi
         [device]="device" (levelSet)="onLevelSet($event)">
       </nd-dim-level>
       <nd-color-picker *ngIf="device.Type === 'Color Switch'" [color]="device.Color"
-        [level]="device.Level" (colorSet)="onColorSet(device.idx, $event)">
+        [level]="device.Level" (colorSet)="onColorSet(device.idx, $event)"
+        (temperatureSet)="onTemperatureSet(device.idx, $event)">
       </nd-color-picker>
     </div>
   `,
@@ -167,6 +168,13 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   onColorSet(idx: string, event: DomoticzColor) {
     this.service.setColorBrightness(idx, event).pipe(
+      take(1),
+      takeUntil(this.unsubscribe$)
+    ).subscribe();
+  }
+
+  onTemperatureSet(idx: string, event: string) {
+    this.service.setKelvinLevel(idx, event).pipe(
       take(1),
       takeUntil(this.unsubscribe$)
     ).subscribe();

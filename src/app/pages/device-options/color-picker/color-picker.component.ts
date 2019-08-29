@@ -20,7 +20,7 @@ import { DomoticzColor } from '@nd/core/models';
 
           <nb-tab #tempTab tabTitle="Temperature" tabIcon="thermometer-outline" responsive>
             <div class="slider-container">
-              <input #myRange type="range" min="1" max="100" value="50" class="slider" id="myRange"
+              <input #myRange type="range" min="1" max="100" [value]="kelvin" class="slider" id="myRange"
                 (input)="temperatureSet.emit(myRange.value)">
             </div>
           </nb-tab>
@@ -39,7 +39,13 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('container', { static: true }) container: ElementRef;
 
-  @Input() color: DomoticzColor;
+  private _color: DomoticzColor;
+  @Input()
+  set color(value: DomoticzColor) {
+    this.kelvin = value.m === 2 ? Math.round(value.t / 255 * 100) : 50;
+    this._color = value;
+  }
+  get color() { return this._color; }
 
   @Input() level: number;
 
@@ -52,6 +58,8 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
   tempActive: boolean;
 
   colorActive: boolean;
+
+  kelvin: number;
 
   ngOnInit() {
     this.debouncer$.pipe(

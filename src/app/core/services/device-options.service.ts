@@ -69,6 +69,12 @@ export class DeviceOptionsService extends DataService {
     );
   }
 
+  setKelvinLevel(idx: string, kelvin: string): Observable<DomoticzResponse<any>> {
+    return this.get<DomoticzResponse<any>>(
+      Api.kelvinLevel.replace('{idx}', idx).replace('{kelvin}', kelvin)
+    );
+  }
+
   isSubscribed(idx: string, pushEndpoint: string): Observable<any> {
     return this.httpClient.post<boolean>(`${pushApi.server}${pushApi.isMonitoring}`,
       {

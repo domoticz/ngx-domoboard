@@ -174,10 +174,11 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   }
 
   onTemperatureSet(idx: string, event: string) {
-    this.service.setKelvinLevel(idx, event).pipe(
-      take(1),
-      takeUntil(this.unsubscribe$)
-    ).subscribe();
+    console.log(event);
+    // this.service.setKelvinLevel(idx, event).pipe(
+    //   take(1),
+    //   takeUntil(this.unsubscribe$)
+    // ).subscribe();
   }
 
   ngOnDestroy() {

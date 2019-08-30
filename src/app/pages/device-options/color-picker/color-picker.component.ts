@@ -21,8 +21,9 @@ import { DomoticzColor } from '@nd/core/models';
           <nb-tab #tempTab tabTitle="Temperature" tabIcon="thermometer-outline" responsive>
             <div class="slider-container">
               <input #myRange type="range" min="1" max="100" [value]="kelvin" class="slider" id="myRange"
-                (input)="temperatureSet.emit(myRange.value)">
+                (input)="temperatureSet.emit($event)">
             </div>
+            {{ kelvin }}
           </nb-tab>
         </nb-tabset>
       </nb-card-body>

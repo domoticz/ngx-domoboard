@@ -5,7 +5,7 @@ import { Observable, Subject, zip } from 'rxjs';
 import { takeUntil, finalize, take, tap, mergeMap, map } from 'rxjs/operators';
 
 import { DeviceOptionsService, DBService } from '@nd/core/services';
-import { Temp, Switch, DomoticzSettings, DomoticzColor } from '@nd/core/models';
+import { Temp, Switch, DomoticzSettings, DomoticzColor, DomoticzResponse } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
 import { Router, UrlSegment } from '@angular/router';
 import { environment } from 'environments/environment';
@@ -33,7 +33,7 @@ const isSwitch = (device: any): device is Switch => device.SwitchType !== undefi
       <nd-dim-level *ngIf="device.SwitchType === 'Dimmer' && device.Type !== 'Color Switch'"
         [device]="device" (levelSet)="onLevelSet($event)">
       </nd-dim-level>
-      <nd-color-picker *ngIf="device.Type === 'Color Switch'" [color]="device.Color"
+      <nd-color-picker *ngIf="device.Type === 'Color Switch'" [color]="color$ | async"
         [level]="device.Level" (colorSet)="onColorSet(device.idx, $event)">
       </nd-color-picker>
     </div>
@@ -49,10 +49,13 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
       this.notificationsSupport = 'Notification' in window && isSwitch(device) &&
         !environment.domoticz;
       this.dbService.syncDeviceIcon(device.idx, null);
-    }),
-    map(device => isSwitch(device) && !!device.Color ?
-      { ...device, Color: JSON.parse(device.Color) } : device)
+    })
   );
+
+  color$: Observable<DomoticzColor> = this.service.select<string>('device', 'Color')
+    .pipe(
+      map((color: string) => JSON.parse(color) as DomoticzColor)
+    );
 
   isSubscribed$: Observable<boolean> = this.service.select<boolean>('isSubscribed');
 
@@ -167,6 +170,11 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   onColorSet(idx: string, event: DomoticzColor) {
     this.service.setColorBrightness(idx, event).pipe(
+      tap((resp: DomoticzResponse<Switch>) => {
+        if (resp.status === 'OK') {
+          this.service.syncColor(event);
+        }
+      }),
       take(1),
       takeUntil(this.unsubscribe$)
     ).subscribe();

@@ -21,6 +21,10 @@
       align-items: center;
       margin: 1.5rem 0;
 
+      #myRange {
+        direction: rtl;
+      }
+
       .slider::-webkit-slider-thumb {
         appearance: none;
         width: 25px;

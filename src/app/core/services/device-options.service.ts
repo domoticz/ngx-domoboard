@@ -119,6 +119,14 @@ export class DeviceOptionsService extends DataService {
     });
   }
 
+  syncColor(color: DomoticzColor) {
+    this.subject.next({
+      ...this.subject.value, device: {
+        ...this.subject.value.device, Color: JSON.stringify(color)
+      }
+    });
+  }
+
   clearStore() {
     this.subject.next(this.initialState);
   }

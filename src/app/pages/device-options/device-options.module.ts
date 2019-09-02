@@ -13,6 +13,7 @@ import { PushNotificationsComponent } from './push-notifications/push-notificati
 import { DimLevelComponent } from './dim-level/dim-level.component';
 import { DeviceIconComponent } from './device-icon/device-icon.component';
 import { ColorPickerComponent } from './color-picker/color-picker.component';
+import { HistoryComponent } from './history/history.component';
 
 @NgModule({
   imports: [
@@ -28,7 +29,8 @@ import { ColorPickerComponent } from './color-picker/color-picker.component';
     PushNotificationsComponent,
     DimLevelComponent,
     DeviceIconComponent,
-    ColorPickerComponent
+    ColorPickerComponent,
+    HistoryComponent
   ],
   providers: [],
 })

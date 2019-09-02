@@ -36,6 +36,7 @@ const isSwitch = (device: any): device is Switch => device.SwitchType !== undefi
       <nd-color-picker *ngIf="device.Type === 'Color Switch'" [color]="color$ | async"
         [level]="device.Level" (colorSet)="onColorSet(device.idx, $event)">
       </nd-color-picker>
+      <nd-history></nd-history>
     </div>
   `,
   styleUrls: ['./device-options.component.scss']

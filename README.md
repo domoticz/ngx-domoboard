@@ -74,10 +74,12 @@ Customizable admin dashboard template based on Angular 8+ and using Nebular.
 - Choose the app icon for your device in [Eva icons](https://akveo.github.io/eva-icons/#/).
 - Push Notifications on device status change (Windows and Android).
 - Dim level
+- Color picker
+- Color temperature
 
 ## WIP Features
 
-- Color picker
+- Temperature graphs
 
 ## BIY - Build It Yourself
 

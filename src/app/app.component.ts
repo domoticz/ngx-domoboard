@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.enableDarkTheme();
+    // this.enableDarkTheme();
     this.notification$.subscribe();
     this.manageUpdate();
     this.router.events.pipe(

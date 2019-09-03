@@ -1,16 +1,18 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router, UrlSegment } from '@angular/router';
 import { SwPush } from '@angular/service-worker';
 
 import { Observable, Subject, zip } from 'rxjs';
 import { takeUntil, finalize, take, tap, mergeMap, map } from 'rxjs/operators';
 
 import { DeviceOptionsService, DBService } from '@nd/core/services';
-import { Temp, Switch, DomoticzSettings, DomoticzColor, DomoticzResponse } from '@nd/core/models';
+import { Temp, Switch, DomoticzSettings, DomoticzColor, DomoticzResponse, TempGraphData } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
-import { Router, UrlSegment } from '@angular/router';
+
 import { environment } from 'environments/environment';
 
 const isSwitch = (device: any): device is Switch => device.SwitchType !== undefined;
+const isTemp = (device: any): device is Temp => device.Temp !== undefined;
 
 @Component({
   selector: 'nd-device-options',
@@ -36,7 +38,9 @@ const isSwitch = (device: any): device is Switch => device.SwitchType !== undefi
       <nd-color-picker *ngIf="device.Type === 'Color Switch'" [color]="color$ | async"
         [level]="device.Level" (colorSet)="onColorSet(device.idx, $event)">
       </nd-color-picker>
-      <nd-history></nd-history>
+      <nd-history *ngIf="isTemp$ | async" [loading]="historyLoading"
+        [tempDayData]="tempGraphDay$ | async">
+      </nd-history>
     </div>
   `,
   styleUrls: ['./device-options.component.scss']
@@ -60,6 +64,8 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   isSubscribed$: Observable<boolean> = this.service.select<boolean>('isSubscribed');
 
+  tempGraphDay$: Observable<TempGraphData[]> = this.service.select<TempGraphData[]>('tempGraph', 'day');
+
   settings$ = this.dbService.select<DomoticzSettings>('settings');
 
   pushEndpoint$ = this.dbService.select<string>('pushEndpoint');
@@ -72,6 +78,8 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   iconLoading: boolean;
 
+  historyLoading: boolean;
+
   readonly VAPID_PUBLIC_KEY = 'BG-zibiw-dk6bhrbwLMicGYXna-WwoNqsF8FLKdDUzqhOKvfrH3jYG-UnaYNss45AMDqfJC_GgskDpx8lycjQ0Y';
 
   notificationsSupport: boolean;
@@ -79,6 +87,10 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   appearanceState = 'appear';
 
   previousUrl: UrlSegment[] = this.router.getCurrentNavigation().extras.state.previousUrl;
+
+  get isTemp$(): Observable<boolean> {
+    return this.device$.pipe(map(device => isTemp(device)));
+  }
 
   constructor(
     private service: DeviceOptionsService,
@@ -89,6 +101,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.pushLoading = true;
+    this.historyLoading = true;
     zip(
       this.device$,
       this.pushEndpoint$
@@ -96,7 +109,12 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
       mergeMap(([device, pushEndpoint]) =>
         this.service.isSubscribed(device.idx, pushEndpoint)),
       finalize(() => this.pushLoading = false),
-      take(1)
+      take(1),
+      takeUntil(this.unsubscribe$)
+    ).subscribe();
+    this.service.getHistory().pipe(
+      finalize(() => this.historyLoading = false),
+      takeUntil(this.unsubscribe$)
     ).subscribe();
   }
 

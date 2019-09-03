@@ -28,7 +28,7 @@ import { environment } from '../environments/environment';
       scrollPositionRestoration: 'enabled'
     }),
     BrowserAnimationsModule,
-    NbThemeModule.forRoot({ name: 'custom-cosmic' }),
+    NbThemeModule.forRoot({ name: 'cosmic' }),
     NbLayoutModule,
     NbDialogModule.forRoot(),
     NbButtonModule,

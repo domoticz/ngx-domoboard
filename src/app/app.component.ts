@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, TemplateRef, ChangeDetectorRef } from '@a
 import { Router, NavigationEnd } from '@angular/router';
 import { SwUpdate } from '@angular/service-worker';
 
-import { NbThemeService, NbToastrService, NbDialogService } from '@nebular/theme';
+import { NbThemeService, NbToastrService, NbDialogService, NbJSThemesRegistry } from '@nebular/theme';
 import { NbToastrConfig } from '@nebular/theme/components/toastr/toastr-config';
 
 import { Observable } from 'rxjs';
@@ -41,6 +41,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private themeService: NbThemeService,
+    private themeRegistry: NbJSThemesRegistry,
     private notifService: NotificationService,
     private toastrService: NbToastrService,
     private dialogService: NbDialogService,
@@ -50,7 +51,7 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // this.enableDarkTheme();
+    this.enableDarkTheme();
     this.notification$.subscribe();
     this.manageUpdate();
     this.router.events.pipe(
@@ -62,7 +63,10 @@ export class AppComponent implements OnInit {
   }
 
   enableDarkTheme() {
-    this.themeService.changeTheme('custom-cosmic');
+    // this.themeService.changeTheme('custom-cosmic');
+    this.themeService.getJsTheme().pipe(
+      tap(config => console.log(config))
+    ).subscribe();
   }
 
   manageUpdate() {

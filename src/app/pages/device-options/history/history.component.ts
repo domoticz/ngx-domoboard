@@ -5,6 +5,7 @@ import { TempGraphData } from '@nd/core/models';
 import { DeviceHistoryService } from '@nd/core/services';
 import { take, finalize, takeWhile, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { NbTabComponent } from '@nebular/theme';
 
 @Component({
   selector: 'nd-history',
@@ -14,10 +15,11 @@ import { Subject } from 'rxjs';
         <span class="title">{{ title }}</span>
         <nd-temp-graph [tempData]="tempDayData$ | async" [loading]="dayLoading">
             </nd-temp-graph>
-        <nb-tabset fullWidth class="tabset-container">
-          <nb-tab tabTitle="Day" responsive>
+        <nb-tabset fullWidth class="tabset-container" (changeTab)="onChangeTab($event)">
+          <nb-tab #dayTab tabTitle="Day" responsive>
             <nd-temp-graph [tempData]="tempDayData$ | async" [loading]="dayLoading">
             </nd-temp-graph>
+            {{ dayTab | json }}
           </nb-tab>
 
           <nb-tab #tempTab tabTitle="Month" responsive>
@@ -54,6 +56,10 @@ export class HistoryComponent implements OnDestroy {
   dayLoading: boolean;
 
   constructor(private service: DeviceHistoryService) { }
+
+  onChangeTab(tab: NbTabComponent) {
+    console.log(tab);
+  }
 
   ngOnDestroy() {
     this.unsubscribe$.next();

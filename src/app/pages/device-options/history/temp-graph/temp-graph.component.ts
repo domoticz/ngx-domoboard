@@ -11,9 +11,7 @@ import { TempGraphData } from '@nd/core/models';
 @Component({
   selector: 'nd-temp-graph',
   template: `
-    <div class="graph-container">
-      <div [nbSpinner]="loading" class="chart-container" #myChart></div>
-    </div>
+    <div [nbSpinner]="loading" class="chart-container" #myChart></div>
   `,
   styleUrls: ['./temp-graph.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -26,7 +26,7 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('myChart', { static: false }) myChart: ElementRef;
 
-  data: any[];
+  data: any;
 
   constructor(
     private theme: NbThemeService,
@@ -36,17 +36,13 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     const myChart = echarts.init(this.myChart.nativeElement);
 
-    this.cd.detectChanges();
-
     this.theme.getJsTheme().pipe(
       takeWhile(() => this.alive),
-      delay(1000)
+      delay(500)
     ).subscribe(config => {
       console.log(config);
       console.log(this.tempData);
       const eTheme: any = config.variables.electricity;
-
-      this.cd.detectChanges();
 
       const option = {
         grid: {
@@ -185,7 +181,11 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
         ],
       };
 
+      this.data = option;
+
       myChart.setOption(option);
+
+      this.cd.detectChanges();
     });
   }
 

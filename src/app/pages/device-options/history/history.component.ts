@@ -14,19 +14,7 @@ import { NbTabComponent } from '@nebular/theme';
       <nb-card-body>
         <span class="title">{{ title }}</span>
         <nd-temp-graph [tempData]="tempDayData$ | async" [loading]="dayLoading">
-            </nd-temp-graph>
-        <nb-tabset fullWidth class="tabset-container" (changeTab)="onChangeTab($event)">
-          <nb-tab #dayTab tabTitle="Day" responsive>
-            <nd-temp-graph [tempData]="tempDayData$ | async" [loading]="dayLoading">
-            </nd-temp-graph>
-            {{ dayTab | json }}
-          </nb-tab>
-
-          <nb-tab #tempTab tabTitle="Month" responsive>
-            <nd-temp-graph [tempData]="tempDayData$ | async" [loading]="dayLoading">
-            </nd-temp-graph>
-          </nb-tab>
-        </nb-tabset>
+        </nd-temp-graph>
       </nb-card-body>
     </nb-card>
   `,

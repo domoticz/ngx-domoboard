@@ -63,10 +63,7 @@ export class AppComponent implements OnInit {
   }
 
   enableDarkTheme() {
-    // this.themeService.changeTheme('custom-cosmic');
-    this.themeService.getJsTheme().pipe(
-      tap(config => console.log(config))
-    ).subscribe();
+    this.themeService.changeTheme('custom-cosmic');
   }
 
   manageUpdate() {

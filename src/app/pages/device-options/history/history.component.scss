@@ -1,5 +1,12 @@
-.chart-container {
-  width: 600px;
-  height: 400px;
-  margin: 0 auto;
+@import 'src/_themes.scss';
+
+@include nb-install-component() {
+
+  .title {
+    font-size: nb-theme(text-heading-6-font-size);
+  }
+}
+
+.tabset-container {
+  padding: 0;
 }

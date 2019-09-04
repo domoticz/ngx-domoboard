@@ -88,18 +88,6 @@ export class DeviceOptionsService extends DataService {
     );
   }
 
-  getHistory(): Observable<DomoticzResponse<Temp>> {
-    if (isTemp(this.subject.value.device)) {
-      return merge(
-        this.getTempGraph('day'),
-        this.getTempGraph('month'),
-        this.getTempGraph('year')
-      );
-    } else {
-      return of();
-    }
-  }
-
   getTempGraph(range: string): Observable<DomoticzResponse<Temp>> {
     return this.get<DomoticzResponse<Temp>>(
       Api.tempGraph.replace('{idx}', this.subject.value.device.idx).replace('{range}', range)

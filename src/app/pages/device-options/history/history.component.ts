@@ -1,192 +1,63 @@
 import { Component, ChangeDetectionStrategy, ViewChild, ElementRef,
-  AfterViewInit, OnDestroy, Input} from '@angular/core';
+  OnDestroy, Input, OnInit} from '@angular/core';
 
-import { takeWhile, delay } from 'rxjs/operators';
-
-import echarts from 'echarts';
-
-import { NbThemeService } from '@nebular/theme';
 import { TempGraphData } from '@nd/core/models';
+import { DeviceHistoryService } from '@nd/core/services';
+import { take, finalize, takeWhile, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'nd-history',
   template: `
     <nb-card>
       <nb-card-body>
-        <div [nbSpinner]="loading" class="chart-container" #myChart></div>
+        <span class="title">{{ title }}</span>
+        <nd-temp-graph [tempData]="tempDayData$ | async" [loading]="dayLoading">
+            </nd-temp-graph>
+        <nb-tabset fullWidth class="tabset-container">
+          <nb-tab tabTitle="Day" responsive>
+            <nd-temp-graph [tempData]="tempDayData$ | async" [loading]="dayLoading">
+            </nd-temp-graph>
+          </nb-tab>
+
+          <nb-tab #tempTab tabTitle="Month" responsive>
+            <nd-temp-graph [tempData]="tempDayData$ | async" [loading]="dayLoading">
+            </nd-temp-graph>
+          </nb-tab>
+        </nb-tabset>
       </nb-card-body>
     </nb-card>
   `,
   styleUrls: ['./history.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HistoryComponent implements AfterViewInit, OnDestroy {
+export class HistoryComponent implements OnDestroy {
 
-  private alive = true;
+  private unsubscribe$ = new Subject();
 
-  @Input() loading: boolean;
-
-  @Input() tempDayData: TempGraphData[];
-
-  @ViewChild('myChart', { static: false }) myChart: ElementRef;
-
-  data: any[];
-
-  constructor(private theme: NbThemeService) { }
-
-  ngAfterViewInit() {
-    const myChart = echarts.init(this.myChart.nativeElement);
-
-    this.theme.getJsTheme().pipe(
-      takeWhile(() => this.alive),
-      delay(1),
-    ).subscribe(config => {
-      console.log(config);
-      const eTheme: any = config.variables.electricity;
-
-      const option = {
-        grid: {
-          left: 0,
-          top: 0,
-          right: 0,
-          bottom: 80,
-        },
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            type: 'line',
-            lineStyle: {
-              color: eTheme.tooltipLineColor,
-              width: eTheme.tooltipLineWidth,
-            },
-          },
-          textStyle: {
-            color: eTheme.tooltipTextColor,
-            fontSize: 20,
-            fontWeight: eTheme.tooltipFontWeight,
-          },
-          position: 'top',
-          backgroundColor: eTheme.tooltipBg,
-          borderColor: eTheme.tooltipBorderColor,
-          borderWidth: 1,
-          formatter: '{c0} kWh',
-          extraCssText: eTheme.tooltipExtraCss,
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          offset: 25,
-          data: this.tempDayData.map(i => i.d),
-          axisTick: {
-            show: false,
-          },
-          axisLabel: {
-            color: eTheme.xAxisTextColor,
-            fontSize: 18,
-          },
-          axisLine: {
-            lineStyle: {
-              color: eTheme.axisLineColor,
-              width: '2',
-            },
-          },
-        },
-        yAxis: {
-          boundaryGap: [0, '5%'],
-          axisLine: {
-            show: false,
-          },
-          axisLabel: {
-            show: false,
-          },
-          axisTick: {
-            show: false,
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: eTheme.yAxisSplitLine,
-              width: '1',
-            },
-          },
-        },
-        series: [
-          {
-            type: 'line',
-            smooth: true,
-            symbolSize: 20,
-            itemStyle: {
-              normal: {
-                opacity: 0,
-              },
-              emphasis: {
-                color: '#ffffff',
-                borderColor: eTheme.itemBorderColor,
-                borderWidth: 2,
-                opacity: 1,
-              },
-            },
-            lineStyle: {
-              normal: {
-                width: eTheme.lineWidth,
-                type: eTheme.lineStyle,
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                  offset: 0,
-                  color: eTheme.lineGradFrom,
-                }, {
-                  offset: 1,
-                  color: eTheme.lineGradTo,
-                }]),
-                shadowColor: eTheme.lineShadow,
-                shadowBlur: 6,
-                shadowOffsetY: 12,
-              },
-            },
-            areaStyle: {
-              normal: {
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                  offset: 0,
-                  color: eTheme.areaGradFrom,
-                }, {
-                  offset: 1,
-                  color: eTheme.areaGradTo,
-                }]),
-              },
-            },
-            data: this.tempDayData.map(i => i.te),
-          },
-
-          {
-            type: 'line',
-            smooth: true,
-            symbol: 'none',
-            lineStyle: {
-              normal: {
-                width: eTheme.lineWidth,
-                type: eTheme.lineStyle,
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                  offset: 0,
-                  color: eTheme.lineGradFrom,
-                }, {
-                  offset: 1,
-                  color: eTheme.lineGradTo,
-                }]),
-                shadowColor: eTheme.shadowLineDarkBg,
-                shadowBlur: 14,
-                opacity: 1,
-              },
-            },
-            data: this.tempDayData.map(i => i.te),
-          },
-        ],
-      };
-
-      myChart.setOption(option);
-    });
+  @Input()
+  set idx(value: string) {
+    if (!!value) {
+      this.dayLoading = true;
+      this.service.getTempGraph(value, 'day').pipe(
+        finalize(() => this.dayLoading = false),
+        take(1),
+        takeUntil(this.unsubscribe$)
+      ).subscribe();
+    }
   }
 
+  tempDayData$ = this.service.select<TempGraphData[]>('tempGraph', 'day');
+
+  title = 'HISTORY';
+
+  dayLoading: boolean;
+
+  constructor(private service: DeviceHistoryService) { }
+
   ngOnDestroy() {
-    this.alive = false;
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
 }

@@ -38,9 +38,7 @@ const isTemp = (device: any): device is Temp => device.Temp !== undefined;
       <nd-color-picker *ngIf="device.Type === 'Color Switch'" [color]="color$ | async"
         [level]="device.Level" (colorSet)="onColorSet(device.idx, $event)">
       </nd-color-picker>
-      <nd-history *ngIf="isTemp$ | async" [loading]="historyLoading"
-        [tempDayData]="tempGraphDay$ | async">
-      </nd-history>
+      <nd-history [idx]="device.idx"></nd-history>
     </div>
   `,
   styleUrls: ['./device-options.component.scss']
@@ -64,8 +62,6 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   isSubscribed$: Observable<boolean> = this.service.select<boolean>('isSubscribed');
 
-  tempGraphDay$: Observable<TempGraphData[]> = this.service.select<TempGraphData[]>('tempGraph', 'day');
-
   settings$ = this.dbService.select<DomoticzSettings>('settings');
 
   pushEndpoint$ = this.dbService.select<string>('pushEndpoint');
@@ -77,8 +73,6 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   pushLoading: boolean;
 
   iconLoading: boolean;
-
-  historyLoading: boolean;
 
   readonly VAPID_PUBLIC_KEY = 'BG-zibiw-dk6bhrbwLMicGYXna-WwoNqsF8FLKdDUzqhOKvfrH3jYG-UnaYNss45AMDqfJC_GgskDpx8lycjQ0Y';
 
@@ -101,7 +95,6 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.pushLoading = true;
-    this.historyLoading = true;
     zip(
       this.device$,
       this.pushEndpoint$
@@ -110,10 +103,6 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
         this.service.isSubscribed(device.idx, pushEndpoint)),
       finalize(() => this.pushLoading = false),
       take(1),
-      takeUntil(this.unsubscribe$)
-    ).subscribe();
-    this.service.getHistory().pipe(
-      finalize(() => this.historyLoading = false),
       takeUntil(this.unsubscribe$)
     ).subscribe();
   }

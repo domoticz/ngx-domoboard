@@ -13,7 +13,7 @@ import { PushNotificationsComponent } from './push-notifications/push-notificati
 import { DimLevelComponent } from './dim-level/dim-level.component';
 import { DeviceIconComponent } from './device-icon/device-icon.component';
 import { ColorPickerComponent } from './color-picker/color-picker.component';
-import { HistoryComponent } from './history/history.component';
+import { historyComponents } from './history';
 
 @NgModule({
   imports: [
@@ -30,7 +30,7 @@ import { HistoryComponent } from './history/history.component';
     DimLevelComponent,
     DeviceIconComponent,
     ColorPickerComponent,
-    HistoryComponent
+    historyComponents
   ],
   providers: [],
 })

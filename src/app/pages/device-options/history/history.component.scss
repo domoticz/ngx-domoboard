@@ -6,3 +6,9 @@
     font-size: nb-theme(text-heading-6-font-size);
   }
 }
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

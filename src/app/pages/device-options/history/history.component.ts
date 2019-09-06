@@ -12,7 +12,14 @@ import { NbTabComponent } from '@nebular/theme';
   template: `
     <nb-card>
       <nb-card-body>
-        <span class="title">{{ title }}</span>
+        <div class="header">
+          <span class="title">{{ title }}</span>
+          <nb-select [(selected)]="range">
+            <nb-option *ngFor="let _range of ranges" value="_range">
+              {{ _range }}
+            </nb-option>
+          </nb-select>
+        </div>
         <nd-temp-graph [tempData]="tempDayData$ | async" [loading]="dayLoading">
         </nd-temp-graph>
       </nb-card-body>
@@ -40,6 +47,10 @@ export class HistoryComponent implements OnDestroy {
   tempDayData$ = this.service.select<TempGraphData[]>('tempGraph', 'day');
 
   title = 'HISTORY';
+
+  ranges = ['day', 'month', 'year'];
+
+  range = 'day';
 
   dayLoading: boolean;
 

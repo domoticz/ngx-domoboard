@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import { NbInputModule, NbProgressBarModule } from '@nebular/theme';
+import { NbInputModule, NbProgressBarModule, NbSelectModule } from '@nebular/theme';
 
 import { SharedModule } from '@nd/shared/shared.module';
 
@@ -21,7 +21,8 @@ import { historyComponents } from './history';
     SharedModule,
     FormsModule,
     NbInputModule,
-    NbProgressBarModule
+    NbProgressBarModule,
+    NbSelectModule
   ],
   declarations: [
     DeviceOptionsComponent,

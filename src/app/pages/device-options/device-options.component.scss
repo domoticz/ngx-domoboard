@@ -4,8 +4,6 @@
 @include nb-install-component() { }
 
 .options-container {
-  display: flex;
-  flex-direction: column;
   height: 100%;
   animation-duration: 400ms;
   animation-timing-function: ease-in-out;
@@ -21,17 +19,10 @@
   }
 
   .close-icon {
+    display: flex;
     margin: 0 0 2rem auto;
     width: 2rem;
     height: 2rem;
     cursor: pointer;
-  }
-}
-
-@media (min-width: 1200px) {
-
-  .options-container {
-    width: 75%;
-    margin: 0 auto;
   }
 }

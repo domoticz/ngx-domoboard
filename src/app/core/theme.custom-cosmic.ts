@@ -6,7 +6,7 @@ export const CUSTOM_COSMIC_THEME = {
   name: 'custom-cosmic',
   base: 'custom-cosmic',
   variables: {
-    electricity: {
+    temperature: {
       tooltipBg: baseThemeVariables.bg,
       tooltipLineColor: baseThemeVariables.fgText,
       tooltipLineWidth: '0',

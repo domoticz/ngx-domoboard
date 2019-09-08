@@ -22,33 +22,36 @@ const isTemp = (device: any): device is Temp => device.Temp !== undefined;
         (click)="onCloseClick()">
       </nb-icon>
 
-      <div *ngIf="(device$ | async) as device" class="options">
-        <nd-name [device]="device" [loading]="renameLoading"
-          (nameClick)="onRenameClick($event)" class="col-xxxl-3 col-md-6">
-        </nd-name>
+      <ng-container *ngIf="(device$ | async) as device">
+        <div class="small-blocks">
+          <nd-name [device]="device" [loading]="renameLoading"
+            (nameClick)="onRenameClick($event)" class="col-xxxl-3 col-md-6 small-block">
+          </nd-name>
 
-        <nd-device-icon [idx]="device.idx" [deviceIcon]="deviceIcon$ | async"
-          (saveIconClick)="onSaveIconClick($event)" [loading]="iconLoading"
-          class="col-xxxl-3 col-md-6">
-        </nd-device-icon>
+          <nd-device-icon [idx]="device.idx" [deviceIcon]="deviceIcon$ | async"
+            (saveIconClick)="onSaveIconClick($event)" [loading]="iconLoading"
+            class="col-xxxl-3 col-md-6 small-block">
+          </nd-device-icon>
 
-        <nd-notifications *ngIf="notificationsSupport" [device]="device"
-          [settings]="settings$ | async" [isSubscribed]="isSubscribed$ | async"
-          (subscribeClick)="onSubscribeClick($event)" [pushEndpoint]="pushEndpoint$ | async"
-          [loading]="pushLoading" class="col-xxxl-3 col-md-6">
-        </nd-notifications>
+          <nd-notifications *ngIf="notificationsSupport" [device]="device"
+            [settings]="settings$ | async" [isSubscribed]="isSubscribed$ | async"
+            (subscribeClick)="onSubscribeClick($event)" [pushEndpoint]="pushEndpoint$ | async"
+            [loading]="pushLoading" class="col-xxxl-3 col-md-6 small-block">
+          </nd-notifications>
 
-        <nd-dim-level *ngIf="device.SwitchType === 'Dimmer' && device.Type !== 'Color Switch'"
-          [device]="device" (levelSet)="onLevelSet($event)" class="col-xxxl-3 col-md-6">
-        </nd-dim-level>
+          <nd-dim-level *ngIf="device.SwitchType === 'Dimmer' && device.Type !== 'Color Switch'"
+            [device]="device" (levelSet)="onLevelSet($event)" class="col-xxxl-3 col-md-6 small-block">
+          </nd-dim-level>
+        </div>
 
-        <nd-color-picker *ngIf="device.Type === 'Color Switch'" [color]="color$ | async"
-          [level]="device.Level" (colorSet)="onColorSet(device.idx, $event)"
-          class="col-xxxl-3 col-md-6">
-        </nd-color-picker>
+        <div class="big-blocks">
+          <nd-color-picker *ngIf="device.Type === 'Color Switch'" [color]="color$ | async"
+            [level]="device.Level" (colorSet)="onColorSet(device.idx, $event)">
+          </nd-color-picker>
 
-        <nd-history [idx]="device.idx" class="col-xxxl-3 col-md-6"></nd-history>
-      </div>
+          <nd-history [idx]="device.idx"></nd-history>
+        </div>
+      </ng-container>
     </div>
   `,
   styleUrls: ['./device-options.component.scss']

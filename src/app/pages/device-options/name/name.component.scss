@@ -37,3 +37,18 @@
     }
   }
 }
+
+@media (min-width: 768px) {
+
+  nb-card {
+    height: inherit;
+    margin: inherit;
+    width: inherit;
+
+    nb-card-body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}

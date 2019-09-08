@@ -1,11 +1,11 @@
-import { Component, ChangeDetectionStrategy, ViewChild, ElementRef,
+import { Component, ChangeDetectionStrategy,
   OnDestroy, Input, OnInit} from '@angular/core';
+
+import { Subject, Observable } from 'rxjs';
+import { take, finalize, takeUntil, map } from 'rxjs/operators';
 
 import { TempGraphData } from '@nd/core/models';
 import { DeviceHistoryService } from '@nd/core/services';
-import { take, finalize, takeWhile, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-import { NbTabComponent } from '@nebular/theme';
 
 @Component({
   selector: 'nd-history',
@@ -14,12 +14,15 @@ import { NbTabComponent } from '@nebular/theme';
       <nb-card-body>
         <div class="header">
           <span class="title">{{ title }}</span>
-          <nb-select [(selected)]="range">
-            <nb-option *ngFor="let _range of ranges" value="_range">
+
+          <nb-select [(selected)]="range" id="history-select"
+            (selectedChange)="onSelectedChange($event)">
+            <nb-option *ngFor="let _range of ranges" [value]="_range">
               {{ _range }}
             </nb-option>
           </nb-select>
         </div>
+
         <nd-temp-graph [tempData]="tempDayData$ | async" [loading]="dayLoading">
         </nd-temp-graph>
       </nb-card-body>
@@ -28,23 +31,13 @@ import { NbTabComponent } from '@nebular/theme';
   styleUrls: ['./history.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HistoryComponent implements OnDestroy {
+export class HistoryComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject();
 
-  @Input()
-  set idx(value: string) {
-    if (!!value) {
-      this.dayLoading = true;
-      this.service.getTempGraph(value, 'day').pipe(
-        finalize(() => this.dayLoading = false),
-        take(1),
-        takeUntil(this.unsubscribe$)
-      ).subscribe();
-    }
-  }
+  @Input() idx: string;
 
-  tempDayData$ = this.service.select<TempGraphData[]>('tempGraph', 'day');
+  tempDayData$: Observable<TempGraphData[]> = this.service.select<any[]>('tempGraph', 'day');
 
   title = 'HISTORY';
 
@@ -56,8 +49,17 @@ export class HistoryComponent implements OnDestroy {
 
   constructor(private service: DeviceHistoryService) { }
 
-  onChangeTab(tab: NbTabComponent) {
-    console.log(tab);
+  ngOnInit() {
+    this.onSelectedChange(this.range);
+  }
+
+  onSelectedChange(range: string) {
+    this.dayLoading = true;
+    this.service.getTempGraph(this.idx, range).pipe(
+      finalize(() => this.dayLoading = false),
+      take(1),
+      takeUntil(this.unsubscribe$)
+    ).subscribe();
   }
 
   ngOnDestroy() {

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, ViewChild, ElementRef,
-  AfterViewInit, OnDestroy, Input, OnInit} from '@angular/core';
+  AfterViewInit, OnDestroy, Input, OnInit, HostListener} from '@angular/core';
 
 import { takeWhile, delay, tap } from 'rxjs/operators';
 
@@ -12,14 +12,15 @@ import { Subject, zip } from 'rxjs';
 @Component({
   selector: 'nd-temp-graph',
   template: `
-    <div [nbSpinner]="loading" class="chart-container" #myChart></div>
+    <div [nbSpinner]="loading" class="chart-container" #myChart>
+    </div>
   `,
   styleUrls: ['./temp-graph.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TempGraphComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  @ViewChild('myChart', { static: false }) myChart: ElementRef;
+  @ViewChild('myChart', { static: false }) myChartRef: ElementRef;
 
   private alive = true;
 
@@ -27,9 +28,16 @@ export class TempGraphComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() loading: boolean;
 
-  @Input() tempData: TempGraphData[];
+  @Input()
+  set tempData(value) {
+    if (!!value) {
+      this.tempData$.next(value);
+    }
+  }
 
   myChart: any;
+
+  option: any;
 
   constructor(private theme: NbThemeService) { }
 
@@ -41,21 +49,41 @@ export class TempGraphComponent implements OnInit, AfterViewInit, OnDestroy {
       tap(([data, config]) => {
         if (!!data && !!data.length) {
           const tTheme: any = config.variables.temperature;
-          const option = this.getChartOption(data, tTheme);
-          this.myChart.setOption(option);
+          this.option = this.getChartOption(data, tTheme);
+          this.myChart.setOption(this.option);
         }
-      })
-    );
+      }),
+      takeWhile(() => this.alive)
+    ).subscribe();
   }
 
   ngAfterViewInit() {
-    this.myChart = echarts.init(this.myChart.nativeElement);
+    this.myChart = echarts.init(this.myChartRef.nativeElement);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.myChart.resize();
+    if (event.target.innerWidth < 768 && !!this.option.grid.left) {
+      this.setGridLeft(null);
+    } else if (event.target.innerWidth >= 768 && !this.option.grid.left) {
+      this.setGridLeft('80');
+    }
+  }
+
+  setGridLeft(left: string) {
+    this.option = {
+      ...this.option, grid: {
+        ...this.option.grid, left: left
+      }
+    };
+    this.myChart.setOption(this.option);
   }
 
   getChartOption(tempData: TempGraphData[], tTheme: any) {
     return {
       grid: {
-        left: '15%',
+        left: innerWidth < 768 ? null : '80',
         top: '5%',
         right: '5%',
         bottom: 80,
@@ -74,7 +102,13 @@ export class TempGraphComponent implements OnInit, AfterViewInit, OnDestroy {
           fontSize: 20,
           fontWeight: tTheme.tooltipFontWeight,
         },
-        position: 'top',
+        position: function (pos, params, dom, rect, size) {
+          // tooltip will be fixed on the right if mouse hovering on the left,
+          // and on the left if hovering on the right.
+          const obj = {top: 60};
+          obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 5;
+          return innerWidth < 768 ? obj : null;
+        },
         backgroundColor: tTheme.tooltipBg,
         borderColor: tTheme.tooltipBorderColor,
         borderWidth: 1,
@@ -94,7 +128,8 @@ export class TempGraphComponent implements OnInit, AfterViewInit, OnDestroy {
           fontSize: 18,
           formatter: function (value: string, idx: number) {
               const date = new Date(value);
-              return idx % 2 ? null : `0${date.getHours()}`.slice(-2) + `:` + `0${date.getMinutes()}`.slice(-2);
+              return idx % 2 || idx === 0 ? null :
+                `0${date.getHours()}`.slice(-2) + `:` + `0${date.getMinutes()}`.slice(-2);
           }
         },
         axisLine: {

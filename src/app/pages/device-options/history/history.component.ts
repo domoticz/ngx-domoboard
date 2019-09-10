@@ -1,10 +1,10 @@
 import { Component, ChangeDetectionStrategy,
-  OnDestroy, Input, OnInit} from '@angular/core';
+  OnDestroy, Input, OnInit, ChangeDetectorRef} from '@angular/core';
 
-import { Subject, Observable } from 'rxjs';
-import { take, finalize, takeUntil, map } from 'rxjs/operators';
+import { Subject, Observable, from } from 'rxjs';
+import { take, finalize, takeUntil, mergeMap } from 'rxjs/operators';
 
-import { TempGraphData } from '@nd/core/models';
+import { TempGraphData, Temp } from '@nd/core/models';
 import { DeviceHistoryService } from '@nd/core/services';
 
 @Component({
@@ -12,19 +12,31 @@ import { DeviceHistoryService } from '@nd/core/services';
   template: `
     <nb-card>
       <nb-card-body>
-        <div class="header">
-          <span class="title">{{ title }}</span>
 
-          <nb-select [(selected)]="range" id="history-select"
-            (selectedChange)="onSelectedChange($event)">
-            <nb-option *ngFor="let _range of ranges" [value]="_range">
-              {{ _range }}
-            </nb-option>
-          </nb-select>
-        </div>
+          <div class="header">
+            <span class="title">{{ title }}</span>
+            <nb-select *ngIf="isTemp(device)" [(selected)]="range" id="history-select">
+              <nb-option *ngFor="let _range of ranges" [value]="_range">
+                {{ _range }}
+              </nb-option>
+            </nb-select>
+          </div>
 
-        <nd-temp-graph [tempData]="tempDayData$ | async" [loading]="dayLoading">
-        </nd-temp-graph>
+          <nd-temp-graph *ngIf="isTemp(device) && range === 'day'"
+            [tempData]="tempDayData$ | async" [loading]="tempLoading"
+            [range]="range">
+          </nd-temp-graph>
+
+          <nd-temp-graph *ngIf="isTemp(device) && range === 'month'"
+            [tempData]="tempMonthData$ | async" [loading]="tempLoading"
+            [range]="range">
+          </nd-temp-graph>
+
+          <nd-temp-graph *ngIf="isTemp(device) && range === 'year'"
+            [tempData]="tempYearData$ | async" [loading]="tempLoading"
+            [range]="range">
+          </nd-temp-graph>
+
       </nb-card-body>
     </nb-card>
   `,
@@ -35,9 +47,13 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject();
 
-  @Input() idx: string;
+  @Input() device: any;
 
   tempDayData$: Observable<TempGraphData[]> = this.service.select<any[]>('tempGraph', 'day');
+
+  tempMonthData$: Observable<TempGraphData[]> = this.service.select<any[]>('tempGraph', 'month');
+
+  tempYearData$: Observable<TempGraphData[]> = this.service.select<any[]>('tempGraph', 'year');
 
   title = 'HISTORY';
 
@@ -45,24 +61,36 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
   range = 'day';
 
-  dayLoading: boolean;
+  tempLoading: boolean;
 
-  constructor(private service: DeviceHistoryService) { }
+  constructor(
+    private service: DeviceHistoryService,
+    private cd: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
-    this.onSelectedChange(this.range);
-  }
-
-  onSelectedChange(range: string) {
-    this.dayLoading = true;
-    this.service.getTempGraph(this.idx, range).pipe(
-      finalize(() => this.dayLoading = false),
-      take(1),
+    this.tempLoading = true;
+    from(this.ranges).pipe(
+      mergeMap(range => this.service.getTempGraph(this.device.idx, range)),
+      finalize(() => {
+        this.tempLoading = false;
+        this.cd.detectChanges();
+      }),
+      take(this.ranges.length),
       takeUntil(this.unsubscribe$)
     ).subscribe();
   }
 
+  isTemp(device: any): device is Temp {
+    return device.Temp !== undefined;
+  }
+
+  onSelectedChange(event: any) {
+
+  }
+
   ngOnDestroy() {
+    this.service.clearStore();
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }

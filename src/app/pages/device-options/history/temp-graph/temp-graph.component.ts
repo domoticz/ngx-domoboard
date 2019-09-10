@@ -1,39 +1,43 @@
 import { Component, ChangeDetectionStrategy, ViewChild, ElementRef,
-  AfterViewInit, OnDestroy, Input, OnInit, HostListener} from '@angular/core';
+  AfterViewInit, OnDestroy, Input, HostListener} from '@angular/core';
 
-import { takeWhile, delay, tap } from 'rxjs/operators';
+import { ReplaySubject, zip } from 'rxjs';
+import { takeWhile, tap } from 'rxjs/operators';
 
 import echarts from 'echarts';
 
 import { NbThemeService } from '@nebular/theme';
+
 import { TempGraphData } from '@nd/core/models';
-import { Subject, zip } from 'rxjs';
 
 @Component({
   selector: 'nd-temp-graph',
   template: `
-    <div [nbSpinner]="loading" class="chart-container" #myChart>
+    <div [nbSpinner]="loading">
+      <div class="chart-container" #myChart></div>
     </div>
   `,
   styleUrls: ['./temp-graph.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TempGraphComponent implements OnInit, AfterViewInit, OnDestroy {
+export class TempGraphComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('myChart', { static: false }) myChartRef: ElementRef;
 
   private alive = true;
 
-  private tempData$ = new Subject<TempGraphData[]>();
+  private tempData$ = new ReplaySubject<TempGraphData[]>(1);
 
   @Input() loading: boolean;
 
   @Input()
   set tempData(value) {
-    if (!!value) {
+    if (!!value && !!value.length) {
       this.tempData$.next(value);
     }
   }
+
+  @Input() range: string;
 
   myChart: any;
 
@@ -41,24 +45,19 @@ export class TempGraphComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private theme: NbThemeService) { }
 
-  ngOnInit() {
+  ngAfterViewInit() {
+    this.myChart = echarts.init(this.myChartRef.nativeElement);
     zip(
       this.tempData$,
       this.theme.getJsTheme()
     ).pipe(
       tap(([data, config]) => {
-        if (!!data && !!data.length) {
-          const tTheme: any = config.variables.temperature;
-          this.option = this.getChartOption(data, tTheme);
-          this.myChart.setOption(this.option);
-        }
+        const tTheme: any = config.variables.temperature;
+        this.option = this.getChartOption(data, this.range, tTheme);
+        this.myChart.setOption(this.option);
       }),
       takeWhile(() => this.alive)
     ).subscribe();
-  }
-
-  ngAfterViewInit() {
-    this.myChart = echarts.init(this.myChartRef.nativeElement);
   }
 
   @HostListener('window:resize', ['$event'])
@@ -80,7 +79,7 @@ export class TempGraphComponent implements OnInit, AfterViewInit, OnDestroy {
     this.myChart.setOption(this.option);
   }
 
-  getChartOption(tempData: TempGraphData[], tTheme: any) {
+  getChartOption(tempData: TempGraphData[], range: string, tTheme: any) {
     return {
       grid: {
         left: innerWidth < 768 ? null : '80',
@@ -128,8 +127,12 @@ export class TempGraphComponent implements OnInit, AfterViewInit, OnDestroy {
           fontSize: 18,
           formatter: function (value: string, idx: number) {
               const date = new Date(value);
-              return idx % 2 || idx === 0 ? null :
+              if (range === 'day') {
+              return idx === 0 ? null :
                 `0${date.getHours()}`.slice(-2) + `:` + `0${date.getMinutes()}`.slice(-2);
+              } else {
+                return idx === 0 ? null : [date.getMonth() + 1, date.getDate()].join('-');
+              }
           }
         },
         axisLine: {
@@ -161,8 +164,7 @@ export class TempGraphComponent implements OnInit, AfterViewInit, OnDestroy {
             width: '1',
           },
         },
-        scale: true,
-        interval: .5
+        scale: true
       },
       series: [
         {

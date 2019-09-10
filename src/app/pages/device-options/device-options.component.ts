@@ -49,7 +49,7 @@ const isTemp = (device: any): device is Temp => device.Temp !== undefined;
             [level]="device.Level" (colorSet)="onColorSet(device.idx, $event)">
           </nd-color-picker>
 
-          <nd-history [idx]="device.idx"></nd-history>
+          <nd-history [device]="device"></nd-history>
         </div>
       </ng-container>
     </div>

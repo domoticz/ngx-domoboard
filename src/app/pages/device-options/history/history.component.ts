@@ -22,19 +22,8 @@ import { DeviceHistoryService } from '@nd/core/services';
             </nb-select>
           </div>
 
-          <nd-temp-graph *ngIf="isTemp(device) && range === 'day'"
-            [tempData]="tempDayData$ | async" [loading]="tempLoading"
-            [range]="range">
-          </nd-temp-graph>
-
-          <nd-temp-graph *ngIf="isTemp(device) && range === 'month'"
-            [tempData]="tempMonthData$ | async" [loading]="tempLoading"
-            [range]="range">
-          </nd-temp-graph>
-
-          <nd-temp-graph *ngIf="isTemp(device) && range === 'year'"
-            [tempData]="tempYearData$ | async" [loading]="tempLoading"
-            [range]="range">
+          <nd-temp-graph *ngIf="isTemp(device)" [tempData]="tempData$ | async"
+            [loading]="tempLoading" [range]="range">
           </nd-temp-graph>
 
       </nb-card-body>
@@ -49,12 +38,6 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
   @Input() device: any;
 
-  tempDayData$: Observable<TempGraphData[]> = this.service.select<any[]>('tempGraph', 'day');
-
-  tempMonthData$: Observable<TempGraphData[]> = this.service.select<any[]>('tempGraph', 'month');
-
-  tempYearData$: Observable<TempGraphData[]> = this.service.select<any[]>('tempGraph', 'year');
-
   title = 'HISTORY';
 
   ranges = ['day', 'month', 'year'];
@@ -62,6 +45,10 @@ export class HistoryComponent implements OnInit, OnDestroy {
   range = 'day';
 
   tempLoading: boolean;
+
+  get tempData$(): Observable<TempGraphData[]> {
+    return this.service.select<any[]>('tempGraph', this.range);
+  }
 
   constructor(
     private service: DeviceHistoryService,
@@ -83,10 +70,6 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
   isTemp(device: any): device is Temp {
     return device.Temp !== undefined;
-  }
-
-  onSelectedChange(event: any) {
-
   }
 
   ngOnDestroy() {

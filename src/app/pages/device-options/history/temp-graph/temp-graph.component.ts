@@ -32,6 +32,9 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
 
   @Input()
   set tempData(value) {
+    if (!!this.myChart) {
+      this.myChart.clear();
+    }
     if (!!value && !!value.length) {
       this.tempData$.next(value);
     }

@@ -80,8 +80,82 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
     this.myChart.setOption(this.option);
   }
 
+  getTemperatureSeries(tempData: TempGraphData[], tTheme: any, type: string) {
+    return [
+      {
+        name: 'te',
+        type: 'line',
+        smooth: true,
+        symbolSize: 20,
+        itemStyle: {
+          normal: {
+            opacity: 0,
+          },
+          emphasis: {
+            color: '#ffffff',
+            borderColor: tTheme.itemBorderColor,
+            borderWidth: 2,
+            opacity: 1,
+          },
+        },
+        lineStyle: {
+          normal: {
+            width: tTheme.lineWidth,
+            type: tTheme.lineStyle,
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+              offset: 0,
+              color: tTheme.lineGradFrom,
+            }, {
+              offset: 1,
+              color: tTheme.lineGradTo,
+            }]),
+            shadowColor: tTheme.lineShadow,
+            shadowBlur: 6,
+            shadowOffsetY: 12,
+          },
+        },
+        areaStyle: {
+          normal: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+              offset: 0,
+              color: tTheme.areaGradFrom,
+            }, {
+              offset: 1,
+              color: tTheme.areaGradTo,
+            }]),
+          },
+        },
+        data: tempData.map(i => i.te),
+      },
+      {
+        name: 'te',
+        type: 'line',
+        smooth: true,
+        symbol: 'none',
+        lineStyle: {
+          normal: {
+            width: tTheme.lineWidth,
+            type: tTheme.lineStyle,
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+              offset: 0,
+              color: tTheme.lineGradFrom,
+            }, {
+              offset: 1,
+              color: tTheme.lineGradTo,
+            }]),
+            shadowColor: tTheme.shadowLineDarkBg,
+            shadowBlur: 14,
+            opacity: 1,
+          },
+        },
+        data: tempData.map(i => i.te),
+      }
+    ]
+  }
+
   getChartOption(tempData: TempGraphData[], range: string, tTheme: any) {
     return {
+      color: tTheme.lineGradFrom,
       grid: {
         left: innerWidth < 768 ? null : '80',
         right: '5%',
@@ -116,7 +190,7 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
         extraCssText: tTheme.tooltipExtraCss,
       },
       legend: {
-        data: ['te', 'te1'],
+        data: ['te'],
         icon: 'rect',
         textStyle: {
           color: tTheme.xAxisTextColor,
@@ -222,7 +296,7 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
           data: tempData.map(i => i.te),
         },
         {
-          name: 'te1',
+          name: 'te',
           type: 'line',
           smooth: true,
           symbol: 'none',

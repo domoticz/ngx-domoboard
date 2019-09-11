@@ -2,7 +2,7 @@ import { Component, ChangeDetectionStrategy, ViewChild, ElementRef,
   AfterViewInit, OnDestroy, Input, HostListener} from '@angular/core';
 
 import { ReplaySubject, zip } from 'rxjs';
-import { takeWhile, tap } from 'rxjs/operators';
+import { takeWhile, tap, mergeMap, withLatestFrom } from 'rxjs/operators';
 
 import echarts from 'echarts';
 
@@ -30,6 +30,8 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
 
   @Input() loading: boolean;
 
+  @Input() range: string;
+
   @Input()
   set tempData(value) {
     if (!!this.myChart) {
@@ -40,8 +42,6 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  @Input() range: string;
-
   myChart: any;
 
   option: any;
@@ -50,10 +50,8 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.myChart = echarts.init(this.myChartRef.nativeElement);
-    zip(
-      this.tempData$,
-      this.theme.getJsTheme()
-    ).pipe(
+    this.tempData$.pipe(
+      withLatestFrom(this.theme.getJsTheme()),
       tap(([data, config]) => {
         const tTheme: any = config.variables.temperature;
         this.option = this.getChartOption(data, this.range, tTheme);
@@ -86,9 +84,9 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
     return {
       grid: {
         left: innerWidth < 768 ? null : '80',
-        top: '5%',
         right: '5%',
         bottom: 80,
+        containsLabel: true
       },
       tooltip: {
         trigger: 'axis',
@@ -116,6 +114,14 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
         borderWidth: 1,
         formatter: '{c0} °C <br/> {b0}',
         extraCssText: tTheme.tooltipExtraCss,
+      },
+      legend: {
+        data: ['te', 'te1'],
+        icon: 'rect',
+        textStyle: {
+          color: tTheme.xAxisTextColor,
+          fontSize: 18
+        }
       },
       xAxis: {
         type: 'category',
@@ -171,6 +177,7 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
       },
       series: [
         {
+          name: 'te',
           type: 'line',
           smooth: true,
           symbolSize: 20,
@@ -214,8 +221,8 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
           },
           data: tempData.map(i => i.te),
         },
-
         {
+          name: 'te1',
           type: 'line',
           smooth: true,
           symbol: 'none',
@@ -236,7 +243,7 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
             },
           },
           data: tempData.map(i => i.te),
-        },
+        }
       ],
     };
   }

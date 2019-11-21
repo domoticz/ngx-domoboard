@@ -3,7 +3,7 @@
 @include nb-install-component() {
 
   .name-form:focus-within {
-    border-color: nb-theme(input-focus-border-color);
+    border-color: nb-theme(input-basic-focus-border-color);
     box-shadow: 0 0 0 0.375rem nb-theme(color-basic-700);
   }
 }

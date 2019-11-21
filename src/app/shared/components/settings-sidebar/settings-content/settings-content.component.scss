@@ -42,7 +42,7 @@
     border: solid;
     border-radius: nb-theme(input-rectangle-border-radius);
     padding: nb-theme(input-tiny-padding);
-    color: nb-theme(input-text-color);
+    color: nb-theme(input-basic-text-color);
 
     &.success {
       border-color: nb-theme(input-success-border-color);

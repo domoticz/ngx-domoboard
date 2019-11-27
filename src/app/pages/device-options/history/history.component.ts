@@ -3,8 +3,7 @@ import {
   ChangeDetectionStrategy,
   OnDestroy,
   Input,
-  OnInit,
-  ChangeDetectorRef
+  OnInit
 } from '@angular/core';
 
 import { Subject, Observable } from 'rxjs';
@@ -62,10 +61,7 @@ export class HistoryComponent implements OnInit, OnDestroy {
     return this.service.select<any[]>('tempGraph', this.range);
   }
 
-  constructor(
-    private service: DeviceHistoryService,
-    private cd: ChangeDetectorRef
-  ) {}
+  constructor(private service: DeviceHistoryService) {}
 
   ngOnInit() {
     this.tempLoading = true;

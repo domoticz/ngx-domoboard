@@ -64,15 +64,17 @@ export class HistoryComponent implements OnInit, OnDestroy {
   constructor(private service: DeviceHistoryService) {}
 
   ngOnInit() {
-    this.tempLoading = true;
-    this.service
-      .getTempGraph(this.device.idx, this.range)
-      .pipe(
-        finalize(() => (this.tempLoading = false)),
-        take(1),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe();
+    if (this.isTemp(this.device)) {
+      this.tempLoading = true;
+      this.service
+        .getTempGraph(this.device.idx, this.range)
+        .pipe(
+          finalize(() => (this.tempLoading = false)),
+          take(1),
+          takeUntil(this.unsubscribe$)
+        )
+        .subscribe();
+    }
   }
 
   onSelectedChange(range: string) {

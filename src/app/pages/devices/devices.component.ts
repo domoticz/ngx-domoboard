@@ -2,7 +2,14 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 
 import { Subject, merge } from 'rxjs';
-import { tap, takeUntil, take, finalize, mergeMap, skip, filter, switchMap } from 'rxjs/operators';
+import {
+  tap,
+  takeUntil,
+  take,
+  finalize,
+  skip,
+  switchMap
+} from 'rxjs/operators';
 
 import { Switch, Temp } from '@nd/core/models';
 
@@ -14,7 +21,6 @@ import { DevicesService, SwitchesService, DBService } from '@nd/core/services';
   styleUrls: ['./devices.component.scss']
 })
 export class DevicesComponent implements OnInit, OnDestroy {
-
   private unsubscribe$ = new Subject();
 
   devices$ = this.service.select<Switch[] | Temp[]>('devices');
@@ -38,15 +44,19 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   get filter() {
     switch (this.path) {
-      case 'temperature': return 'temp';
-      case 'switches': return 'light';
+      case 'temperature':
+        return 'temp';
+      case 'switches':
+        return 'light';
     }
   }
 
   get statusKey() {
     switch (this.filter) {
-      case 'light': return 'Status';
-      case 'temp': return 'Data';
+      case 'light':
+        return 'Status';
+      case 'temp':
+        return 'Data';
     }
   }
 
@@ -56,7 +66,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private dbService: DBService
-  ) { }
+  ) {}
 
   ngOnInit() {
     merge(
@@ -75,16 +85,16 @@ export class DevicesComponent implements OnInit, OnDestroy {
           }
         })
       )
-    ).pipe(
-      takeUntil(this.unsubscribe$)
-    ).subscribe();
+    )
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe();
     this.getDeviceIcons();
   }
 
   async getDeviceIcons() {
     try {
       const icons = await this.dbService.getAllIcons();
-      this.deviceIcons = (icons as any[]);
+      this.deviceIcons = icons as any[];
     } catch (error) {
       console.error('Could not retrieve device icons', error);
     }
@@ -96,7 +106,9 @@ export class DevicesComponent implements OnInit, OnDestroy {
   }
 
   isSwitchOn(_switch: Switch): boolean {
-    if (this.filter !== 'light' || !_switch.Status) { return; }
+    if (this.filter !== 'light' || !_switch.Status) {
+      return;
+    }
     return !['Off', 'Closed'].some(s => _switch.Status.includes(s));
   }
 
@@ -104,29 +116,33 @@ export class DevicesComponent implements OnInit, OnDestroy {
     if (['On/Off', 'Dimmer'].includes(_switch.SwitchType)) {
       this.switchLoading = true;
       this.clickedIdx = _switch.idx;
-      this.switchesService.switchLight(_switch.idx, event).pipe(
-        tap(resp => {
-          if (resp.status === 'OK') {
-            _switch.Status = event;
-          } else {
-            throw resp;
-          }
-        }),
-        take(1),
-        finalize(() => this.switchLoading = false)
-      ).subscribe();
+      this.switchesService
+        .switchLight(_switch.idx, event)
+        .pipe(
+          tap(resp => {
+            if (resp.status === 'OK') {
+              _switch.Status = event;
+            } else {
+              throw resp;
+            }
+          }),
+          take(1),
+          finalize(() => (this.switchLoading = false))
+        )
+        .subscribe();
     } else {
       throw new Error('Not a switchable device!');
     }
   }
 
   onOptionsClick(idx: string) {
-    this.router.navigate(['options', idx], { state: { previousUrl: this.route.snapshot.url } });
+    this.router.navigate(['options', idx], {
+      state: { previousUrl: this.route.snapshot.url }
+    });
   }
 
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }
-
 }

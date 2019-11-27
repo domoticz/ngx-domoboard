@@ -1,19 +1,25 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, BehaviorSubject } from 'rxjs';
-import { distinctUntilChanged, tap, pluck, map } from 'rxjs/operators';
+import { Observable, BehaviorSubject, merge, of } from 'rxjs';
+import { distinctUntilChanged, tap, pluck } from 'rxjs/operators';
 
 import { DataService } from './data.service';
 import { DBService } from './db.service';
 
-import { DomoticzResponse, Switch, Temp, DomoticzColor } from '@nd/core/models';
+import { DomoticzResponse, Switch, Temp, DomoticzColor, TempGraphData } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
+
 import { environment } from 'environments/environment';
 
 interface State<T> {
   device: T;
   isSubscribed: boolean;
+  tempGraph: {
+    day: TempGraphData[];
+    month: TempGraphData[];
+    year: TempGraphData[];
+  };
 }
 
 const pushApi = {
@@ -23,12 +29,19 @@ const pushApi = {
   isMonitoring: '/is-monitoring'
 };
 
+const isTemp = (device: any): device is Temp => device.Temp !== undefined;
+
 @Injectable({providedIn: 'root'})
 export class DeviceOptionsService extends DataService {
 
   initialState: State<Temp | Switch> = {
     device: {} as Temp | Switch,
-    isSubscribed: false
+    isSubscribed: false,
+    tempGraph: {
+      day: [],
+      month: [],
+      year: []
+    }
   };
 
   private subject = new BehaviorSubject<State<Temp | Switch>>(this.initialState);
@@ -72,6 +85,22 @@ export class DeviceOptionsService extends DataService {
   setKelvinLevel(idx: string, kelvin: string): Observable<DomoticzResponse<any>> {
     return this.get<DomoticzResponse<any>>(
       Api.kelvinLevel.replace('{idx}', idx).replace('{kelvin}', kelvin)
+    );
+  }
+
+  getTempGraph(range: string): Observable<DomoticzResponse<Temp>> {
+    return this.get<DomoticzResponse<Temp>>(
+      Api.tempGraph.replace('{idx}', this.subject.value.device.idx).replace('{range}', range)
+    ).pipe(
+      tap((resp: DomoticzResponse<Temp>) => {
+        if (resp.status === 'OK') {
+          this.subject.next({
+            ...this.subject.value, tempGraph: {
+              ...this.subject.value.tempGraph, [range]: resp.result
+            }
+          });
+        }
+      })
     );
   }
 

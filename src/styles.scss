@@ -1,8 +1,9 @@
-@import 'src/_themes.scss';
+@import 'themes';
 
 @import '~@nebular/theme/styles/globals';
 
 @import './app/shared/components/header/header-theme';
+@import './app/pages/device-options/history/history-theme';
 
 .no-devices {
   height: 100%;

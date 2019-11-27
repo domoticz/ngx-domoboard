@@ -8,5 +8,6 @@ export enum Api {
   refreshDevices = 'json.htm?type=devices&filter={filter}&used=true&lastupdate={lastupdate}',
   dimLevel = 'json.htm?type=command&param=switchlight&idx={idx}&switchcmd=Set%20Level&level={level}',
   colorBrightness = 'json.htm?type=command&param=setcolbrightnessvalue&idx={idx}&color={color}',
-  kelvinLevel = 'json.htm?type=command&param=setkelvinlevel&idx={idx}&kelvin={kelvin}'
+  kelvinLevel = 'json.htm?type=command&param=setkelvinlevel&idx={idx}&kelvin={kelvin}',
+  tempGraph = 'json.htm?type=graph&sensor=temp&idx={idx}&range={range}'
 }

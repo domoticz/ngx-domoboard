@@ -1,0 +1,15 @@
+@import 'src/_themes.scss';
+
+@include nb-install-component() {
+
+  .title {
+    font-size: nb-theme(text-heading-6-font-size);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 2rem 0;
+}

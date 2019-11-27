@@ -7,7 +7,7 @@ export const environment = {
   production: false,
   version: version,
   name: name,
-  pushServer: 'http://localhost/api',
+  pushServer: 'https://nd-api.duckdns.org:5035/api',
   domoticz: false
 };
 

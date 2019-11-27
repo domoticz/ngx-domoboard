@@ -10,6 +10,7 @@ import { NbThemeModule, NbLayoutModule, NbToastrModule, NbDialogModule, NbButton
 import { SharedModule } from '@nd/shared/shared.module';
 import { GlobalErrorHandler } from '@nd/core/global-error-handler';
 import { httpInterceptorProviders } from '@nd/core/http-interceptors';
+import { CUSTOM_COSMIC_THEME } from '@nd/core/theme.custom-cosmic';
 
 import { AppComponent } from './app.component';
 import { routes } from './app.routes';
@@ -28,7 +29,7 @@ import { environment } from '../environments/environment';
       scrollPositionRestoration: 'enabled'
     }),
     BrowserAnimationsModule,
-    NbThemeModule.forRoot({ name: 'custom-cosmic' }),
+    NbThemeModule.forRoot({ name: 'custom-cosmic' }, [CUSTOM_COSMIC_THEME]),
     NbLayoutModule,
     NbDialogModule.forRoot(),
     NbButtonModule,

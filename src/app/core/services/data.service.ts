@@ -50,7 +50,7 @@ export abstract class DataService {
     );
   }
 
-  getAuthOption(settings: DomoticzSettings): any {
+  private getAuthOption(settings: DomoticzSettings): any {
     const authToken = btoa(`${settings.credentials.username}:${settings.credentials.password}`);
     return {
       headers: new HttpHeaders({

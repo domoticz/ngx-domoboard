@@ -4,8 +4,6 @@
 @include nb-install-component() { }
 
 .options-container {
-  display: flex;
-  flex-direction: column;
   height: 100%;
   animation-duration: 400ms;
   animation-timing-function: ease-in-out;
@@ -21,9 +19,47 @@
   }
 
   .close-icon {
+    display: flex;
     margin: 0 0 2rem auto;
     width: 2rem;
     height: 2rem;
     cursor: pointer;
+  }
+
+  .small-blocks {
+    display: flex;
+    flex-wrap: wrap;
+
+    .small-block {
+      padding: 0;
+    }
+  }
+
+  .big-blocks {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 768px) {
+
+  .options-container {
+
+    .small-blocks {
+      margin: 1rem 0;
+
+      .small-block {
+        display: flex;
+        justify-content: space-evenly;
+        height: 8rem;
+        margin: 1rem 0;
+        width: 95%;
+      }
+
+      .big-blocks {
+        margin: 0 auto;
+        width: 75%;
+      }
+    }
   }
 }

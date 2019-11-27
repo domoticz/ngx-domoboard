@@ -181,15 +181,14 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   }
 
   async onSaveIconClick(event: any) {
-    this.iconLoading = true;
     try {
+      this.iconLoading = true;
       const msg = await this.dbService.addDeviceIcon(event.idx, event.evaIcon);
       console.log('😃 ' + msg);
       this.dbService.syncDeviceIcon(event.idx, event.evaIcon);
+      setTimeout(() => (this.iconLoading = false), 500);
     } catch (error) {
       console.error('⛔️ Could not save device icon', error);
-    } finally {
-      setTimeout(() => (this.iconLoading = false), 500);
     }
   }
 

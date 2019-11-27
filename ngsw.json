@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1567538716341,
+  "timestamp": 1574865147529,
   "index": "https://domoticz.github.io/ngx-domoboard/index.html",
   "assetGroups": [
     {
@@ -8,19 +8,17 @@
       "installMode": "prefetch",
       "updateMode": "prefetch",
       "urls": [
-        "https://domoticz.github.io/ngx-domoboard/7.989d478650a83888a1a0.js",
-        "https://domoticz.github.io/ngx-domoboard/8.4c6e1b90974ecf66c92f.js",
-        "https://domoticz.github.io/ngx-domoboard/9.ff646ef226c402ee97fa.js",
-        "https://domoticz.github.io/ngx-domoboard/common.aacec6ecd4ad51f91ea0.js",
+        "https://domoticz.github.io/ngx-domoboard/6.13334e85ea76fb159517.js",
+        "https://domoticz.github.io/ngx-domoboard/7.6a551c1bcd1fdac01f6a.js",
         "https://domoticz.github.io/ngx-domoboard/favicon.ico",
         "https://domoticz.github.io/ngx-domoboard/index.html",
-        "https://domoticz.github.io/ngx-domoboard/main.54554f3f2aca3b98f99d.js",
-        "https://domoticz.github.io/ngx-domoboard/polyfills-es5.ee36f288ebe29b6d000e.js",
-        "https://domoticz.github.io/ngx-domoboard/polyfills.392c7ecf8ff5a9480e0f.js",
-        "https://domoticz.github.io/ngx-domoboard/runtime.035f7fb74eabc47bb282.js",
+        "https://domoticz.github.io/ngx-domoboard/main.50e57cccb5a673c13445.js",
+        "https://domoticz.github.io/ngx-domoboard/polyfills-es5.9735f73a9b2078c0f425.js",
+        "https://domoticz.github.io/ngx-domoboard/polyfills.80273fb0fd77f19997e1.js",
+        "https://domoticz.github.io/ngx-domoboard/runtime.65ce179f6b8733cc4ff2.js",
         "https://domoticz.github.io/ngx-domoboard/scripts.33b9fc15c4179bd83f7e.js",
-        "https://domoticz.github.io/ngx-domoboard/styles.b2aa0d847bae59501fd8.css",
-        "https://domoticz.github.io/ngx-domoboard/vendor.c8ad61453449ca57005f.js"
+        "https://domoticz.github.io/ngx-domoboard/styles.fbbadcf7c6d1b2b4bef3.css",
+        "https://domoticz.github.io/ngx-domoboard/vendor.715412bcd224ec99638c.js"
       ],
       "patterns": []
     },
@@ -64,9 +62,8 @@
   ],
   "dataGroups": [],
   "hashTable": {
-    "https://domoticz.github.io/ngx-domoboard/7.989d478650a83888a1a0.js": "93eb86245cbbd7791159f6068c66cbcfaad63ee5",
-    "https://domoticz.github.io/ngx-domoboard/8.4c6e1b90974ecf66c92f.js": "efdab399f128ecdb019d9f868eb97ccb214bf3e1",
-    "https://domoticz.github.io/ngx-domoboard/9.ff646ef226c402ee97fa.js": "e97799ec3cf0b8695347161e1609c767bd349794",
+    "https://domoticz.github.io/ngx-domoboard/6.13334e85ea76fb159517.js": "97b61aefd0967bece03786a6915e638a0f5fe094",
+    "https://domoticz.github.io/ngx-domoboard/7.6a551c1bcd1fdac01f6a.js": "17eb4e06d7536dcff83cfef0891ea84d2b12d886",
     "https://domoticz.github.io/ngx-domoboard/assets/icons/icon-128x128.png": "dae3b6ed49bdaf4327b92531d4b5b4a5d30c7532",
     "https://domoticz.github.io/ngx-domoboard/assets/icons/icon-144x144.png": "b0bd89982e08f9bd2b642928f5391915b74799a7",
     "https://domoticz.github.io/ngx-domoboard/assets/icons/icon-152x152.png": "7479a9477815dfd9668d60f8b3b2fba709b91310",
@@ -92,20 +89,19 @@
     "https://domoticz.github.io/ngx-domoboard/assets/icons/nd-icon-72x72.png": "aeb3729f849c6cd60bc2fb43605c87b82e68174f",
     "https://domoticz.github.io/ngx-domoboard/assets/icons/nd-icon-96x96.png": "e8011e0e816dcf59f3e9aac1fa7638e783862015",
     "https://domoticz.github.io/ngx-domoboard/assets/icons/nd-icons.svg": "57a1fd3a54a376737a2fa2e5950a290b5b675b66",
-    "https://domoticz.github.io/ngx-domoboard/common.aacec6ecd4ad51f91ea0.js": "8559e03d0e819c0105d3014bd0670c1b89c7b89b",
     "https://domoticz.github.io/ngx-domoboard/favicon.ico": "84161b857f5c547e3699ddfbffc6d8d737542e01",
-    "https://domoticz.github.io/ngx-domoboard/index.html": "df8e1bc34c9bbe34a4be23afe6b775281123a381",
-    "https://domoticz.github.io/ngx-domoboard/main.54554f3f2aca3b98f99d.js": "545a7a7b72e2b6dff234634ad00298c8d66f16d0",
+    "https://domoticz.github.io/ngx-domoboard/index.html": "13d2c1eb1064f459ae3a03bcb498ae96f6c1ee03",
+    "https://domoticz.github.io/ngx-domoboard/main.50e57cccb5a673c13445.js": "29c7ef2f9a9fb5e1a9eb5f5a58955d845a90969b",
     "https://domoticz.github.io/ngx-domoboard/nebular.85e45e2f83750a4184af.eot": "290b6c75a0af38b8606a9d2b843e6b4af4dacf31",
     "https://domoticz.github.io/ngx-domoboard/nebular.e5b059e952431846f8ab.ttf": "9e89de0ceca347c2877748d84035e1b7910f82d0",
     "https://domoticz.github.io/ngx-domoboard/nebular.e7b6b47eeafe34432dca.woff": "ccef7bb01bbec4b2fd438dabf939d7036ed3b51d",
     "https://domoticz.github.io/ngx-domoboard/nebular.ee79fa432c91db08585f.svg": "e98dd44dada2a5fa7bcf7afed08c9c6b0eb2092f",
-    "https://domoticz.github.io/ngx-domoboard/polyfills-es5.ee36f288ebe29b6d000e.js": "ba8073d00ab0ddc7da42f5e20aa7f1ca30442581",
-    "https://domoticz.github.io/ngx-domoboard/polyfills.392c7ecf8ff5a9480e0f.js": "991e145d3322d7c85270c736282bc917e87f3347",
-    "https://domoticz.github.io/ngx-domoboard/runtime.035f7fb74eabc47bb282.js": "cbe3d69df591ea88e0a2f94c773b7c9fc24f3237",
-    "https://domoticz.github.io/ngx-domoboard/scripts.33b9fc15c4179bd83f7e.js": "c093ae6a887f90e5ce3a56150778362477f0f439",
-    "https://domoticz.github.io/ngx-domoboard/styles.b2aa0d847bae59501fd8.css": "518c655ad83c5516a84269c317c7bf4b74332c82",
-    "https://domoticz.github.io/ngx-domoboard/vendor.c8ad61453449ca57005f.js": "d5cca90aed3559c0bb0981394ff6c3adc1ada31d"
+    "https://domoticz.github.io/ngx-domoboard/polyfills-es5.9735f73a9b2078c0f425.js": "c4b6c052228a5ec4355db51ca189fff2afca80b6",
+    "https://domoticz.github.io/ngx-domoboard/polyfills.80273fb0fd77f19997e1.js": "9184626363d337c09b10a1a74164edbcb4a433e5",
+    "https://domoticz.github.io/ngx-domoboard/runtime.65ce179f6b8733cc4ff2.js": "0a506e3f46b0caac398e575ecbbbe04770413baf",
+    "https://domoticz.github.io/ngx-domoboard/scripts.33b9fc15c4179bd83f7e.js": "7ab4a38735f3d54bb9614fd8dd5db32e60238eb9",
+    "https://domoticz.github.io/ngx-domoboard/styles.fbbadcf7c6d1b2b4bef3.css": "56d910dcfb7c6ba2ec19bfbd5af2438e0d6d7bb0",
+    "https://domoticz.github.io/ngx-domoboard/vendor.715412bcd224ec99638c.js": "ef23c7a92691e1500af579a5b7a0f5f5eb56223d"
   },
   "navigationUrls": [
     {

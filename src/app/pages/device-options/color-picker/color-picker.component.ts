@@ -1,5 +1,15 @@
-import { Component, AfterViewInit, ChangeDetectionStrategy, ViewChild,
-  ElementRef, Input, EventEmitter, OnInit, OnDestroy, Output } from '@angular/core';
+import {
+  Component,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ViewChild,
+  ElementRef,
+  Input,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+  Output
+} from '@angular/core';
 
 import { Subject } from 'rxjs';
 import { debounceTime, tap, takeUntil } from 'rxjs/operators';
@@ -15,14 +25,33 @@ import { kelvinTable } from './kelvin-table';
     <nb-card>
       <nb-card-body class="card-body-container">
         <nb-tabset fullWidth class="tabset-container">
-          <nb-tab #colorTab tabTitle="Color & Brightness" tabIcon="color-picker-outline" responsive>
+          <nb-tab
+            #colorTab
+            tabTitle="Color & Brightness"
+            tabIcon="color-picker-outline"
+            responsive
+          >
             <div class="color-picker-container" #container></div>
           </nb-tab>
 
-          <nb-tab #tempTab tabTitle="Temperature" tabIcon="thermometer-outline" responsive>
+          <nb-tab
+            #tempTab
+            tabTitle="Temperature"
+            tabIcon="thermometer-outline"
+            responsive
+          >
             <div class="slider-container">
-              <input #myRange type="range" step="100" min="1000" max="12000" [value]="kelvin"
-                class="slider" id="myRange" (input)="onRangeInput(myRange.value)">
+              <input
+                #myRange
+                type="range"
+                step="100"
+                min="1000"
+                max="12000"
+                [value]="kelvin"
+                class="slider"
+                id="myRange"
+                (input)="onRangeInput(myRange.value)"
+              />
             </div>
           </nb-tab>
         </nb-tabset>
@@ -33,7 +62,6 @@ import { kelvinTable } from './kelvin-table';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
-
   private unsubscribe$ = new Subject();
 
   private debouncer$ = new Subject<DomoticzColor>();
@@ -47,7 +75,9 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.kelvinInit(value);
     this._color = value;
   }
-  get color() { return this._color; }
+  get color() {
+    return this._color;
+  }
 
   @Input() level: number;
 
@@ -62,11 +92,13 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
   kelvin: number;
 
   ngOnInit() {
-    this.debouncer$.pipe(
-      debounceTime(100),
-      tap(value => this.colorSet.emit(value)),
-      takeUntil(this.unsubscribe$)
-    ).subscribe();
+    this.debouncer$
+      .pipe(
+        debounceTime(100),
+        tap(value => this.colorSet.emit(value)),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe();
   }
 
   async ngAfterViewInit() {
@@ -93,25 +125,43 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   kelvinInit(_color: DomoticzColor) {
     const _c = _color || this.color;
-    const _k = kelvinTable.find(k => (k.r <= _c.r + 1 && k.r >= _c.r - 1) &&
-      (k.g <= _c.g + 1 && k.g >= _c.g - 1) && (k.b <= _c.b + 1 && k.b >= _c.b - 1));
+    const _k = kelvinTable.find(
+      k =>
+        k.r <= _c.r + 1 &&
+        k.r >= _c.r - 1 &&
+        k.g <= _c.g + 1 && k.g >= _c.g - 1 &&
+        k.b <= _c.b + 1 && k.b >= _c.b - 1
+    );
     if (!!_k) {
-      this.kelvin =  _k.kelvin;
+      this.kelvin = _k.kelvin;
     }
   }
 
   onColorChange(color: any) {
-    this.debouncer$.next({ m: 3, t: 0, ...color.rgb, cw: 0, ww: 0 } as DomoticzColor);
+    this.debouncer$.next({
+      m: 3,
+      t: 0,
+      ...color.rgb,
+      cw: 0,
+      ww: 0
+    } as DomoticzColor);
   }
 
   onRangeInput(value: string) {
-    const { kelvin, ...color } = kelvinTable.find(x => x.kelvin.toString() === value);
-    this.debouncer$.next({ m: 3, t: 0, ...color, cw: 0, ww: 0 } as DomoticzColor);
+    const { kelvin, ...color } = kelvinTable.find(
+      x => x.kelvin.toString() === value
+    );
+    this.debouncer$.next({
+      m: 3,
+      t: 0,
+      ...color,
+      cw: 0,
+      ww: 0
+    } as DomoticzColor);
   }
 
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }
-
 }

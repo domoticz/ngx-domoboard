@@ -1,4 +1,7 @@
 {
   "workbench.colorCustomizations": {},
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "emojisense.languages": {
+    "typescript": true
+  }
 }

@@ -71,6 +71,27 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
         takeWhile(() => this.alive)
       )
       .subscribe();
+    this.myChart.on('legendselectchanged', (event: any) => {
+      const showRange = Object.keys(event.selected).every(
+        key => event.selected[key]
+      );
+      this.option = {
+        ...this.option,
+        tooltip: {
+          ...this.option.tooltip,
+          formatter: `
+            {c0} °C </br>
+            ${
+              this.range !== 'day' && showRange
+                ? 'Range: {c2} °C - {c1} °C </br>'
+                : ''
+            }
+            {b0}
+          `
+        }
+      };
+      this.myChart.setOption(this.option);
+    });
   }
 
   @HostListener('window:resize', ['$event'])
@@ -211,7 +232,20 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
 
   getChartOption(tempData: TempGraphData[], range: string, tTheme: any) {
     return {
-      color: tTheme.lineGradFrom,
+      color: [
+        new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          {
+            offset: 0,
+            color: tTheme.lineGradTo
+          },
+          {
+            offset: 1,
+            color: tTheme.lineGradFrom
+          }
+        ]),
+        tTheme.lineGradTo,
+        tTheme.lineGradFrom
+      ],
       grid: {
         left: innerWidth < 768 ? null : '80',
         right: '5%',
@@ -242,11 +276,15 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
         backgroundColor: tTheme.tooltipBg,
         borderColor: tTheme.tooltipBorderColor,
         borderWidth: 1,
-        formatter: '{c0} °C <br/> {b0}',
+        formatter: `
+          {c0} °C </br>
+          ${this.range !== 'day' ? 'Range: {c2} °C - {c1} °C </br>' : ''}
+          {b0}
+        `,
         extraCssText: tTheme.tooltipExtraCss
       },
       legend: {
-        data: ['Tav', 'Tmin', 'Tmax'],
+        data: ['Tmin', 'Tmax'],
         icon: 'rect',
         textStyle: {
           color: tTheme.xAxisTextColor,
@@ -288,7 +326,7 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
         axisLine: {
           lineStyle: {
             color: tTheme.axisLineColor,
-            width: '2'
+            width: 2
           }
         },
         axisLabel: {
@@ -313,7 +351,8 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
       series: [
         this.getTemperatureSeries(tempData, tTheme, range),
         ...this.getRangeTempSeries(tempData, tTheme, range)
-      ]
+      ],
+      animationDelay: 100
     };
   }
 

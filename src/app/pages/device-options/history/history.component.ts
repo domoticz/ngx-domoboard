@@ -1,8 +1,14 @@
-import { Component, ChangeDetectionStrategy,
-  OnDestroy, Input, OnInit, ChangeDetectorRef} from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnDestroy,
+  Input,
+  OnInit,
+  ChangeDetectorRef
+} from '@angular/core';
 
-import { Subject, Observable, from } from 'rxjs';
-import { take, finalize, takeUntil, mergeMap } from 'rxjs/operators';
+import { Subject, Observable } from 'rxjs';
+import { finalize, takeUntil, filter, switchMap, take } from 'rxjs/operators';
 
 import { TempGraphData, Temp } from '@nd/core/models';
 import { DeviceHistoryService } from '@nd/core/services';
@@ -12,20 +18,27 @@ import { DeviceHistoryService } from '@nd/core/services';
   template: `
     <nb-card>
       <nb-card-body>
+        <div class="header">
+          <span class="title">{{ title }}</span>
+          <nb-select
+            *ngIf="isTemp(device)"
+            [selected]="range"
+            id="history-select"
+            (selectedChange)="onSelectedChange($event)"
+          >
+            <nb-option *ngFor="let _range of ranges" [value]="_range">
+              {{ _range }}
+            </nb-option>
+          </nb-select>
+        </div>
 
-          <div class="header">
-            <span class="title">{{ title }}</span>
-            <nb-select *ngIf="isTemp(device)" [(selected)]="range" id="history-select">
-              <nb-option *ngFor="let _range of ranges" [value]="_range">
-                {{ _range }}
-              </nb-option>
-            </nb-select>
-          </div>
-
-          <nd-temp-graph *ngIf="isTemp(device)" [tempData]="tempData$ | async"
-            [loading]="tempLoading" [range]="range">
-          </nd-temp-graph>
-
+        <nd-temp-graph
+          *ngIf="isTemp(device)"
+          [tempData]="tempData$ | async"
+          [loading]="tempLoading"
+          [range]="range"
+        >
+        </nd-temp-graph>
       </nb-card-body>
     </nb-card>
   `,
@@ -33,7 +46,6 @@ import { DeviceHistoryService } from '@nd/core/services';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HistoryComponent implements OnInit, OnDestroy {
-
   private unsubscribe$ = new Subject();
 
   @Input() device: any;
@@ -53,19 +65,34 @@ export class HistoryComponent implements OnInit, OnDestroy {
   constructor(
     private service: DeviceHistoryService,
     private cd: ChangeDetectorRef
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.tempLoading = true;
-    from(this.ranges).pipe(
-      mergeMap(range => this.service.getTempGraph(this.device.idx, range)),
-      finalize(() => {
-        this.tempLoading = false;
-        this.cd.detectChanges();
-      }),
-      take(this.ranges.length),
-      takeUntil(this.unsubscribe$)
-    ).subscribe();
+    this.service
+      .getTempGraph(this.device.idx, this.range)
+      .pipe(
+        finalize(() => (this.tempLoading = false)),
+        take(1),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe();
+  }
+
+  onSelectedChange(range: string) {
+    this.range = range;
+    this.tempData$
+      .pipe(
+        filter(tempData => !tempData.length),
+        switchMap(() => {
+          this.tempLoading = true;
+          return this.service.getTempGraph(this.device.idx, this.range);
+        }),
+        finalize(() => (this.tempLoading = false)),
+        take(1),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe();
   }
 
   isTemp(device: any): device is Temp {
@@ -77,5 +104,4 @@ export class HistoryComponent implements OnInit, OnDestroy {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
   }
-
 }

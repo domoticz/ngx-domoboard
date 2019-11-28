@@ -7,8 +7,7 @@ import { DevicesService } from '../services';
 
 @Injectable({ providedIn: 'root' })
 export class DevicesResolver implements Resolve<Observable<any>> {
-
-  constructor(private service: DevicesService) { }
+  constructor(private service: DevicesService) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<any> {
     let filter;
@@ -22,5 +21,4 @@ export class DevicesResolver implements Resolve<Observable<any>> {
       take(1)
     );
   }
-
 }

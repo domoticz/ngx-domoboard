@@ -88,15 +88,9 @@ const isTemp = (device: any): device is Temp => device.Temp !== undefined;
 export class DeviceOptionsComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject();
 
-  device$: Observable<Temp | Switch> = this.service
-    .select<Temp | Switch>('device')
-    .pipe(
-      tap(device => {
-        this.notificationsSupport =
-          'Notification' in window && isSwitch(device) && !environment.domoticz;
-        this.dbService.syncDeviceIcon(device.idx, null);
-      })
-    );
+  device$: Observable<Temp | Switch> = this.service.select<Temp | Switch>(
+    'device'
+  );
 
   color$: Observable<DomoticzColor> = this.service
     .select<string>('device', 'Color')
@@ -150,6 +144,19 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.device$
+      .pipe(
+        tap(device => {
+          this.notificationsSupport =
+            'Notification' in window &&
+            isSwitch(device) &&
+            !environment.domoticz;
+          this.dbService.syncDeviceIcon(device.idx, null);
+        }),
+        take(1),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe();
     this.pushLoading = true;
     zip(this.device$, this.pushEndpoint$)
       .pipe(
@@ -260,8 +267,8 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.service.clearStore();
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+    this.service.clearStore();
   }
 }

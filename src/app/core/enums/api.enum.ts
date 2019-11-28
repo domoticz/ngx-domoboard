@@ -9,5 +9,6 @@ export enum Api {
   dimLevel = 'json.htm?type=command&param=switchlight&idx={idx}&switchcmd=Set%20Level&level={level}',
   colorBrightness = 'json.htm?type=command&param=setcolbrightnessvalue&idx={idx}&color={color}',
   kelvinLevel = 'json.htm?type=command&param=setkelvinlevel&idx={idx}&kelvin={kelvin}',
-  tempGraph = 'json.htm?type=graph&sensor=temp&idx={idx}&range={range}'
+  tempGraph = 'json.htm?type=graph&sensor=temp&idx={idx}&range={range}',
+  lightLog = 'json.htm?type=lightlog&idx={idx}'
 }

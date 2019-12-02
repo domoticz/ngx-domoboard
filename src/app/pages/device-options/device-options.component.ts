@@ -11,8 +11,7 @@ import {
   Switch,
   DomoticzSettings,
   DomoticzColor,
-  DomoticzResponse,
-  TempGraphData
+  DomoticzResponse
 } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
 

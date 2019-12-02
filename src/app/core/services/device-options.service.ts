@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, BehaviorSubject, merge, of } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, tap, pluck } from 'rxjs/operators';
 
 import { DataService } from './data.service';
@@ -22,12 +22,6 @@ import { SwitchLog } from '../models/switch-log.interface';
 interface State<T> {
   device: T;
   isSubscribed: boolean;
-  tempGraph: {
-    day: TempGraphData[];
-    month: TempGraphData[];
-    year: TempGraphData[];
-  };
-  switchLogs: SwitchLog[];
 }
 
 const pushApi = {
@@ -43,13 +37,7 @@ const isTemp = (device: any): device is Temp => device.Temp !== undefined;
 export class DeviceOptionsService extends DataService {
   initialState: State<Temp | Switch> = {
     device: {} as Temp | Switch,
-    isSubscribed: false,
-    tempGraph: {
-      day: [],
-      month: [],
-      year: []
-    },
-    switchLogs: []
+    isSubscribed: false
   };
 
   private subject = new BehaviorSubject<State<Temp | Switch>>(
@@ -111,41 +99,6 @@ export class DeviceOptionsService extends DataService {
   ): Observable<DomoticzResponse<any>> {
     return this.get<DomoticzResponse<any>>(
       Api.kelvinLevel.replace('{idx}', idx).replace('{kelvin}', kelvin)
-    );
-  }
-
-  getTempGraph(range: string): Observable<DomoticzResponse<Temp>> {
-    return this.get<DomoticzResponse<Temp>>(
-      Api.tempGraph
-        .replace('{idx}', this.subject.value.device.idx)
-        .replace('{range}', range)
-    ).pipe(
-      tap((resp: DomoticzResponse<Temp>) => {
-        if (resp.status === 'OK') {
-          this.subject.next({
-            ...this.subject.value,
-            tempGraph: {
-              ...this.subject.value.tempGraph,
-              [range]: resp.result
-            }
-          });
-        }
-      })
-    );
-  }
-
-  getSwitchLogs(): Observable<DomoticzResponse<SwitchLog>> {
-    return this.get<DomoticzResponse<SwitchLog>>(
-      Api.lightLog.replace('{idx}', this.subject.value.device.idx)
-    ).pipe(
-      tap((resp: DomoticzResponse<SwitchLog>) => {
-        if (resp.status === 'OK') {
-          this.subject.next({
-            ...this.subject.value,
-            switchLogs: resp.result
-          });
-        }
-      })
     );
   }
 

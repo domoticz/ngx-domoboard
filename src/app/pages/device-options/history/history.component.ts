@@ -9,8 +9,12 @@ import {
 import { Subject, Observable } from 'rxjs';
 import { finalize, takeUntil, filter, switchMap, take } from 'rxjs/operators';
 
-import { TempGraphData, Temp } from '@nd/core/models';
+import { TempGraphData, Temp, Switch, SwitchLog } from '@nd/core/models';
 import { DeviceHistoryService } from '@nd/core/services';
+
+const isSwitch = (device: any): device is Switch =>
+  device.SwitchType !== undefined;
+const isTemp = (device: any): device is Temp => device.Temp !== undefined;
 
 @Component({
   selector: 'nd-history',
@@ -20,7 +24,7 @@ import { DeviceHistoryService } from '@nd/core/services';
         <div class="header">
           <span class="title">{{ title }}</span>
           <nb-select
-            *ngIf="isTemp(device)"
+            *ngIf="(tempData$ | async).length"
             [selected]="range"
             id="history-select"
             (selectedChange)="onSelectedChange($event)"
@@ -32,12 +36,18 @@ import { DeviceHistoryService } from '@nd/core/services';
         </div>
 
         <nd-temp-graph
-          *ngIf="isTemp(device)"
+          *ngIf="(tempData$ | async).length"
           [tempData]="tempData$ | async"
           [loading]="tempLoading"
           [range]="range"
         >
         </nd-temp-graph>
+
+        <nd-switch-logs
+          *ngIf="(switchLogs$ | async).length"
+          [logs]="switchLogs$ | async"
+          [loading]="logsLoading"
+        ></nd-switch-logs>
       </nb-card-body>
     </nb-card>
   `,
@@ -57,19 +67,33 @@ export class HistoryComponent implements OnInit, OnDestroy {
 
   tempLoading: boolean;
 
+  logsLoading: boolean;
+
   get tempData$(): Observable<TempGraphData[]> {
-    return this.service.select<any[]>('tempGraph', this.range);
+    return this.service.select<TempGraphData[]>('tempGraph', this.range);
   }
+
+  switchLogs$ = this.service.select<SwitchLog[]>('switchLogs');
 
   constructor(private service: DeviceHistoryService) {}
 
   ngOnInit() {
-    if (this.isTemp(this.device)) {
+    if (isTemp(this.device)) {
       this.tempLoading = true;
       this.service
         .getTempGraph(this.device.idx, this.range)
         .pipe(
           finalize(() => (this.tempLoading = false)),
+          take(1),
+          takeUntil(this.unsubscribe$)
+        )
+        .subscribe();
+    } else if (isSwitch(this.device)) {
+      this.logsLoading = true;
+      this.service
+        .getSwitchLogs(this.device.idx)
+        .pipe(
+          finalize(() => (this.logsLoading = false)),
           take(1),
           takeUntil(this.unsubscribe$)
         )
@@ -91,10 +115,6 @@ export class HistoryComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$)
       )
       .subscribe();
-  }
-
-  isTemp(device: any): device is Temp {
-    return device.Temp !== undefined;
   }
 
   ngOnDestroy() {

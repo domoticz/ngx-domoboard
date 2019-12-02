@@ -6,3 +6,4 @@ export { DomoticzAuth } from './domoticz-auth.interface';
 export { Temp } from './temp.interface';
 export { DomoticzColor } from './domoticz-color.interface';
 export { TempGraphData } from './temp-graph-data.interface';
+export { SwitchLog } from './switch-log.interface';

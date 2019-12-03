@@ -1,2 +1,14 @@
-.logs-container {
+.logs--container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.logs--table-container {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.logs--cell-container {
+  display: flex;
 }

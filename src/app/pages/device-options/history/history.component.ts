@@ -47,6 +47,7 @@ const isTemp = (device: any): device is Temp => device.Temp !== undefined;
           *ngIf="(switchLogs$ | async).length"
           [logs]="switchLogs$ | async"
           [loading]="logsLoading"
+          [doorContact]="device.SwitchType === 'Door Contact'"
         ></nd-switch-logs>
       </nb-card-body>
     </nb-card>

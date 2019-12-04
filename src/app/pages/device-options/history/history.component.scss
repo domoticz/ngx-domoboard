@@ -1,8 +1,11 @@
 @import 'src/_themes.scss';
 
 @include nb-install-component() {
-
   .title {
+    font-size: nb-theme(text-heading-6-font-size);
+  }
+
+  .history--span-nologs {
     font-size: nb-theme(text-heading-6-font-size);
   }
 }
@@ -12,4 +15,10 @@
   align-items: center;
   justify-content: space-between;
   margin: 0 0 2rem 0;
+}
+
+.history--span-nologs {
+  text-transform: uppercase;
+  font-style: italic;
+  margin: 0 0 1rem 5%;
 }

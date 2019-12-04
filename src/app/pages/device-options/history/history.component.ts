@@ -36,7 +36,7 @@ const isTemp = (device: any): device is Temp => device.Temp !== undefined;
         </div>
 
         <nd-temp-graph
-          *ngIf="(tempData$ | async).length"
+          *ngIf="device.Temp"
           [tempData]="tempData$ | async"
           [loading]="tempLoading"
           [range]="range"
@@ -44,10 +44,11 @@ const isTemp = (device: any): device is Temp => device.Temp !== undefined;
         </nd-temp-graph>
 
         <nd-switch-logs
-          *ngIf="(switchLogs$ | async).length"
+          *ngIf="device.SwitchType"
           [logs]="switchLogs$ | async"
           [loading]="logsLoading"
           [doorContact]="device.SwitchType === 'Door Contact'"
+          (clearClick)="onClearClick()"
         ></nd-switch-logs>
       </nb-card-body>
     </nb-card>
@@ -112,6 +113,18 @@ export class HistoryComponent implements OnInit, OnDestroy {
           return this.service.getTempGraph(this.device.idx, this.range);
         }),
         finalize(() => (this.tempLoading = false)),
+        take(1),
+        takeUntil(this.unsubscribe$)
+      )
+      .subscribe();
+  }
+
+  onClearClick() {
+    this.logsLoading = true;
+    this.service
+      .clearSwitchLogs(this.device.idx)
+      .pipe(
+        finalize(() => (this.logsLoading = false)),
         take(1),
         takeUntil(this.unsubscribe$)
       )

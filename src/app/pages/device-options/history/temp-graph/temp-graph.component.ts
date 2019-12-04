@@ -22,7 +22,8 @@ import { TempGraphData } from '@nd/core/models';
   selector: 'nd-temp-graph',
   template: `
     <div [nbSpinner]="loading">
-      <div class="chart-container" #myChart></div>
+      <span *ngIf="!tempData" class="temp--title-last">no logs</span>
+      <div *ngIf="tempData" class="chart-container" #myChart></div>
     </div>
   `,
   styleUrls: ['./temp-graph.component.scss'],
@@ -59,7 +60,8 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
   constructor(private theme: NbThemeService) {}
 
   ngAfterViewInit() {
-    this.myChart = echarts.init(this.myChartRef.nativeElement);
+    this.myChart =
+      this.myChartRef && echarts.init(this.myChartRef.nativeElement);
     this.tempData$
       .pipe(
         withLatestFrom(this.theme.getJsTheme()),
@@ -71,15 +73,16 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
         takeWhile(() => this.alive)
       )
       .subscribe();
-    this.myChart.on('legendselectchanged', (event: any) => {
-      const showRange = Object.keys(event.selected).every(
-        key => event.selected[key]
-      );
-      this.option = {
-        ...this.option,
-        tooltip: {
-          ...this.option.tooltip,
-          formatter: `
+    if (this.myChart) {
+      this.myChart.on('legendselectchanged', (event: any) => {
+        const showRange = Object.keys(event.selected).every(
+          key => event.selected[key]
+        );
+        this.option = {
+          ...this.option,
+          tooltip: {
+            ...this.option.tooltip,
+            formatter: `
             {c0} °C </br>
             ${
               this.range !== 'day' && showRange
@@ -88,10 +91,11 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
             }
             {b0}
           `
-        }
-      };
-      this.myChart.setOption(this.option);
-    });
+          }
+        };
+        this.myChart.setOption(this.option);
+      });
+    }
   }
 
   @HostListener('window:resize', ['$event'])

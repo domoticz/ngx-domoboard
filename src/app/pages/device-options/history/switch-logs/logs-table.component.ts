@@ -29,10 +29,19 @@ import { TreeNode } from './switch-logs.component';
       </ng-container>
     </table>
   `,
+  styles: [
+    `
+      .logs--cell-container {
+        display: flex;
+      }
+    `
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LogsTableComponent {
   @Input() logsData: TreeNode<any>;
 
   @Input() columns: string[];
+
+  constructor() {}
 }

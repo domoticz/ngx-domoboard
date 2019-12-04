@@ -78,6 +78,21 @@ export class DeviceHistoryService extends DataService {
     );
   }
 
+  clearSwitchLogs(idx: string): Observable<DomoticzResponse<any>> {
+    return this.get<DomoticzResponse<any>>(
+      Api.clearLog.replace('{idx}', idx)
+    ).pipe(
+      tap((resp: DomoticzResponse<any>) => {
+        if (resp.status === 'OK') {
+          this.subject.next({
+            ...this.subject.value,
+            switchLogs: []
+          });
+        }
+      })
+    );
+  }
+
   clearStore() {
     this.subject.next(this.initialState);
   }

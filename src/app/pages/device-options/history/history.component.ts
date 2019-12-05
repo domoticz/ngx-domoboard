@@ -7,7 +7,14 @@ import {
 } from '@angular/core';
 
 import { Subject, Observable } from 'rxjs';
-import { finalize, takeUntil, filter, switchMap, take } from 'rxjs/operators';
+import {
+  finalize,
+  takeUntil,
+  filter,
+  switchMap,
+  take,
+  share
+} from 'rxjs/operators';
 
 import { TempGraphData, Temp, Switch, SwitchLog } from '@nd/core/models';
 import { DeviceHistoryService } from '@nd/core/services';
@@ -72,7 +79,9 @@ export class HistoryComponent implements OnInit, OnDestroy {
   logsLoading: boolean;
 
   get tempData$(): Observable<TempGraphData[]> {
-    return this.service.select<TempGraphData[]>('tempGraph', this.range);
+    return this.service
+      .select<TempGraphData[]>('tempGraph', this.range)
+      .pipe(share());
   }
 
   switchLogs$ = this.service.select<SwitchLog[]>('switchLogs');

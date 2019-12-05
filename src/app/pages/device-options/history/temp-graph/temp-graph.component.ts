@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 import { ReplaySubject } from 'rxjs';
-import { takeWhile, tap, withLatestFrom } from 'rxjs/operators';
+import { takeWhile, tap, withLatestFrom, filter } from 'rxjs/operators';
 
 import echarts from 'echarts';
 
@@ -22,8 +22,8 @@ import { TempGraphData } from '@nd/core/models';
   selector: 'nd-temp-graph',
   template: `
     <div [nbSpinner]="loading">
-      <span *ngIf="!tempData" class="temp--title-last">no logs</span>
-      <div *ngIf="tempData" class="chart-container" #myChart></div>
+      <span *ngIf="!tempData.length" class="temp--title-last">no logs</span>
+      <div class="chart-container" #myChart></div>
     </div>
   `,
   styleUrls: ['./temp-graph.component.scss'],
@@ -40,6 +40,7 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
 
   @Input() range: string;
 
+  private _tempData: TempGraphData[];
   @Input()
   set tempData(value) {
     if (!!this.myChart) {
@@ -51,6 +52,10 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
     if (!!value && !!value.length) {
       this.tempData$.next(value);
     }
+    this._tempData = value;
+  }
+  get tempData() {
+    return this._tempData;
   }
 
   myChart: any;
@@ -60,8 +65,7 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
   constructor(private theme: NbThemeService) {}
 
   ngAfterViewInit() {
-    this.myChart =
-      this.myChartRef && echarts.init(this.myChartRef.nativeElement);
+    this.myChart = echarts.init(this.myChartRef.nativeElement);
     this.tempData$
       .pipe(
         withLatestFrom(this.theme.getJsTheme()),

@@ -1,5 +1,19 @@
+@import 'src/_themes.scss';
+
+@include nb-install-component() {
+  .temp--title-last {
+    font-size: nb-theme(text-heading-6-font-size);
+  }
+}
+
 .chart-container {
   width: 90%;
   height: 400px;
   margin: 0 auto;
+}
+
+.temp--title-last {
+  text-transform: uppercase;
+  font-style: italic;
+  margin: 0 0 1rem 5%;
 }

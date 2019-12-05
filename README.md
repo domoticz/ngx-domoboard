@@ -77,10 +77,11 @@ Customizable admin dashboard template based on Angular 8+ and using Nebular.
 - Color picker
 - Color temperature
 - Temperature graphs
+- Switch devices history
 
 ## WIP Features
 
-- Switch devices history
+- Cameras
 
 ## BIY - Build It Yourself
 

@@ -2,7 +2,12 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
-import { NbInputModule, NbProgressBarModule, NbSelectModule } from '@nebular/theme';
+import {
+  NbInputModule,
+  NbProgressBarModule,
+  NbSelectModule,
+  NbTreeGridModule
+} from '@nebular/theme';
 
 import { SharedModule } from '@nd/shared/shared.module';
 
@@ -22,7 +27,8 @@ import { historyComponents } from './history';
     FormsModule,
     NbInputModule,
     NbProgressBarModule,
-    NbSelectModule
+    NbSelectModule,
+    NbTreeGridModule
   ],
   declarations: [
     DeviceOptionsComponent,
@@ -33,6 +39,6 @@ import { historyComponents } from './history';
     ColorPickerComponent,
     historyComponents
   ],
-  providers: [],
+  providers: []
 })
-export class DeviceOptionsModule { }
+export class DeviceOptionsModule {}

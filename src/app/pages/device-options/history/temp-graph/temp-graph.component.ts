@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 import { ReplaySubject } from 'rxjs';
-import { takeWhile, tap, withLatestFrom } from 'rxjs/operators';
+import { takeWhile, tap, withLatestFrom, filter } from 'rxjs/operators';
 
 import echarts from 'echarts';
 
@@ -22,6 +22,7 @@ import { TempGraphData } from '@nd/core/models';
   selector: 'nd-temp-graph',
   template: `
     <div [nbSpinner]="loading">
+      <span *ngIf="!tempData.length" class="temp--title-last">no logs</span>
       <div class="chart-container" #myChart></div>
     </div>
   `,
@@ -39,6 +40,7 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
 
   @Input() range: string;
 
+  private _tempData: TempGraphData[];
   @Input()
   set tempData(value) {
     if (!!this.myChart) {
@@ -50,6 +52,10 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
     if (!!value && !!value.length) {
       this.tempData$.next(value);
     }
+    this._tempData = value;
+  }
+  get tempData() {
+    return this._tempData;
   }
 
   myChart: any;
@@ -71,15 +77,16 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
         takeWhile(() => this.alive)
       )
       .subscribe();
-    this.myChart.on('legendselectchanged', (event: any) => {
-      const showRange = Object.keys(event.selected).every(
-        key => event.selected[key]
-      );
-      this.option = {
-        ...this.option,
-        tooltip: {
-          ...this.option.tooltip,
-          formatter: `
+    if (this.myChart) {
+      this.myChart.on('legendselectchanged', (event: any) => {
+        const showRange = Object.keys(event.selected).every(
+          key => event.selected[key]
+        );
+        this.option = {
+          ...this.option,
+          tooltip: {
+            ...this.option.tooltip,
+            formatter: `
             {c0} °C </br>
             ${
               this.range !== 'day' && showRange
@@ -88,10 +95,11 @@ export class TempGraphComponent implements AfterViewInit, OnDestroy {
             }
             {b0}
           `
-        }
-      };
-      this.myChart.setOption(this.option);
-    });
+          }
+        };
+        this.myChart.setOption(this.option);
+      });
+    }
   }
 
   @HostListener('window:resize', ['$event'])

@@ -7,13 +7,7 @@ import { distinctUntilChanged, tap, pluck } from 'rxjs/operators';
 import { DataService } from './data.service';
 import { DBService } from './db.service';
 
-import {
-  DomoticzResponse,
-  Switch,
-  Temp,
-  DomoticzColor,
-  TempGraphData
-} from '@nd/core/models';
+import { DomoticzResponse, Switch, Temp, DomoticzColor } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
 
 import { environment } from 'environments/environment';
@@ -102,11 +96,14 @@ export class DeviceOptionsService extends DataService {
     );
   }
 
-  isSubscribed(idx: string, pushEndpoint: string): Observable<any> {
+  isSubscribed(
+    device: any,
+    pushSubscription: PushSubscription
+  ): Observable<any> {
     return this.httpClient
       .post<boolean>(`${pushApi.server}${pushApi.isMonitoring}`, {
-        idx: idx,
-        pushEndpoint: pushEndpoint
+        device,
+        pushSubscription
       })
       .pipe(
         tap((resp: any) => {
@@ -129,11 +126,14 @@ export class DeviceOptionsService extends DataService {
       );
   }
 
-  stopSubscription(idx: string, pushEndpoint: string): Observable<any> {
+  stopSubscription(
+    device: any,
+    pushSubscription: PushSubscription
+  ): Observable<any> {
     return this.httpClient
       .post<boolean>(`${pushApi.server}${pushApi.stop}`, {
-        idx: idx,
-        pushEndpoint: pushEndpoint
+        device,
+        pushSubscription
       })
       .pipe(
         tap((resp: any) => {

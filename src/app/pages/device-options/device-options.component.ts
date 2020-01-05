@@ -53,7 +53,7 @@ const isTemp = (device: any): device is Temp => device.Temp !== undefined;
             [settings]="settings$ | async"
             [isSubscribed]="isSubscribed$ | async"
             (subscribeClick)="onSubscribeClick($event)"
-            [pushEndpoint]="pushEndpoint$ | async"
+            [pushSubscription]="pushSubscription$ | async"
             [loading]="pushLoading"
             class="col-xxxl-3 col-md-6 small-block"
           >
@@ -101,7 +101,9 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   settings$ = this.dbService.select<DomoticzSettings>('settings');
 
-  pushEndpoint$ = this.dbService.select<string>('pushEndpoint');
+  pushSubscription$ = this.dbService.select<PushSubscription>(
+    'pushSubscription'
+  );
 
   deviceIcon$ = this.dbService.select<string>('deviceIcon');
 
@@ -157,10 +159,10 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
       )
       .subscribe();
     this.pushLoading = true;
-    zip(this.device$, this.pushEndpoint$)
+    zip(this.device$, this.pushSubscription$)
       .pipe(
-        mergeMap(([device, pushEndpoint]) =>
-          this.service.isSubscribed(device.idx, pushEndpoint)
+        mergeMap(([device, pushSubscription]) =>
+          this.service.isSubscribed(device, pushSubscription)
         ),
         finalize(() => (this.pushLoading = false)),
         take(1),
@@ -200,11 +202,11 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   async onSubscribeClick(event: any) {
     this.pushLoading = true;
+    const pushSub: PushSubscription = await this.swPush.requestSubscription({
+      serverPublicKey: this.VAPID_PUBLIC_KEY
+    });
     if (!event.isSubscribed) {
       try {
-        const pushSub: PushSubscription = await this.swPush.requestSubscription(
-          { serverPublicKey: this.VAPID_PUBLIC_KEY }
-        );
         const payload = {
           device: event.device,
           statusUrl:
@@ -219,8 +221,8 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
           .pipe(take(1))
           .subscribe();
         try {
-          const msg = await this.dbService.addPushSub(pushSub.endpoint);
-          this.dbService.syncPushSub(pushSub.endpoint);
+          const msg = await this.dbService.addPushSub(pushSub);
+          this.dbService.syncPushSub(pushSub);
           console.log(msg);
         } catch (error) {
           this.dbService.syncPushSub(null);
@@ -233,7 +235,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
       }
     } else {
       this.service
-        .stopSubscription(event.device.idx, event.pushEndpoint)
+        .stopSubscription(event.device, pushSub)
         .pipe(
           take(1),
           finalize(() => (this.pushLoading = false)),

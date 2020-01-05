@@ -7,17 +7,18 @@ import { DomoticzSettings } from '@nd/core/models';
 
 interface State {
   settings: DomoticzSettings;
-  pushEndpoint: string;
+  pushSubscription: PushSubscription;
   deviceIcon: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class DBService {
-
   private subject = new BehaviorSubject<State>({} as State);
-  store = this.subject.asObservable().pipe(
-    distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y))
-  );
+  store = this.subject
+    .asObservable()
+    .pipe(
+      distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y))
+    );
 
   db: IDBDatabase;
 
@@ -38,24 +39,24 @@ export class DBService {
   openDb(): Promise<any> {
     const req = indexedDB.open(this.DB_NAME, this.DB_VERSION);
     return new Promise<any>((resolve, reject) => {
-      req.onsuccess = function (evt) {
-        resolve(this.db = evt.target.result);
+      req.onsuccess = function(evt) {
+        resolve((this.db = evt.target.result));
       }.bind(this);
 
-      req.onerror = function (evt) {
+      req.onerror = function(evt) {
         reject('openDb: ' + evt.target['error'].message);
       };
 
-      req.onupgradeneeded = function (evt) {
-        evt.currentTarget['result'].createObjectStore(
-          this.SETTINGS_STORE, { keyPath: 'id' }
-        );
-        evt.currentTarget['result'].createObjectStore(
-          this.PUSHSUB_STORE, { keyPath: 'id' }
-        );
-        evt.currentTarget['result'].createObjectStore(
-          this.ICON_STORE, { keyPath: 'idx' }
-        );
+      req.onupgradeneeded = function(evt) {
+        evt.currentTarget['result'].createObjectStore(this.SETTINGS_STORE, {
+          keyPath: 'id'
+        });
+        evt.currentTarget['result'].createObjectStore(this.PUSHSUB_STORE, {
+          keyPath: 'id'
+        });
+        evt.currentTarget['result'].createObjectStore(this.ICON_STORE, {
+          keyPath: 'idx'
+        });
       }.bind(this);
     });
   }
@@ -68,32 +69,38 @@ export class DBService {
   addSettings(settings: DomoticzSettings): Promise<any> {
     const store = this.getObjectStore(this.SETTINGS_STORE, 'readwrite');
     try {
-      if (!!Object.keys(settings.credentials).every(key => settings.credentials[key] !== null)) {
-        const authToken = btoa(`${settings.credentials.username}:${settings.credentials.password}`);
+      if (
+        !!Object.keys(settings.credentials).every(
+          key => settings.credentials[key] !== null
+        )
+      ) {
+        const authToken = btoa(
+          `${settings.credentials.username}:${settings.credentials.password}`
+        );
         settings.authToken = authToken;
         delete settings.credentials;
       }
-    } catch (e) { }
-    const req = store.put({ id: 1, ...settings});
+    } catch (e) {}
+    const req = store.put({ id: 1, ...settings });
     return new Promise<any>((resolve, reject) => {
-      req.onsuccess = function (evt: any) {
+      req.onsuccess = function(evt: any) {
         resolve('addSettings: ' + evt.type);
       };
 
-      req.onerror = function (evt) {
+      req.onerror = function(evt) {
         reject('addSettings: ' + evt.target['error'].message);
       };
     });
   }
 
-  addPushSub(pushEndpoint: string): Promise<any> {
+  addPushSub(pushSubscription: PushSubscription): Promise<any> {
     const store = this.getObjectStore(this.PUSHSUB_STORE, 'readwrite');
-    const req = store.put({ id: 1, endpoint: pushEndpoint });
+    const req = store.put({ id: 1, pushSubscription });
     return new Promise<any>((resolve, reject) => {
-      req.onsuccess = function (evt: any) {
+      req.onsuccess = function(evt: any) {
         resolve('addPushSub: ' + evt.type);
       };
-      req.onerror = function (evt) {
+      req.onerror = function(evt) {
         reject('addPushSub: ' + evt.target['error'].message);
       };
     });
@@ -101,13 +108,14 @@ export class DBService {
 
   addDeviceIcon(idx: string, icon: string) {
     const store = this.getObjectStore(this.ICON_STORE, 'readwrite');
-    const req = !!icon ? store.put({ idx: idx, deviceIcon: icon }) :
-      store.delete(idx);
+    const req = !!icon
+      ? store.put({ idx: idx, deviceIcon: icon })
+      : store.delete(idx);
     return new Promise<any>((resolve, reject) => {
-      req.onsuccess = function (evt: any) {
+      req.onsuccess = function(evt: any) {
         resolve('addDeviceIcon: ' + evt.type);
       };
-      req.onerror = function (evt) {
+      req.onerror = function(evt) {
         reject('addDeviceIcon: ' + evt.target['error'].message);
       };
     });
@@ -116,13 +124,15 @@ export class DBService {
   syncSettings(settings?: DomoticzSettings) {
     if (!!settings) {
       this.subject.next({
-        ...this.subject.value, settings: null
+        ...this.subject.value,
+        settings: null
       });
     } else {
       const req = this.getObjectStore(this.SETTINGS_STORE, 'readonly').get(1);
       req.onsuccess = ((evt: any) => {
         this.subject.next({
-          ...this.subject.value, settings: this.decodeSettings(evt.target.result)
+          ...this.subject.value,
+          settings: this.decodeSettings(evt.target.result)
         });
       }).bind(this);
     }
@@ -132,25 +142,27 @@ export class DBService {
     const store = this.getObjectStore(this.SETTINGS_STORE, 'readwrite');
     const req = store.clear();
     return new Promise<any>((resolve, reject) => {
-      req.onsuccess = function (evt: any) {
+      req.onsuccess = function(evt: any) {
         resolve('clearSettings: ' + evt.type);
       };
-      req.onerror = function (evt) {
+      req.onerror = function(evt) {
         reject('clearSettings: ' + evt.target['error'].message);
       };
     });
   }
 
-  syncPushSub(pushEndpoint: string) {
+  syncPushSub(pushSubscription: PushSubscription) {
     const req = this.getObjectStore(this.PUSHSUB_STORE, 'readonly').get(1);
     req.onsuccess = ((evt: any) => {
       if (!!evt.target.result) {
         this.subject.next({
-          ...this.subject.value, pushEndpoint: evt.target.result.endpoint
+          ...this.subject.value,
+          pushSubscription: evt.target.result.pushSubscription
         });
       } else {
         this.subject.next({
-          ...this.subject.value, pushEndpoint: pushEndpoint
+          ...this.subject.value,
+          pushSubscription
         });
       }
     }).bind(this);
@@ -161,11 +173,13 @@ export class DBService {
     req.onsuccess = ((evt: any) => {
       if (!!evt.target.result) {
         this.subject.next({
-          ...this.subject.value, deviceIcon: evt.target.result.deviceIcon
+          ...this.subject.value,
+          deviceIcon: evt.target.result.deviceIcon
         });
       } else {
         this.subject.next({
-          ...this.subject.value, deviceIcon: icon
+          ...this.subject.value,
+          deviceIcon: icon
         });
       }
     }).bind(this);
@@ -173,10 +187,13 @@ export class DBService {
 
   decodeSettings(settings: DomoticzSettings): DomoticzSettings {
     if (!!settings && !!settings.authToken) {
-      return { ...settings, credentials: {
-        username: atob(settings.authToken).split(':')[0],
-        password: atob(settings.authToken).split(':')[1]
-      } };
+      return {
+        ...settings,
+        credentials: {
+          username: atob(settings.authToken).split(':')[0],
+          password: atob(settings.authToken).split(':')[1]
+        }
+      };
     } else {
       return settings;
     }
@@ -189,9 +206,8 @@ export class DBService {
   getAllStore(store: string) {
     const req = this.getObjectStore(store, 'readonly').getAll();
     return new Promise((resolve, reject) => {
-      req.onsuccess = ((evt: any) => resolve(evt.target.result || []));
-      req.onerror = ((evt: any) => reject(evt.target['error'].message));
+      req.onsuccess = (evt: any) => resolve(evt.target.result || []);
+      req.onerror = (evt: any) => reject(evt.target['error'].message);
     });
   }
-
 }

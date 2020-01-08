@@ -5,7 +5,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { RouterModule } from '@angular/router';
 
-import { NbThemeModule, NbLayoutModule, NbToastrModule, NbDialogModule, NbButtonModule } from '@nebular/theme';
+import {
+  NbThemeModule,
+  NbLayoutModule,
+  NbToastrModule,
+  NbDialogModule,
+  NbButtonModule
+} from '@nebular/theme';
 
 import { SharedModule } from '@nd/shared/shared.module';
 import { GlobalErrorHandler } from '@nd/core/global-error-handler';
@@ -18,9 +24,7 @@ import { routes } from './app.routes';
 import { environment } from '../environments/environment';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -34,7 +38,9 @@ import { environment } from '../environments/environment';
     NbDialogModule.forRoot(),
     NbButtonModule,
     SharedModule,
-    ServiceWorkerModule.register('/ngx-domoboard/ngsw-worker.js', { enabled: environment.production }),
+    ServiceWorkerModule.register('/ngx-domoboard/ngsw-worker.js', {
+      enabled: environment.production
+    }),
     NbToastrModule.forRoot()
   ],
   providers: [
@@ -45,11 +51,9 @@ import { environment } from '../environments/environment';
   entryComponents: [AppComponent]
 })
 export class AppModule {
-
   app: ApplicationRef;
 
   ngDoBootstrap(app: ApplicationRef) {
     this.app = app;
   }
-
- }
+}

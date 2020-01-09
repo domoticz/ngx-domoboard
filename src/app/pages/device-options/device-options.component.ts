@@ -218,20 +218,13 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
         };
         this.service
           .subscribeToNotifications(payload)
-          .pipe(take(1))
+          .pipe(take(1), takeUntil(this.unsubscribe$))
           .subscribe();
-        try {
-          const msg = await this.dbService.addPushSub(pushSub);
-          this.dbService.syncPushSub(pushSub);
-          console.log(msg);
-        } catch (error) {
-          this.dbService.syncPushSub(null);
-          console.log(error);
-        }
-      } catch (error) {
-        console.error('Could not subscribe to notifications', error);
-      } finally {
+        await this.syncWithDb('push_subscription', pushSub);
+        await this.syncWithDb('monitored_device', event.device);
         this.pushLoading = false;
+      } catch (error) {
+        console.error('🚫 Could not subscribe to notifications', error);
       }
     } else {
       this.service
@@ -242,6 +235,27 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
           takeUntil(this.unsubscribe$)
         )
         .subscribe();
+    }
+  }
+
+  async syncWithDb(store: string, payload: any) {
+    try {
+      let msg: string;
+      if (store === 'push_subscription') {
+        msg = await this.dbService.addPushSub(payload);
+        this.dbService.syncPushSub(payload);
+      } else if (store === 'monitored_device') {
+        msg = await this.dbService.addMonitoredDevice(payload);
+        this.dbService.syncMonitoredDevice(payload);
+      }
+      console.log('😃 ' + msg);
+    } catch (error) {
+      if (store === 'push_subscription') {
+        this.dbService.syncPushSub(null);
+      } else if (store === 'monitored_device') {
+        this.dbService.syncMonitoredDevice(null);
+      }
+      console.log(error);
     }
   }
 

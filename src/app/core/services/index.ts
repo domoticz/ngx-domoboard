@@ -8,3 +8,4 @@ export { DataService } from './data.service';
 export { DevicesService } from './devices.service';
 export { DeviceOptionsService } from './device-options.service';
 export { DeviceHistoryService } from './device-history.service';
+export { PushSubscriptionService } from './push-subscription.service';

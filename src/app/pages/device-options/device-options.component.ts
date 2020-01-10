@@ -1,11 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, UrlSegment } from '@angular/router';
-import { SwPush } from '@angular/service-worker';
 
 import { Observable, Subject, zip } from 'rxjs';
 import { takeUntil, finalize, take, tap, mergeMap, map } from 'rxjs/operators';
 
-import { DeviceOptionsService, DBService } from '@nd/core/services';
+import {
+  DeviceOptionsService,
+  DBService,
+  PushSubscriptionService
+} from '@nd/core/services';
 import {
   Temp,
   Switch,
@@ -113,9 +116,6 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   iconLoading: boolean;
 
-  readonly VAPID_PUBLIC_KEY =
-    'BG-zibiw-dk6bhrbwLMicGYXna-WwoNqsF8FLKdDUzqhOKvfrH3jYG-UnaYNss45AMDqfJC_GgskDpx8lycjQ0Y';
-
   notificationsSupport: boolean;
 
   appearanceState = 'appear';
@@ -139,8 +139,8 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   constructor(
     private service: DeviceOptionsService,
+    private pushService: PushSubscriptionService,
     private dbService: DBService,
-    private swPush: SwPush,
     private router: Router
   ) {}
 
@@ -162,7 +162,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
     zip(this.device$, this.pushSubscription$)
       .pipe(
         mergeMap(([device, pushSubscription]) =>
-          this.service.isSubscribed(device, pushSubscription)
+          this.pushService.isSubscribed(device, pushSubscription)
         ),
         finalize(() => (this.pushLoading = false)),
         take(1),
@@ -202,22 +202,10 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   async onSubscribeClick(event: any) {
     this.pushLoading = true;
-    const pushSub: PushSubscription = await this.swPush.requestSubscription({
-      serverPublicKey: this.VAPID_PUBLIC_KEY
-    });
     if (!event.isSubscribed) {
       try {
-        const payload = {
-          device: event.device,
-          statusUrl:
-            `${event.settings.ssl ? 'https' : 'http'}://` +
-            `${event.settings.domain}:${
-              event.settings.port
-            }/${Api.device.replace('{idx}', event.device.idx)}`,
-          sub: pushSub
-        };
-        this.service
-          .subscribeToNotifications(payload)
+        this.pushService
+          .subscribeToNotifications(event.device)
           .pipe(take(1), takeUntil(this.unsubscribe$))
           .subscribe();
         await this.syncWithDb('push_subscription', pushSub);
@@ -227,7 +215,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
         console.error('🚫 Could not subscribe to notifications', error);
       }
     } else {
-      this.service
+      this.pushService
         .stopSubscription(event.device, pushSub)
         .pipe(
           take(1),

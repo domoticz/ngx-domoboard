@@ -8,12 +8,12 @@ import { DomoticzSettings } from '@nd/core/models';
 interface State {
   settings: DomoticzSettings;
   pushSubscription: PushSubscription;
-  monitoredDevice: any;
-  deviceIcon: string;
+  monitoredDevices: any[];
+  deviceIcons: string[];
 }
 
 @Injectable({ providedIn: 'root' })
-export class DBService {
+export abstract class DBService {
   private subject = new BehaviorSubject<State>({} as State);
   store = this.subject
     .asObservable()
@@ -122,27 +122,25 @@ export class DBService {
     });
   }
 
-  addDeviceIcon(idx: string, icon: string) {
-    const store = this.getObjectStore(this.ICON_STORE, 'readwrite');
-    const req = !!icon
-      ? store.put({ idx: idx, deviceIcon: icon })
-      : store.delete(idx);
-    return new Promise<any>((resolve, reject) => {
-      req.onsuccess = function(evt: any) {
-        resolve('addDeviceIcon: ' + evt.type);
-      };
-      req.onerror = function(evt) {
-        reject('addDeviceIcon: ' + evt.target['error'].message);
-      };
-    });
-  }
-
   addMonitoredDevice(device: any) {
     const store = this.getObjectStore(this.MONITOR_STORE, 'readwrite');
     const req = store.put({ idx: device.idx, monitoredDevice: device });
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = function(evt: any) {
         resolve('addMonitoredDevice: ' + evt.type);
+      };
+      req.onerror = function(evt) {
+        reject('addMonitoredDevice: ' + evt.target['error'].message);
+      };
+    });
+  }
+
+  deleteMonitoredDevice(device: any) {
+    const store = this.getObjectStore(this.MONITOR_STORE, 'readwrite');
+    const req = store.delete(device.idx);
+    return new Promise<any>((resolve, reject) => {
+      req.onsuccess = function(evt: any) {
+        resolve('deleteMonitoredDevice: ' + evt.type);
       };
       req.onerror = function(evt) {
         reject('addMonitoredDevice: ' + evt.target['error'].message);
@@ -203,7 +201,10 @@ export class DBService {
       const store = evt.target.result;
       this.subject.next({
         ...this.subject.value,
-        deviceIcon: store ? store.deviceIcon : icon
+        deviceIcons: [
+          ...this.subject.value.deviceIcons,
+          store ? store.deviceIcon : icon
+        ]
       });
     }).bind(this);
   }
@@ -216,7 +217,10 @@ export class DBService {
       const store = evt.target.result;
       this.subject.next({
         ...this.subject.value,
-        monitoredDevice: store ? store.monitoredDevice : device
+        monitoredDevices: [
+          ...this.subject.value.monitoredDevices,
+          store ? store.monitoredDevice : device
+        ]
       });
     }).bind(this);
   }
@@ -233,10 +237,6 @@ export class DBService {
     } else {
       return settings;
     }
-  }
-
-  getAllIcons() {
-    return this.getAllStore(this.ICON_STORE);
   }
 
   getAllStore(store: string) {

@@ -7,7 +7,8 @@ import { takeUntil, finalize, take, tap, mergeMap, map } from 'rxjs/operators';
 import {
   DeviceOptionsService,
   DBService,
-  PushSubscriptionService
+  PushSubscriptionService,
+  DeviceIconService
 } from '@nd/core/services';
 import {
   Temp,
@@ -16,7 +17,6 @@ import {
   DomoticzColor,
   DomoticzResponse
 } from '@nd/core/models';
-import { Api } from '@nd/core/enums/api.enum';
 
 import { environment } from 'environments/environment';
 
@@ -141,7 +141,8 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
     private service: DeviceOptionsService,
     private pushService: PushSubscriptionService,
     private dbService: DBService,
-    private router: Router
+    private router: Router,
+    private iconService: DeviceIconService
   ) {}
 
   ngOnInit() {
@@ -191,7 +192,12 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   async onSaveIconClick(event: any) {
     try {
       this.iconLoading = true;
-      const msg = await this.dbService.addDeviceIcon(event.idx, event.evaIcon);
+      let msg: string;
+      if (event.evaIcon) {
+        msg = await this.iconService.addDeviceIcon(event.idx, event.evaIcon);
+      } else {
+        msg = await this.iconService.deleteDeviceIcon(event.idx);
+      }
       console.log('😃 ' + msg);
       this.dbService.syncDeviceIcon(event.idx, event.evaIcon);
       setTimeout(() => (this.iconLoading = false), 500);
@@ -200,7 +206,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
     }
   }
 
-  async onSubscribeClick(event: any) {
+  onSubscribeClick(event: any) {
     this.pushLoading = true;
     if (!event.isSubscribed) {
       try {
@@ -208,42 +214,19 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
           .subscribeToNotifications(event.device)
           .pipe(take(1), takeUntil(this.unsubscribe$))
           .subscribe();
-        await this.syncWithDb('push_subscription', pushSub);
-        await this.syncWithDb('monitored_device', event.device);
         this.pushLoading = false;
       } catch (error) {
         console.error('🚫 Could not subscribe to notifications', error);
       }
     } else {
       this.pushService
-        .stopSubscription(event.device, pushSub)
+        .stopSubscription(event.device)
         .pipe(
           take(1),
           finalize(() => (this.pushLoading = false)),
           takeUntil(this.unsubscribe$)
         )
         .subscribe();
-    }
-  }
-
-  async syncWithDb(store: string, payload: any) {
-    try {
-      let msg: string;
-      if (store === 'push_subscription') {
-        msg = await this.dbService.addPushSub(payload);
-        this.dbService.syncPushSub(payload);
-      } else if (store === 'monitored_device') {
-        msg = await this.dbService.addMonitoredDevice(payload);
-        this.dbService.syncMonitoredDevice(payload);
-      }
-      console.log('😃 ' + msg);
-    } catch (error) {
-      if (store === 'push_subscription') {
-        this.dbService.syncPushSub(null);
-      } else if (store === 'monitored_device') {
-        this.dbService.syncMonitoredDevice(null);
-      }
-      console.log(error);
     }
   }
 

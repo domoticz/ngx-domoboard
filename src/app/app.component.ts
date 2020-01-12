@@ -18,7 +18,7 @@ import { NbToastrConfig } from '@nebular/theme/components/toastr/toastr-config';
 import { Observable } from 'rxjs';
 import { tap, filter } from 'rxjs/operators';
 
-import { NotificationService } from '@nd/core/services';
+import { NotificationService, DBService } from '@nd/core/services';
 
 import { environment } from 'environments/environment';
 
@@ -59,7 +59,8 @@ export class AppComponent implements OnInit {
     private update: SwUpdate,
     private cd: ChangeDetectorRef,
     private router: Router,
-    readonly swPush: SwPush
+    readonly swPush: SwPush,
+    private dbService: DBService
   ) {}
 
   ngOnInit() {
@@ -79,6 +80,10 @@ export class AppComponent implements OnInit {
         tap(() => this.onMenuToggle())
       )
       .subscribe();
+    this.dbService.openDb().then(() => {
+      this.dbService.syncSettings();
+      this.dbService.syncPushSub(null);
+    });
   }
 
   enableDarkTheme() {

@@ -13,7 +13,12 @@ import {
 
 import { Switch, Temp } from '@nd/core/models';
 
-import { DevicesService, SwitchesService, DBService } from '@nd/core/services';
+import {
+  DevicesService,
+  SwitchesService,
+  DBService,
+  DeviceIconService
+} from '@nd/core/services';
 
 @Component({
   selector: 'nd-devices',
@@ -65,7 +70,8 @@ export class DevicesComponent implements OnInit, OnDestroy {
     private switchesService: SwitchesService,
     private router: Router,
     private route: ActivatedRoute,
-    private dbService: DBService
+    private dbService: DBService,
+    private iconService: DeviceIconService
   ) {}
 
   ngOnInit() {
@@ -93,7 +99,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   async getDeviceIcons() {
     try {
-      const icons = await this.dbService.getAllIcons();
+      const icons = await this.iconService.getAllIcons();
       this.deviceIcons = icons as any[];
     } catch (error) {
       console.error('Could not retrieve device icons', error);

@@ -63,26 +63,6 @@ export class PushSubscriptionService extends DataService {
     super(httpClient, dbService);
   }
 
-  async getPushSubscription() {
-    const pushDb = await this.dbService
-      .select<PushSubscription>('pushSubscription')
-      .toPromise();
-    if (!pushDb) {
-      const pushSub = await this.swPush.requestSubscription({
-        serverPublicKey: VAPID_PUBLIC_KEY
-      });
-      return pushSub;
-    }
-    return pushDb;
-  }
-
-  async getSettings() {
-    const settings = await this.dbService
-      .select<DomoticzSettings>('settings')
-      .toPromise();
-    return settings;
-  }
-
   isSubscribed(
     device: any,
     pushSubscription: PushSubscription
@@ -118,34 +98,49 @@ export class PushSubscriptionService extends DataService {
         tap(async (resp: any) => {
           if (resp.status === 'OK') {
             this.optionsService.syncIsSubscribed(true);
-            try {
-              const msg = await this.dbService.addPushSub(
-                this.pushSubscription
-              );
-              this.dbService.syncPushSub(this.pushSubscription);
-              console.log('😃 ' + msg);
-            } catch (error) {
-              this.dbService.syncPushSub(null);
-              console.log('⛔️ ' + error);
-            }
+            await this.syncWithDb('push_subscription', this.pushSubscription);
+            await this.syncWithDb('monitored_device', device);
           }
         })
       );
   }
 
-  stopSubscription(
-    device: any,
-    pushSubscription: PushSubscription
-  ): Observable<any> {
+  async syncWithDb(store: string, payload: any) {
+    try {
+      let msg: string;
+      if (store === 'push_subscription') {
+        msg = await this.dbService.addPushSub(payload);
+        this.dbService.syncPushSub(payload);
+      } else if (store === 'monitored_device') {
+        msg = await this.dbService.addMonitoredDevice(payload);
+        this.dbService.syncMonitoredDevice(payload);
+      }
+      console.log('😃 ' + msg);
+    } catch (error) {
+      if (store === 'push_subscription') {
+        this.dbService.syncPushSub(null);
+      } else if (store === 'monitored_device') {
+        this.dbService.syncMonitoredDevice(null);
+      }
+      console.log('⛔️ ' + error);
+    }
+  }
+
+  stopSubscription(device: any): Observable<any> {
     return this.httpClient
       .post<boolean>(`${pushApi.server}${pushApi.stop}`, {
-        device,
-        pushSubscription
+        pushSubscription: this.pushSubscription
       })
       .pipe(
-        tap((resp: any) => {
+        tap(async (resp: any) => {
           if (resp.status === 'OK') {
             this.optionsService.syncIsSubscribed(false);
+            try {
+              const msg = await this.dbService.deleteMonitoredDevice(device);
+              console.log('😃 ' + msg);
+            } catch (error) {
+              console.log('⛔️ ' + error);
+            }
           }
         })
       );

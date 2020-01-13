@@ -1,5 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, ErrorHandler, ApplicationRef } from '@angular/core';
+import {
+  NgModule,
+  ErrorHandler,
+  ApplicationRef,
+  APP_INITIALIZER
+} from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -23,6 +28,12 @@ import { routes } from './app.routes';
 
 import { environment } from '../environments/environment';
 
+import { AppInitializerService } from './core/services/app-initializer.service';
+
+function initializeApp(initializerService: AppInitializerService) {
+  return (): Promise<any> => initializerService.init();
+}
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -45,7 +56,13 @@ import { environment } from '../environments/environment';
   ],
   providers: [
     { provide: ErrorHandler, useClass: GlobalErrorHandler },
-    httpInterceptorProviders
+    httpInterceptorProviders,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [AppInitializerService],
+      multi: true
+    }
   ],
   bootstrap: [AppComponent],
   entryComponents: [AppComponent]

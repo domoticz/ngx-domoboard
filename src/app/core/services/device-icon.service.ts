@@ -4,12 +4,13 @@ import { DBService } from './db.service';
 
 @Injectable({ providedIn: 'root' })
 export class DeviceIconService extends DBService {
-  constructor() {
-    super();
+  getIconStore(mode: any) {
+    const tx = this.db.transaction(this.ICON_STORE, mode);
+    return tx.objectStore(this.ICON_STORE);
   }
 
   addDeviceIcon(idx: string, icon: string) {
-    const store = this.getObjectStore(this.ICON_STORE, 'readwrite');
+    const store = this.getIconStore('readwrite');
     const req = store.put({ idx: idx, deviceIcon: icon });
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = function(evt: any) {
@@ -22,7 +23,7 @@ export class DeviceIconService extends DBService {
   }
 
   deleteDeviceIcon(idx: string) {
-    const store = this.getObjectStore(this.ICON_STORE, 'readwrite');
+    const store = this.getIconStore('readwrite');
     const req = store.delete(idx);
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = function(evt: any) {
@@ -35,6 +36,10 @@ export class DeviceIconService extends DBService {
   }
 
   getAllIcons() {
-    return this.getAllStore(this.ICON_STORE);
+    const req = this.getIconStore('readonly').getAll();
+    return new Promise((resolve, reject) => {
+      req.onsuccess = (evt: any) => resolve(evt.target.result || []);
+      req.onerror = (evt: any) => reject(evt.target['error'].message);
+    });
   }
 }

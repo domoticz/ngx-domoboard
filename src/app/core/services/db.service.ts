@@ -13,7 +13,7 @@ interface State {
 }
 
 @Injectable({ providedIn: 'root' })
-export abstract class DBService {
+export class DBService {
   private subject = new BehaviorSubject<State>({} as State);
   store = this.subject
     .asObservable()
@@ -43,7 +43,7 @@ export abstract class DBService {
   openDb(): Promise<any> {
     const req = indexedDB.open(this.DB_NAME, this.DB_VERSION);
     return new Promise<any>((resolve, reject) => {
-      req.onsuccess = function(evt) {
+      req.onsuccess = function(evt: any) {
         resolve((this.db = evt.target.result));
       }.bind(this);
 
@@ -69,7 +69,7 @@ export abstract class DBService {
     }
   }
 
-  getObjectStore(store_name, mode?: any) {
+  getObjectStore(store_name: string, mode?: any) {
     let tx: IDBTransaction;
     if (mode) {
       tx = this.db.transaction(store_name, mode);

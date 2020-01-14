@@ -3,9 +3,16 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: 'devices',
-    loadChildren: './pages/devices/devices.module#DevicesModule'
+    loadChildren: () =>
+      import('./pages/devices/devices.module').then(m => m.DevicesModule)
   },
-  { path: 'options/:idx', loadChildren: './pages/device-options/device-options.module#DeviceOptionsModule' },
+  {
+    path: 'options/:idx',
+    loadChildren: () =>
+      import('./pages/device-options/device-options.module').then(
+        m => m.DeviceOptionsModule
+      )
+  },
   { path: '', redirectTo: '', pathMatch: 'full' },
   { path: '**', redirectTo: '' }
 ];

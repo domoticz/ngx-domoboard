@@ -14,7 +14,7 @@ interface State {
 
 @Injectable({ providedIn: 'root' })
 export class DBService {
-  private subject = new BehaviorSubject<State>({} as State);
+  protected subject = new BehaviorSubject<State>({} as State);
   store = this.subject
     .asObservable()
     .pipe(
@@ -181,30 +181,10 @@ export class DBService {
   syncPushSub(pushSubscription: PushSubscription) {
     const req = this.getObjectStore(this.PUSHSUB_STORE, 'readonly').get(1);
     req.onsuccess = ((evt: any) => {
-      if (!!evt.target.result) {
-        this.subject.next({
-          ...this.subject.value,
-          pushSubscription: evt.target.result.pushSubscription
-        });
-      } else {
-        this.subject.next({
-          ...this.subject.value,
-          pushSubscription
-        });
-      }
-    }).bind(this);
-  }
-
-  syncDeviceIcon(idx: string, icon: string) {
-    const req = this.getObjectStore(this.ICON_STORE, 'readonly').get(idx);
-    req.onsuccess = ((evt: any) => {
-      const store = evt.target.result;
+      const res = evt.target.result;
       this.subject.next({
         ...this.subject.value,
-        deviceIcons: [
-          ...this.subject.value.deviceIcons,
-          store ? store.deviceIcon : icon
-        ]
+        pushSubscription: res ? res.pushSubscription : pushSubscription
       });
     }).bind(this);
   }
@@ -214,12 +194,12 @@ export class DBService {
       device.idx
     );
     req.onsuccess = ((evt: any) => {
-      const store = evt.target.result;
+      const res = evt.target.result;
       this.subject.next({
         ...this.subject.value,
         monitoredDevices: [
           ...this.subject.value.monitoredDevices,
-          store ? store.monitoredDevice : device
+          res ? res.monitoredDevice : device
         ]
       });
     }).bind(this);

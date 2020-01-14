@@ -153,7 +153,6 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
             'Notification' in window &&
             isSwitch(device) &&
             !environment.domoticz;
-          this.dbService.syncDeviceIcon(device.idx, null);
         }),
         take(1),
         takeUntil(this.unsubscribe$)
@@ -199,7 +198,6 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
         msg = await this.iconService.deleteDeviceIcon(event.idx);
       }
       console.log('😃 ' + msg);
-      this.dbService.syncDeviceIcon(event.idx, event.evaIcon);
       setTimeout(() => (this.iconLoading = false), 500);
     } catch (error) {
       console.error('⛔️ Could not save device icon', error);

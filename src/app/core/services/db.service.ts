@@ -9,12 +9,12 @@ interface State {
   settings: DomoticzSettings;
   pushSubscription: PushSubscription;
   monitoredDevices: any[];
-  deviceIcons: string[];
+  deviceIcons: any[];
 }
 
 @Injectable({ providedIn: 'root' })
 export class DBService {
-  protected subject = new BehaviorSubject<State>({} as State);
+  subject = new BehaviorSubject<State>({} as State);
   store = this.subject
     .asObservable()
     .pipe(

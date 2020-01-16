@@ -12,9 +12,9 @@ export class AppInitializerService {
 
   async init() {
     return this.dbService.openDb().then(() => {
+      this.iconService.syncDeviceIcons();
       this.dbService.syncSettings();
       this.dbService.syncPushSub(null);
-      this.iconService.syncDeviceIcons();
     });
   }
 }

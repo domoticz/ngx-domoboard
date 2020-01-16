@@ -37,8 +37,6 @@ export class DevicesComponent implements OnInit, OnDestroy {
     Door: 'nd-door'
   };
 
-  deviceIcons: any[];
-
   switchLoading: boolean;
 
   clickedIdx: string;
@@ -94,21 +92,15 @@ export class DevicesComponent implements OnInit, OnDestroy {
     )
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe();
-    this.getDeviceIcons();
   }
 
-  async getDeviceIcons() {
-    try {
-      const icons = await this.iconService.getAllIcons();
-      this.deviceIcons = icons as any[];
-    } catch (error) {
-      console.error('Could not retrieve device icons', error);
-    }
-  }
-
-  getDeviceIcon(idx: string) {
-    const device = (this.deviceIcons || []).find(icon => icon.idx === idx);
-    return !!device ? device.deviceIcon : 'alert-triangle-outline';
+  async getDeviceIcon(idx: string) {
+    const deviceIcons = await this.dbService
+      .select<any[]>('deviceIcons')
+      .toPromise();
+    console.log(deviceIcons);
+    const device = deviceIcons.find(icon => icon.idx === idx);
+    return device.deviceIcon ? device.deviceIcon : 'alert-triangle-outline';
   }
 
   isSwitchOn(_switch: Switch): boolean {

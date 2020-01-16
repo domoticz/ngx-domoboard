@@ -4,12 +4,16 @@ import { DBService } from './db.service';
 
 @Injectable({ providedIn: 'root' })
 export class DeviceIconService extends DBService {
-  constructor(private debService: DBService) {
+  get dbSubject() {
+    return this.dbService.subject;
+  }
+
+  constructor(private dbService: DBService) {
     super();
   }
 
   getIconStore(mode: string) {
-    return this.debService.getObjectStore(this.ICON_STORE, mode);
+    return this.dbService.getObjectStore(this.ICON_STORE, mode);
   }
 
   addDeviceIcon(idx: string, icon: string) {
@@ -17,10 +21,10 @@ export class DeviceIconService extends DBService {
     const req = store.put({ idx: idx, deviceIcon: icon });
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = function(evt: any) {
-        this.subject.next({
-          ...this.subject.value,
+        this.dbSubject.next({
+          ...this.dbSubject.value,
           deviceIcons: [
-            ...this.subject.value.deviceIcons,
+            ...this.dbSubject.value.deviceIcons,
             { idx: idx, deviceIcon: icon }
           ]
         });
@@ -37,8 +41,8 @@ export class DeviceIconService extends DBService {
     const req = this.getIconStore('readonly').getAll();
     req.onsuccess = ((evt: any) => {
       const res = evt.target.result;
-      this.subject.next({
-        ...this.subject.value,
+      this.dbSubject.next({
+        ...this.dbSubject.value,
         deviceIcons: res || []
       });
     }).bind(this);
@@ -53,14 +57,6 @@ export class DeviceIconService extends DBService {
       req.onerror = function(evt) {
         reject('deleteDeviceIcon: ' + evt.target['error'].message);
       };
-    });
-  }
-
-  getAllIcons() {
-    const req = this.getIconStore('readonly').getAll();
-    return new Promise((resolve, reject) => {
-      req.onsuccess = (evt: any) => resolve(evt.target.result || []);
-      req.onerror = (evt: any) => reject(evt.target['error'].message);
     });
   }
 }

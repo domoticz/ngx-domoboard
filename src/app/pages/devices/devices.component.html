@@ -10,8 +10,12 @@
         <ng-container *ngFor="let device of devices">
           <div
             class="col-xxxl-3 col-md-6"
-            *ngIf="device.SwitchType === type || device.Type === type"
+            *ngIf="
+              (device.SwitchType === type || device.Type === type) &&
+              (getDeviceIcon(device.idx) | async) as deviceIcon
+            "
           >
+            {{ deviceIcon }}
             <nd-status-card
               [title]="device.Name"
               (statusChanged)="statusChanged($event, device)"
@@ -24,7 +28,7 @@
               <nd-svg-icon
                 *ngIf="
                   (!!icon[device.Image] || type === 'Door Contact') &&
-                    getDeviceIcon(device.idx) === 'alert-triangle-outline';
+                    deviceIcon === 'alert-triangle-outline';
                   else nbIcon
                 "
                 class="nd-icon {{ device[statusKey] }}"
@@ -33,8 +37,7 @@
               >
               </nd-svg-icon>
               <ng-template #nbIcon>
-                <nb-icon class="temp-icon" [icon]="getDeviceIcon(device.idx)">
-                </nb-icon>
+                <!-- <nb-icon class="temp-icon" [icon]="deviceIcon"> </nb-icon> -->
               </ng-template>
             </nd-status-card>
           </div>

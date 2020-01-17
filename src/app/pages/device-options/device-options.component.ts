@@ -2,7 +2,15 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, UrlSegment } from '@angular/router';
 
 import { Observable, Subject, zip } from 'rxjs';
-import { takeUntil, finalize, take, tap, mergeMap, map } from 'rxjs/operators';
+import {
+  takeUntil,
+  finalize,
+  take,
+  tap,
+  mergeMap,
+  map,
+  withLatestFrom
+} from 'rxjs/operators';
 
 import {
   DeviceOptionsService,
@@ -27,62 +35,80 @@ const isTemp = (device: any): device is Temp => device.Temp !== undefined;
 @Component({
   selector: 'nd-device-options',
   template: `
-    <div class="options-container {{ appearanceState }}">
-      <nb-icon class="close-icon" icon="close-outline" (click)="onCloseClick()">
-      </nb-icon>
-
-      <ng-container *ngIf="device$ | async as device">
-        <div class="small-blocks">
-          <nd-name
-            [device]="device"
-            [loading]="renameLoading"
-            (nameClick)="onRenameClick($event)"
-            class="col-xxxl-3 col-md-6 small-block"
+    <div
+      *ngIf="device$ | async as device"
+      class="options-container {{ appearanceState }}"
+    >
+      <div class="options--header-container">
+        <div
+          *ngIf="device.BatteryLevel !== 255"
+          class="options--header-battery"
+        >
+          <nb-icon
+            class="options--header-icons"
+            icon="battery-outline"
+          ></nb-icon>
+          <span class="options--battery-level"
+            >{{ device.BatteryLevel }} %</span
           >
-          </nd-name>
-
-          <nd-device-icon
-            [idx]="device.idx"
-            [deviceIcon]="deviceIcon$ | async"
-            (saveIconClick)="onSaveIconClick($event)"
-            [loading]="iconLoading"
-            class="col-xxxl-3 col-md-6 small-block"
-          >
-          </nd-device-icon>
-
-          <nd-notifications
-            *ngIf="notificationsSupport"
-            [device]="device"
-            [settings]="settings$ | async"
-            [isSubscribed]="isSubscribed$ | async"
-            (subscribeClick)="onSubscribeClick($event)"
-            [pushSubscription]="pushSubscription$ | async"
-            [loading]="pushLoading"
-            class="col-xxxl-3 col-md-6 small-block"
-          >
-          </nd-notifications>
-
-          <nd-dim-level
-            *ngIf="(isDimmer$ | async) && device.Type !== 'Color Switch'"
-            [device]="device"
-            (levelSet)="onLevelSet($event)"
-            class="col-xxxl-3 col-md-6 small-block"
-          >
-          </nd-dim-level>
         </div>
+        <nb-icon
+          class="options--header-icons options--header-close"
+          icon="close-outline"
+          (click)="onCloseClick()"
+        >
+        </nb-icon>
+      </div>
+      <div class="small-blocks">
+        <nd-name
+          [device]="device"
+          [loading]="renameLoading"
+          (nameClick)="onRenameClick($event)"
+          class="col-xxxl-3 col-md-6 small-block"
+        >
+        </nd-name>
 
-        <div class="big-blocks">
-          <nd-color-picker
-            *ngIf="device.Type === 'Color Switch'"
-            [color]="color$ | async"
-            [level]="level$ | async"
-            (colorSet)="onColorSet(device.idx, $event)"
-          >
-          </nd-color-picker>
+        <nd-device-icon
+          [idx]="device.idx"
+          [deviceIcon]="deviceIcon$ | async"
+          (saveIconClick)="onSaveIconClick($event)"
+          [loading]="iconLoading"
+          class="col-xxxl-3 col-md-6 small-block"
+        >
+        </nd-device-icon>
 
-          <nd-history [device]="device"></nd-history>
-        </div>
-      </ng-container>
+        <nd-notifications
+          *ngIf="notificationsSupport"
+          [device]="device"
+          [settings]="settings$ | async"
+          [isSubscribed]="isSubscribed$ | async"
+          (subscribeClick)="onSubscribeClick($event)"
+          [pushSubscription]="pushSubscription$ | async"
+          [loading]="pushLoading"
+          class="col-xxxl-3 col-md-6 small-block"
+        >
+        </nd-notifications>
+
+        <nd-dim-level
+          *ngIf="(isDimmer$ | async) && device.Type !== 'Color Switch'"
+          [device]="device"
+          (levelSet)="onLevelSet($event)"
+          class="col-xxxl-3 col-md-6 small-block"
+        >
+        </nd-dim-level>
+      </div>
+
+      <div class="big-blocks">
+        <nd-color-picker
+          *ngIf="device.Type === 'Color Switch'"
+          [color]="color$ | async"
+          [level]="level$ | async"
+          (colorSet)="onColorSet(device.idx, $event)"
+        >
+        </nd-color-picker>
+
+        <nd-history [device]="device"></nd-history>
+      </div>
     </div>
   `,
   styleUrls: ['./device-options.component.scss']
@@ -108,7 +134,13 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
     'pushSubscription'
   );
 
-  deviceIcon$ = this.dbService.select<string>('deviceIcon');
+  deviceIcon$ = this.dbService.select<any[]>('deviceIcons').pipe(
+    withLatestFrom(this.device$),
+    map(([deviceIcons, device]) => {
+      const record = deviceIcons.find(di => di.idx === device.idx);
+      return record ? record.deviceIcon : '';
+    })
+  );
 
   renameLoading: boolean;
 

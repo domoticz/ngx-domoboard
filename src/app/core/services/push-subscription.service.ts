@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, single, first } from 'rxjs/operators';
 
 import { DataService } from './data.service';
 import { DBService } from './db.service';
@@ -32,6 +32,7 @@ export class PushSubscriptionService extends DataService {
     const getSettings = async () => {
       settings = await this.dbService
         .select<DomoticzSettings>('settings')
+        .pipe(single())
         .toPromise();
     };
     getSettings();
@@ -43,6 +44,7 @@ export class PushSubscriptionService extends DataService {
     const getPushSubscription = async () => {
       pushSubscription = await this.dbService
         .select<PushSubscription>('pushSubscription')
+        .pipe(first())
         .toPromise();
       if (!pushSubscription) {
         pushSubscription = await this.swPush.requestSubscription({
@@ -51,7 +53,16 @@ export class PushSubscriptionService extends DataService {
       }
     };
     getPushSubscription();
-    return pushSubscription;
+    return {
+      endpoint:
+        'https://fcm.googleapis.com/fcm/send/d1AHolIOEto:APA91bE5C2hXmqJTXKcL5IUPz1eYstLYJ0-o0KDBmLF1PiWZiG5_DssSnX_ACn5ZZFR3sM9IifA3a6qeyIsy-YcA8Gf-m0oXZU-8SJVMMt9Jw9792XdZnrODFBZOY__h_QuSPYbPOz3Y',
+      expirationTime: null,
+      keys: {
+        p256dh:
+          'BG6oCpRhEW9GYSh4v8lCDlgVgB3JuaYfuSNN361n1p6p6R_VvaEEfY1PPJIZbs6oDKOMkjPK6RT2mxRF9ZjR6N8',
+        auth: 'eRTPXpUZE1fHp-Yh7gAfjQ'
+      }
+    };
   }
 
   constructor(

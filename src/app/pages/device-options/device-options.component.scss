@@ -1,7 +1,8 @@
 @import 'src/_themes.scss';
 @import '../../../animations';
 
-@include nb-install-component() { }
+@include nb-install-component() {
+}
 
 .options-container {
   height: 100%;
@@ -18,11 +19,27 @@
     animation-name: disappear;
   }
 
-  .close-icon {
+  .options--header-container {
     display: flex;
-    margin: 0 0 2rem auto;
+    margin: 0 0 2rem 0;
+  }
+
+  .options--header-icons {
     width: 2rem;
     height: 2rem;
+  }
+
+  .options--header-battery {
+    display: flex;
+    align-items: center;
+  }
+
+  .options--battery-level {
+    margin-left: 0.5rem;
+  }
+
+  .options--header-close {
+    margin-left: auto;
     cursor: pointer;
   }
 
@@ -42,9 +59,7 @@
 }
 
 @media (min-width: 768px) {
-
   .options-container {
-
     .small-blocks {
       margin: 1rem 0;
 

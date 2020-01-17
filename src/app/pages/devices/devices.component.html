@@ -10,35 +10,19 @@
         <ng-container *ngFor="let device of devices">
           <div
             class="col-xxxl-3 col-md-6"
-            *ngIf="
-              (device.SwitchType === type || device.Type === type) &&
-              (getDeviceIcon(device.idx) | async) as deviceIcon
-            "
+            *ngIf="device.SwitchType === type || device.Type === type"
           >
-            {{ deviceIcon }}
             <nd-status-card
-              [title]="device.Name"
+              [device]="device"
+              [type]="type"
+              [statusKey]="statusKey"
+              [deviceIcons]="deviceIcons$ | async"
               (statusChanged)="statusChanged($event, device)"
               [on]="isSwitchOn(device)"
-              [disabled]="device.HaveTimeout"
               [status]="device[statusKey]"
               [loading]="switchLoading && clickedIdx === device.idx"
               (optionsClick)="onOptionsClick(device.idx)"
             >
-              <nd-svg-icon
-                *ngIf="
-                  (!!icon[device.Image] || type === 'Door Contact') &&
-                    deviceIcon === 'alert-triangle-outline';
-                  else nbIcon
-                "
-                class="nd-icon {{ device[statusKey] }}"
-                [name]="icon[device.Image]"
-                [status]="device[statusKey]"
-              >
-              </nd-svg-icon>
-              <ng-template #nbIcon>
-                <!-- <nb-icon class="temp-icon" [icon]="deviceIcon"> </nb-icon> -->
-              </ng-template>
             </nd-status-card>
           </div>
         </ng-container>

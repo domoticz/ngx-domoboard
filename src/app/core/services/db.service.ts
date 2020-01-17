@@ -32,9 +32,9 @@ export class DBService {
 
   PUSHSUB_STORE = 'push_subscription';
 
-  ICON_STORE = 'device_icon';
+  ICON_STORE = 'device_icons';
 
-  MONITOR_STORE = 'monitored_device';
+  MONITOR_STORE = 'monitored_devices';
 
   select<T>(...name: string[]): Observable<T> {
     return this.store.pipe(pluck(...name));

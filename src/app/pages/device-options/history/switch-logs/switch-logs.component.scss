@@ -32,9 +32,13 @@
   margin: 0 0 1rem 5%;
 }
 
-.logs--text-more {
+.logs--more-container {
   margin: 1rem 5%;
+}
+
+.logs--more-label {
   font-style: italic;
+  cursor: pointer;
 }
 
 .logs--sample-container {
@@ -44,6 +48,7 @@
 
   nb-icon {
     &.active {
+      cursor: pointer;
       color: #ffff;
     }
   }

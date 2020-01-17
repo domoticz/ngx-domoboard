@@ -2,20 +2,22 @@
 @import '~@nebular/bootstrap/styles/hero-buttons';
 
 @include nb-install-component() {
-
   nb-card {
     box-shadow: nb-theme(button-hero-bevel-size) #342f6e, nb-theme(shadow);
 
     .icon {
-      border-radius: nb-theme(card-border-radius) 0 0 nb-theme(card-border-radius);
+      border-radius: nb-theme(card-border-radius) 0 0
+        nb-theme(card-border-radius);
       color: nb-theme(text-primary-color);
 
       &.primary {
         $left-color: nb-theme(button-hero-primary-left-background-color);
         $right-color: nb-theme(button-hero-primary-right-background-color);
-        $glow: nb-theme(button-hero-glow-size) nb-theme(button-hero-primary-glow-color);
+        $glow: nb-theme(button-hero-glow-size)
+          nb-theme(button-hero-primary-glow-color);
         $shadow: nb-theme(button-hero-shadow);
-        $bevel: nb-theme(button-hero-bevel-size) nb-theme(button-hero-primary-bevel-color);
+        $bevel: nb-theme(button-hero-bevel-size)
+          nb-theme(button-hero-primary-bevel-color);
         $hero-box-shadows: $bevel, $glow, $shadow;
         background-image: linear-gradient(to right, $left-color, $right-color);
         box-shadow: $hero-box-shadows;
@@ -51,15 +53,34 @@
     }
   }
 
+  .nd-icon {
+    width: 100%;
+    height: 100%;
+
+    &.Off {
+      fill: nb-theme(text-basic-color);
+      stroke: nb-theme(text-basic-color);
+    }
+
+    &.Closed,
+    &.Open {
+      fill: nb-theme(text-basic-color);
+      stroke: nb-theme(text-basic-color);
+      pointer-events: none;
+    }
+
+    &.On {
+      fill: nb-theme(text-primary-color);
+      stroke: nb-theme(text-primary-color);
+    }
+  }
+
   @media (min-width: 992px) {
-
     nb-card {
-
       &:hover {
         background: lighten(nb-theme(background-basic-color-1), 5%);
 
         .icon {
-
           &.primary {
             background-image: btn-hero-primary-light-gradient();
           }
@@ -100,12 +121,14 @@ nb-card {
   }
 
   &.off {
-
     .icon {
-
       &.primary {
         box-shadow: none !important;
-        background-image: linear-gradient(to right, transparent, transparent) !important;
+        background-image: linear-gradient(
+          to right,
+          transparent,
+          transparent
+        ) !important;
       }
 
       &.secondary {
@@ -133,11 +156,15 @@ nb-card {
   }
 
   .option-icon {
-    margin: .5rem .5rem auto auto;
+    margin: 0.5rem 0.5rem auto auto;
     width: 2rem;
     height: 2rem;
     cursor: pointer;
     pointer-events: auto;
   }
+}
 
+.temp-icon {
+  width: 60%;
+  height: 60%;
 }

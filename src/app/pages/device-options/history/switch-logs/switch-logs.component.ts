@@ -28,11 +28,10 @@ export interface TreeNode<T> {
         [columns]="logColumns"
       ></nd-logs-table>
 
-      <a
-        *ngIf="treeSample && treeSample.length"
-        class="logs--text-more"
-        (click)="onMoreClick()"
-        >{{ moreText }}</a
+      <a *ngIf="treeSample && treeSample.length" class="logs--more-container"
+        ><span class="logs--more-label" (click)="onMoreClick()">{{
+          moreText
+        }}</span></a
       >
 
       <div

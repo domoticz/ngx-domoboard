@@ -32,10 +32,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   types$ = this.service.select<string[]>('types');
 
-  icon = {
-    Fireplace: 'nd-fireplace',
-    Door: 'nd-door'
-  };
+  deviceIcons$ = this.dbService.select<any[]>('deviceIcons');
 
   switchLoading: boolean;
 
@@ -92,15 +89,6 @@ export class DevicesComponent implements OnInit, OnDestroy {
     )
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe();
-  }
-
-  async getDeviceIcon(idx: string) {
-    const deviceIcons = await this.dbService
-      .select<any[]>('deviceIcons')
-      .toPromise();
-    console.log(deviceIcons);
-    const device = deviceIcons.find(icon => icon.idx === idx);
-    return device.deviceIcon ? device.deviceIcon : 'alert-triangle-outline';
   }
 
   isSwitchOn(_switch: Switch): boolean {

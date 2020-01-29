@@ -50,9 +50,7 @@ export class PushNotificationsComponent {
   onSubscribeClick() {
     this.subscribeClick.emit({
       device: this.device,
-      isSubscribed: this.isSubscribed,
-      settings: this.settings,
-      pushSubscription: this.pushSubscription
+      isSubscribed: this.isSubscribed
     });
   }
 }

@@ -30,7 +30,18 @@ import { environment } from 'environments/environment';
 
 const isSwitch = (device: any): device is Switch =>
   device.SwitchType !== undefined;
+
 const isTemp = (device: any): device is Temp => device.Temp !== undefined;
+
+const noColor: DomoticzColor = {
+  m: null,
+  t: null,
+  r: null,
+  g: null,
+  b: null,
+  cw: null,
+  ww: null
+};
 
 @Component({
   selector: 'nd-device-options',
@@ -122,7 +133,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   color$: Observable<DomoticzColor> = this.service
     .select<string>('device', 'Color')
-    .pipe(map((color: string) => JSON.parse(color) as DomoticzColor));
+    .pipe(map((color: string) => (color ? JSON.parse(color) : noColor)));
 
   isSubscribed$: Observable<boolean> = this.service.select<boolean>(
     'isSubscribed'

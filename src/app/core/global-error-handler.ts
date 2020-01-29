@@ -6,8 +6,7 @@ import { NotificationService } from './services/notification.service';
 
 @Injectable()
 export class GlobalErrorHandler implements ErrorHandler {
-
-  constructor(private injector: Injector) { }
+  constructor(private injector: Injector) {}
 
   handleError(error: Error | HttpErrorResponse) {
     const errorService = this.injector.get(ErrorService);

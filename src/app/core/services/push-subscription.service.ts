@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 
 import { Observable } from 'rxjs';
-import { tap, single, first } from 'rxjs/operators';
+import { tap, single, first, take } from 'rxjs/operators';
 
 import { DataService } from './data.service';
 import { DBService } from './db.service';
@@ -14,6 +14,7 @@ import { environment } from 'environments/environment';
 import { DomoticzSettings } from '../models';
 
 import { Api } from '../enums/api.enum';
+import { MonitoredDeviceService } from './monitored-device.service';
 
 const pushApi = {
   server: environment.pushServer,
@@ -27,32 +28,28 @@ const VAPID_PUBLIC_KEY =
 
 @Injectable({ providedIn: 'root' })
 export class PushSubscriptionService extends DataService {
-  get settings() {
-    let settings: DomoticzSettings;
-    const getSettings = async () => {
-      settings = await this.dbService
+  get settings(): any {
+    return (async () =>
+      await this.dbService
         .select<DomoticzSettings>('settings')
-        .pipe(single())
-        .toPromise();
-    };
-    getSettings();
-    return settings;
+        .pipe(take(1))
+        .toPromise())();
   }
 
   get pushSubscription() {
-    let pushSubscription: PushSubscription;
-    const getPushSubscription = async () => {
-      pushSubscription = await this.dbService
-        .select<PushSubscription>('pushSubscription')
-        .pipe(first())
-        .toPromise();
-      if (!pushSubscription) {
-        pushSubscription = await this.swPush.requestSubscription({
-          serverPublicKey: VAPID_PUBLIC_KEY
-        });
-      }
-    };
-    getPushSubscription();
+    // return (async () => {
+    //   let pushSubscription: PushSubscription;
+    //   pushSubscription = await this.dbService
+    //     .select<PushSubscription>('pushSubscription')
+    //     .pipe(first())
+    //     .toPromise();
+    //   if (!pushSubscription) {
+    //     pushSubscription = await this.swPush.requestSubscription({
+    //       serverPublicKey: VAPID_PUBLIC_KEY
+    //     });
+    //   }
+    //   return pushSubscription;
+    // })();
     return {
       endpoint:
         'https://fcm.googleapis.com/fcm/send/d1AHolIOEto:APA91bE5C2hXmqJTXKcL5IUPz1eYstLYJ0-o0KDBmLF1PiWZiG5_DssSnX_ACn5ZZFR3sM9IifA3a6qeyIsy-YcA8Gf-m0oXZU-8SJVMMt9Jw9792XdZnrODFBZOY__h_QuSPYbPOz3Y',
@@ -69,6 +66,7 @@ export class PushSubscriptionService extends DataService {
     httpClient: HttpClient,
     dbService: DBService,
     private optionsService: DeviceOptionsService,
+    private monitorService: MonitoredDeviceService,
     private swPush: SwPush
   ) {
     super(httpClient, dbService);
@@ -123,15 +121,12 @@ export class PushSubscriptionService extends DataService {
         msg = await this.dbService.addPushSub(payload);
         this.dbService.syncPushSub(payload);
       } else if (store === 'monitored_device') {
-        msg = await this.dbService.addMonitoredDevice(payload);
-        this.dbService.syncMonitoredDevice(payload);
+        msg = await this.monitorService.addMonitoredDevice(payload);
       }
       console.log('😃 ' + msg);
     } catch (error) {
       if (store === 'push_subscription') {
         this.dbService.syncPushSub(null);
-      } else if (store === 'monitored_device') {
-        this.dbService.syncMonitoredDevice(null);
       }
       console.log('⛔️ ' + error);
     }
@@ -147,7 +142,9 @@ export class PushSubscriptionService extends DataService {
           if (resp.status === 'OK') {
             this.optionsService.syncIsSubscribed(false);
             try {
-              const msg = await this.dbService.deleteMonitoredDevice(device);
+              const msg = await this.monitorService.deleteMonitoredDevice(
+                device
+              );
               console.log('😃 ' + msg);
             } catch (error) {
               console.log('⛔️ ' + error);

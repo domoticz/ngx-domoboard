@@ -110,7 +110,8 @@ export class DBService {
     const store = this.getObjectStore(this.PUSHSUB_STORE, 'readwrite');
     const req = store.put({
       id: 1,
-      pushSubscription: pushSubscription.toJSON()
+      pushSubscription: pushSubscription
+      // pushSubscription: pushSubscription.toJSON()
     });
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = function(evt: any) {
@@ -118,32 +119,6 @@ export class DBService {
       };
       req.onerror = function(evt) {
         reject('addPushSub: ' + evt.target['error'].message);
-      };
-    });
-  }
-
-  addMonitoredDevice(device: any) {
-    const store = this.getObjectStore(this.MONITOR_STORE, 'readwrite');
-    const req = store.put({ idx: device.idx, monitoredDevice: device });
-    return new Promise<any>((resolve, reject) => {
-      req.onsuccess = function(evt: any) {
-        resolve('addMonitoredDevice: ' + evt.type);
-      };
-      req.onerror = function(evt) {
-        reject('addMonitoredDevice: ' + evt.target['error'].message);
-      };
-    });
-  }
-
-  deleteMonitoredDevice(device: any) {
-    const store = this.getObjectStore(this.MONITOR_STORE, 'readwrite');
-    const req = store.delete(device.idx);
-    return new Promise<any>((resolve, reject) => {
-      req.onsuccess = function(evt: any) {
-        resolve('deleteMonitoredDevice: ' + evt.type);
-      };
-      req.onerror = function(evt) {
-        reject('addMonitoredDevice: ' + evt.target['error'].message);
       };
     });
   }
@@ -187,22 +162,9 @@ export class DBService {
         pushSubscription: res ? res.pushSubscription : pushSubscription
       });
     }).bind(this);
-  }
-
-  syncMonitoredDevice(device: any) {
-    const req = this.getObjectStore(this.ICON_STORE, 'readonly').get(
-      device.idx
-    );
-    req.onsuccess = ((evt: any) => {
-      const res = evt.target.result;
-      this.subject.next({
-        ...this.subject.value,
-        monitoredDevices: [
-          ...this.subject.value.monitoredDevices,
-          res ? res.monitoredDevice : device
-        ]
-      });
-    }).bind(this);
+    req.onerror = function(evt) {
+      console.log('syncPushSub: ' + evt.target['error'].message);
+    };
   }
 
   decodeSettings(settings: DomoticzSettings): DomoticzSettings {

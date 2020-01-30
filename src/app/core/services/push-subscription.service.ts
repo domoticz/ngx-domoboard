@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 
 import { Observable } from 'rxjs';
-import { tap, single, first, take } from 'rxjs/operators';
+import { tap, single, first, take, map, switchMap } from 'rxjs/operators';
 
 import { DataService } from './data.service';
 import { DBService } from './db.service';
@@ -27,14 +27,8 @@ const VAPID_PUBLIC_KEY =
   'BG-zibiw-dk6bhrbwLMicGYXna-WwoNqsF8FLKdDUzqhOKvfrH3jYG-UnaYNss45AMDqfJC_GgskDpx8lycjQ0Y';
 
 @Injectable({ providedIn: 'root' })
-export class PushSubscriptionService extends DataService {
-  get settings(): any {
-    return (async () =>
-      await this.dbService
-        .select<DomoticzSettings>('settings')
-        .pipe(take(1))
-        .toPromise())();
-  }
+export class PushSubscriptionService {
+  settings$ = this.dbService.select<DomoticzSettings>('settings');
 
   get pushSubscription() {
     // return (async () => {
@@ -63,14 +57,12 @@ export class PushSubscriptionService extends DataService {
   }
 
   constructor(
-    httpClient: HttpClient,
-    dbService: DBService,
+    private httpClient: HttpClient,
+    private dbService: DBService,
     private optionsService: DeviceOptionsService,
     private monitorService: MonitoredDeviceService,
     private swPush: SwPush
-  ) {
-    super(httpClient, dbService);
-  }
+  ) {}
 
   isSubscribed(
     device: any,
@@ -91,27 +83,34 @@ export class PushSubscriptionService extends DataService {
   }
 
   subscribeToNotifications(device: any): Observable<any> {
-    const payload = {
-      device: device,
-      statusUrl:
-        `${this.settings.ssl ? 'https' : 'http'}://` +
-        `${this.settings.domain}:${this.settings.port}/${Api.device.replace(
-          '{idx}',
-          device.idx
-        )}`,
-      sub: this.pushSubscription
-    };
-    return this.httpClient
-      .post(`${pushApi.server}${pushApi.monitor}`, payload)
-      .pipe(
-        tap(async (resp: any) => {
-          if (resp.status === 'OK') {
-            this.optionsService.syncIsSubscribed(true);
-            await this.syncWithDb('push_subscription', this.pushSubscription);
-            await this.syncWithDb('monitored_device', device);
-          }
-        })
-      );
+    return this.settings$.pipe(
+      switchMap((settings: DomoticzSettings) => {
+        const payload = {
+          device: device,
+          statusUrl:
+            `${settings.ssl ? 'https' : 'http'}://` +
+            `${settings.domain}:${settings.port}/${Api.device.replace(
+              '{idx}',
+              device.idx
+            )}`,
+          sub: this.pushSubscription
+        };
+        return this.httpClient
+          .post(`${pushApi.server}${pushApi.monitor}`, payload)
+          .pipe(
+            tap(async (resp: any) => {
+              if (resp.status === 'OK') {
+                this.optionsService.syncIsSubscribed(true);
+                await this.syncWithDb(
+                  'push_subscription',
+                  this.pushSubscription
+                );
+                await this.syncWithDb('monitored_device', device);
+              }
+            })
+          );
+      })
+    );
   }
 
   async syncWithDb(store: string, payload: any) {

@@ -3,18 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 
 import { Observable } from 'rxjs';
-import { tap, single, first, take, map, switchMap } from 'rxjs/operators';
+import { tap, switchMap } from 'rxjs/operators';
 
-import { DataService } from './data.service';
 import { DBService } from './db.service';
-import { DeviceOptionsService } from './device-options.service';
+import { MonitoredDeviceService } from './monitored-device.service';
 
 import { environment } from 'environments/environment';
 
 import { DomoticzSettings } from '../models';
 
 import { Api } from '../enums/api.enum';
-import { MonitoredDeviceService } from './monitored-device.service';
 
 const pushApi = {
   server: environment.pushServer,
@@ -27,7 +25,11 @@ const VAPID_PUBLIC_KEY =
   'BG-zibiw-dk6bhrbwLMicGYXna-WwoNqsF8FLKdDUzqhOKvfrH3jYG-UnaYNss45AMDqfJC_GgskDpx8lycjQ0Y';
 
 @Injectable({ providedIn: 'root' })
-export class PushSubscriptionService {
+export class PushSubscriptionService extends DBService {
+  get dbSubject() {
+    return this.dbService.subject;
+  }
+
   settings$ = this.dbService.select<DomoticzSettings>('settings');
 
   get pushSubscription() {
@@ -59,27 +61,14 @@ export class PushSubscriptionService {
   constructor(
     private httpClient: HttpClient,
     private dbService: DBService,
-    private optionsService: DeviceOptionsService,
     private monitorService: MonitoredDeviceService,
     private swPush: SwPush
-  ) {}
+  ) {
+    super();
+  }
 
-  isSubscribed(
-    device: any,
-    pushSubscription: PushSubscription
-  ): Observable<any> {
-    return this.httpClient
-      .post<boolean>(`${pushApi.server}${pushApi.isMonitoring}`, {
-        device,
-        pushSubscription
-      })
-      .pipe(
-        tap((resp: any) => {
-          if (resp.status === 'OK') {
-            this.optionsService.syncIsSubscribed(resp.isMonitoring);
-          }
-        })
-      );
+  getPushSubStore(mode: string) {
+    return this.dbService.getObjectStore(this.PUSHSUB_STORE, mode);
   }
 
   subscribeToNotifications(device: any): Observable<any> {
@@ -100,7 +89,6 @@ export class PushSubscriptionService {
           .pipe(
             tap(async (resp: any) => {
               if (resp.status === 'OK') {
-                this.optionsService.syncIsSubscribed(true);
                 await this.syncWithDb(
                   'push_subscription',
                   this.pushSubscription
@@ -117,29 +105,60 @@ export class PushSubscriptionService {
     try {
       let msg: string;
       if (store === 'push_subscription') {
-        msg = await this.dbService.addPushSub(payload);
-        this.dbService.syncPushSub(payload);
+        msg = await this.addPushSub(payload);
       } else if (store === 'monitored_device') {
         msg = await this.monitorService.addMonitoredDevice(payload);
       }
       console.log('😃 ' + msg);
     } catch (error) {
-      if (store === 'push_subscription') {
-        this.dbService.syncPushSub(null);
-      }
       console.log('⛔️ ' + error);
     }
+  }
+
+  addPushSub(pushSubscription: PushSubscription): Promise<any> {
+    const store = this.getPushSubStore('readwrite');
+    const req = store.put({
+      id: 1,
+      pushSubscription: pushSubscription
+      // pushSubscription: pushSubscription.toJSON()
+    });
+    return new Promise<any>((resolve, reject) => {
+      req.onsuccess = function(evt: any) {
+        this.dbSubject.next({
+          ...this.dbSubject.value,
+          pushSubscription: pushSubscription
+        });
+        resolve('addPushSub: ' + evt.type);
+      }.bind(this);
+      req.onerror = function(evt) {
+        reject('addPushSub: ' + evt.target['error'].message);
+      };
+    });
+  }
+
+  syncPushSub() {
+    const req = this.getPushSubStore('readonly').get(1);
+    req.onsuccess = ((evt: any) => {
+      const res = evt.target.result;
+      this.dbSubject.next({
+        ...this.dbSubject.value,
+        pushSubscription: res ? res.pushSubscription : null
+      });
+    }).bind(this);
+    req.onerror = function(evt) {
+      console.log('syncPushSub: ' + evt.target['error'].message);
+    };
   }
 
   stopSubscription(device: any): Observable<any> {
     return this.httpClient
       .post<boolean>(`${pushApi.server}${pushApi.stop}`, {
-        pushSubscription: this.pushSubscription
+        pushSubscription: this.pushSubscription,
+        device
       })
       .pipe(
         tap(async (resp: any) => {
           if (resp.status === 'OK') {
-            this.optionsService.syncIsSubscribed(false);
             try {
               const msg = await this.monitorService.deleteMonitoredDevice(
                 device
@@ -148,8 +167,31 @@ export class PushSubscriptionService {
             } catch (error) {
               console.log('⛔️ ' + error);
             }
+            try {
+              const msg = await this.clearPushSubscription();
+              console.log('😃 ' + msg);
+            } catch (error) {
+              console.log('⛔️ ' + error);
+            }
           }
         })
       );
+  }
+
+  clearPushSubscription() {
+    const store = this.getPushSubStore('readwrite');
+    const req = store.clear();
+    return new Promise<any>((resolve, reject) => {
+      req.onsuccess = function(evt: any) {
+        this.dbSubject.next({
+          ...this.dbSubject.value,
+          pushSubscription: null
+        });
+        resolve('clearPushSubscription: ' + evt.type);
+      }.bind(this);
+      req.onerror = function(evt) {
+        reject('clearPushSubscription: ' + evt.target['error'].message);
+      };
+    });
   }
 }

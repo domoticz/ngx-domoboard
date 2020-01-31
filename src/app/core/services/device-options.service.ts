@@ -12,14 +12,12 @@ import { Api } from '@nd/core/enums/api.enum';
 
 interface State<T> {
   device: T;
-  isSubscribed: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
 export class DeviceOptionsService extends DataService {
   initialState: State<Temp | Switch> = {
-    device: {} as Temp | Switch,
-    isSubscribed: false
+    device: {} as Temp | Switch
   };
 
   private subject = new BehaviorSubject<State<Temp | Switch>>(
@@ -82,13 +80,6 @@ export class DeviceOptionsService extends DataService {
     return this.get<DomoticzResponse<any>>(
       Api.kelvinLevel.replace('{idx}', idx).replace('{kelvin}', kelvin)
     );
-  }
-
-  syncIsSubscribed(isSubscribed: boolean) {
-    this.subject.next({
-      ...this.subject.value,
-      isSubscribed: isSubscribed
-    });
   }
 
   syncColor(color: DomoticzColor) {

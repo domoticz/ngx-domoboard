@@ -106,23 +106,6 @@ export class DBService {
     });
   }
 
-  addPushSub(pushSubscription: PushSubscription): Promise<any> {
-    const store = this.getObjectStore(this.PUSHSUB_STORE, 'readwrite');
-    const req = store.put({
-      id: 1,
-      pushSubscription: pushSubscription
-      // pushSubscription: pushSubscription.toJSON()
-    });
-    return new Promise<any>((resolve, reject) => {
-      req.onsuccess = function(evt: any) {
-        resolve('addPushSub: ' + evt.type);
-      };
-      req.onerror = function(evt) {
-        reject('addPushSub: ' + evt.target['error'].message);
-      };
-    });
-  }
-
   syncSettings(settings?: DomoticzSettings) {
     if (!!settings) {
       this.subject.next({
@@ -151,20 +134,6 @@ export class DBService {
         reject('clearSettings: ' + evt.target['error'].message);
       };
     });
-  }
-
-  syncPushSub(pushSubscription: PushSubscription) {
-    const req = this.getObjectStore(this.PUSHSUB_STORE, 'readonly').get(1);
-    req.onsuccess = ((evt: any) => {
-      const res = evt.target.result;
-      this.subject.next({
-        ...this.subject.value,
-        pushSubscription: res ? res.pushSubscription : pushSubscription
-      });
-    }).bind(this);
-    req.onerror = function(evt) {
-      console.log('syncPushSub: ' + evt.target['error'].message);
-    };
   }
 
   decodeSettings(settings: DomoticzSettings): DomoticzSettings {

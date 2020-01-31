@@ -39,8 +39,6 @@ export class PushNotificationsComponent {
 
   @Input() isSubscribed: boolean;
 
-  @Input() pushSubscription: PushSubscription;
-
   @Input() loading: boolean;
 
   @Output() subscribeClick = new EventEmitter<any>();

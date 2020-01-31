@@ -92,9 +92,8 @@ const noColor: DomoticzColor = {
           *ngIf="notificationsSupport"
           [device]="device"
           [settings]="settings$ | async"
-          [isSubscribed]="isSubscribed$ | async"
           (subscribeClick)="onSubscribeClick($event)"
-          [pushSubscription]="pushSubscription$ | async"
+          [isSubscribed]="isSubscribed$ | async"
           [loading]="pushLoading"
           class="col-xxxl-3 col-md-6 small-block"
         >
@@ -135,15 +134,16 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
     .select<string>('device', 'Color')
     .pipe(map((color: string) => (color ? JSON.parse(color) : noColor)));
 
-  isSubscribed$: Observable<boolean> = this.service.select<boolean>(
-    'isSubscribed'
-  );
-
   settings$ = this.dbService.select<DomoticzSettings>('settings');
 
-  pushSubscription$ = this.dbService.select<PushSubscription>(
-    'pushSubscription'
-  );
+  isSubscribed$: Observable<boolean> = this.dbService
+    .select<any[]>('monitoredDevices')
+    .pipe(
+      withLatestFrom(this.device$),
+      map(([monitoredDevices, device]) => {
+        return !!monitoredDevices.find(dev => dev.idx === device.idx);
+      })
+    );
 
   deviceIcon$ = this.dbService.select<any[]>('deviceIcons').pipe(
     withLatestFrom(this.device$),
@@ -201,17 +201,6 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$)
       )
       .subscribe();
-    this.pushLoading = true;
-    zip(this.device$, this.pushSubscription$)
-      .pipe(
-        mergeMap(([device, pushSubscription]) =>
-          this.pushService.isSubscribed(device, pushSubscription)
-        ),
-        finalize(() => (this.pushLoading = false)),
-        take(1),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe();
   }
 
   onCloseClick() {
@@ -253,9 +242,12 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
       try {
         this.pushService
           .subscribeToNotifications(event.device)
-          .pipe(take(1), takeUntil(this.unsubscribe$))
+          .pipe(
+            take(1),
+            takeUntil(this.unsubscribe$),
+            finalize(() => (this.pushLoading = false))
+          )
           .subscribe();
-        this.pushLoading = false;
       } catch (error) {
         console.error('🚫 Could not subscribe to notifications', error);
       }

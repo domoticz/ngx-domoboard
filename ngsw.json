@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1580744527698,
+  "timestamp": 1580745013029,
   "index": "https://domoticz.github.io/ngx-domoboard/index.html",
   "assetGroups": [
     {
@@ -12,7 +12,7 @@
         "https://domoticz.github.io/ngx-domoboard/7.0845b5d0138de552ce89.js",
         "https://domoticz.github.io/ngx-domoboard/favicon.ico",
         "https://domoticz.github.io/ngx-domoboard/index.html",
-        "https://domoticz.github.io/ngx-domoboard/main.46598b71779f48790ea9.js",
+        "https://domoticz.github.io/ngx-domoboard/main.ecd0876dde09a68a6806.js",
         "https://domoticz.github.io/ngx-domoboard/polyfills-es5.9735f73a9b2078c0f425.js",
         "https://domoticz.github.io/ngx-domoboard/polyfills.80273fb0fd77f19997e1.js",
         "https://domoticz.github.io/ngx-domoboard/runtime.afaf37c4f153cbc74c37.js",
@@ -90,8 +90,8 @@
     "https://domoticz.github.io/ngx-domoboard/assets/icons/nd-icon-96x96.png": "e8011e0e816dcf59f3e9aac1fa7638e783862015",
     "https://domoticz.github.io/ngx-domoboard/assets/icons/nd-icons.svg": "57a1fd3a54a376737a2fa2e5950a290b5b675b66",
     "https://domoticz.github.io/ngx-domoboard/favicon.ico": "84161b857f5c547e3699ddfbffc6d8d737542e01",
-    "https://domoticz.github.io/ngx-domoboard/index.html": "43fe187cd00c3686dbcd7e7634162c8e1f03b198",
-    "https://domoticz.github.io/ngx-domoboard/main.46598b71779f48790ea9.js": "d97374b1e0e73db601e0e327c8afc24304ee6365",
+    "https://domoticz.github.io/ngx-domoboard/index.html": "796edb3f9795bfa73b21369b8f87a914aa6f4ac4",
+    "https://domoticz.github.io/ngx-domoboard/main.ecd0876dde09a68a6806.js": "b2a7060a6e0dce6fdc1d68aa5c3abb61bb1c6e77",
     "https://domoticz.github.io/ngx-domoboard/nebular.85e45e2f83750a4184af.eot": "290b6c75a0af38b8606a9d2b843e6b4af4dacf31",
     "https://domoticz.github.io/ngx-domoboard/nebular.e5b059e952431846f8ab.ttf": "9e89de0ceca347c2877748d84035e1b7910f82d0",
     "https://domoticz.github.io/ngx-domoboard/nebular.e7b6b47eeafe34432dca.woff": "ccef7bb01bbec4b2fd438dabf939d7036ed3b51d",

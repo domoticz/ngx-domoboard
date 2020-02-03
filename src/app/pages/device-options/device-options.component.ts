@@ -1,11 +1,23 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, UrlSegment } from '@angular/router';
-import { SwPush } from '@angular/service-worker';
 
 import { Observable, Subject, zip } from 'rxjs';
-import { takeUntil, finalize, take, tap, mergeMap, map } from 'rxjs/operators';
+import {
+  takeUntil,
+  finalize,
+  take,
+  tap,
+  mergeMap,
+  map,
+  withLatestFrom
+} from 'rxjs/operators';
 
-import { DeviceOptionsService, DBService } from '@nd/core/services';
+import {
+  DeviceOptionsService,
+  DBService,
+  PushSubscriptionService,
+  DeviceIconService
+} from '@nd/core/services';
 import {
   Temp,
   Switch,
@@ -13,73 +25,100 @@ import {
   DomoticzColor,
   DomoticzResponse
 } from '@nd/core/models';
-import { Api } from '@nd/core/enums/api.enum';
 
 import { environment } from 'environments/environment';
 
 const isSwitch = (device: any): device is Switch =>
   device.SwitchType !== undefined;
+
 const isTemp = (device: any): device is Temp => device.Temp !== undefined;
+
+const noColor: DomoticzColor = {
+  m: null,
+  t: null,
+  r: null,
+  g: null,
+  b: null,
+  cw: null,
+  ww: null
+};
 
 @Component({
   selector: 'nd-device-options',
   template: `
-    <div class="options-container {{ appearanceState }}">
-      <nb-icon class="close-icon" icon="close-outline" (click)="onCloseClick()">
-      </nb-icon>
-
-      <ng-container *ngIf="device$ | async as device">
-        <div class="small-blocks">
-          <nd-name
-            [device]="device"
-            [loading]="renameLoading"
-            (nameClick)="onRenameClick($event)"
-            class="col-xxxl-3 col-md-6 small-block"
+    <div
+      *ngIf="device$ | async as device"
+      class="options-container {{ appearanceState }}"
+    >
+      <div class="options--header-container">
+        <div
+          *ngIf="device.BatteryLevel !== 255"
+          class="options--header-battery"
+        >
+          <nb-icon
+            class="options--header-icons"
+            icon="battery-outline"
+          ></nb-icon>
+          <span class="options--battery-level"
+            >{{ device.BatteryLevel }} %</span
           >
-          </nd-name>
-
-          <nd-device-icon
-            [idx]="device.idx"
-            [deviceIcon]="deviceIcon$ | async"
-            (saveIconClick)="onSaveIconClick($event)"
-            [loading]="iconLoading"
-            class="col-xxxl-3 col-md-6 small-block"
-          >
-          </nd-device-icon>
-
-          <nd-notifications
-            *ngIf="notificationsSupport"
-            [device]="device"
-            [settings]="settings$ | async"
-            [isSubscribed]="isSubscribed$ | async"
-            (subscribeClick)="onSubscribeClick($event)"
-            [pushSubscription]="pushSubscription$ | async"
-            [loading]="pushLoading"
-            class="col-xxxl-3 col-md-6 small-block"
-          >
-          </nd-notifications>
-
-          <nd-dim-level
-            *ngIf="(isDimmer$ | async) && device.Type !== 'Color Switch'"
-            [device]="device"
-            (levelSet)="onLevelSet($event)"
-            class="col-xxxl-3 col-md-6 small-block"
-          >
-          </nd-dim-level>
         </div>
+        <nb-icon
+          class="options--header-icons options--header-close"
+          icon="close-outline"
+          (click)="onCloseClick()"
+        >
+        </nb-icon>
+      </div>
+      <div class="small-blocks">
+        <nd-name
+          [device]="device"
+          [loading]="renameLoading"
+          (nameClick)="onRenameClick($event)"
+          class="col-xxxl-3 col-md-6 small-block"
+        >
+        </nd-name>
 
-        <div class="big-blocks">
-          <nd-color-picker
-            *ngIf="device.Type === 'Color Switch'"
-            [color]="color$ | async"
-            [level]="level$ | async"
-            (colorSet)="onColorSet(device.idx, $event)"
-          >
-          </nd-color-picker>
+        <nd-device-icon
+          [idx]="device.idx"
+          [deviceIcon]="deviceIcon$ | async"
+          (saveIconClick)="onSaveIconClick($event)"
+          [loading]="iconLoading"
+          class="col-xxxl-3 col-md-6 small-block"
+        >
+        </nd-device-icon>
 
-          <nd-history [device]="device"></nd-history>
-        </div>
-      </ng-container>
+        <nd-notifications
+          *ngIf="notificationsSupport"
+          [device]="device"
+          [settings]="settings$ | async"
+          (subscribeClick)="onSubscribeClick($event)"
+          [isSubscribed]="isSubscribed$ | async"
+          [loading]="pushLoading"
+          class="col-xxxl-3 col-md-6 small-block"
+        >
+        </nd-notifications>
+
+        <nd-dim-level
+          *ngIf="(isDimmer$ | async) && device.Type !== 'Color Switch'"
+          [device]="device"
+          (levelSet)="onLevelSet($event)"
+          class="col-xxxl-3 col-md-6 small-block"
+        >
+        </nd-dim-level>
+      </div>
+
+      <div class="big-blocks">
+        <nd-color-picker
+          *ngIf="device.Type === 'Color Switch'"
+          [color]="color$ | async"
+          [level]="level$ | async"
+          (colorSet)="onColorSet(device.idx, $event)"
+        >
+        </nd-color-picker>
+
+        <nd-history [device]="device"></nd-history>
+      </div>
     </div>
   `,
   styleUrls: ['./device-options.component.scss']
@@ -93,28 +132,32 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   color$: Observable<DomoticzColor> = this.service
     .select<string>('device', 'Color')
-    .pipe(map((color: string) => JSON.parse(color) as DomoticzColor));
-
-  isSubscribed$: Observable<boolean> = this.service.select<boolean>(
-    'isSubscribed'
-  );
+    .pipe(map((color: string) => (color ? JSON.parse(color) : noColor)));
 
   settings$ = this.dbService.select<DomoticzSettings>('settings');
 
-  pushSubscription$ = this.dbService.select<PushSubscription>(
-    'pushSubscription'
-  );
+  isSubscribed$: Observable<boolean> = this.dbService
+    .select<any[]>('monitoredDevices')
+    .pipe(
+      withLatestFrom(this.device$),
+      map(([monitoredDevices, device]) => {
+        return !!monitoredDevices.find(dev => dev.idx === device.idx);
+      })
+    );
 
-  deviceIcon$ = this.dbService.select<string>('deviceIcon');
+  deviceIcon$ = this.dbService.select<any[]>('deviceIcons').pipe(
+    withLatestFrom(this.device$),
+    map(([deviceIcons, device]) => {
+      const record = deviceIcons.find(di => di.idx === device.idx);
+      return record ? record.deviceIcon : '';
+    })
+  );
 
   renameLoading: boolean;
 
   pushLoading: boolean;
 
   iconLoading: boolean;
-
-  readonly VAPID_PUBLIC_KEY =
-    'BG-zibiw-dk6bhrbwLMicGYXna-WwoNqsF8FLKdDUzqhOKvfrH3jYG-UnaYNss45AMDqfJC_GgskDpx8lycjQ0Y';
 
   notificationsSupport: boolean;
 
@@ -139,9 +182,10 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
 
   constructor(
     private service: DeviceOptionsService,
+    private pushService: PushSubscriptionService,
     private dbService: DBService,
-    private swPush: SwPush,
-    private router: Router
+    private router: Router,
+    private iconService: DeviceIconService
   ) {}
 
   ngOnInit() {
@@ -152,19 +196,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
             'Notification' in window &&
             isSwitch(device) &&
             !environment.domoticz;
-          this.dbService.syncDeviceIcon(device.idx, null);
         }),
-        take(1),
-        takeUntil(this.unsubscribe$)
-      )
-      .subscribe();
-    this.pushLoading = true;
-    zip(this.device$, this.pushSubscription$)
-      .pipe(
-        mergeMap(([device, pushSubscription]) =>
-          this.service.isSubscribed(device, pushSubscription)
-        ),
-        finalize(() => (this.pushLoading = false)),
         take(1),
         takeUntil(this.unsubscribe$)
       )
@@ -191,51 +223,37 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   async onSaveIconClick(event: any) {
     try {
       this.iconLoading = true;
-      const msg = await this.dbService.addDeviceIcon(event.idx, event.evaIcon);
+      let msg: string;
+      if (event.evaIcon) {
+        msg = await this.iconService.addDeviceIcon(event.idx, event.evaIcon);
+      } else {
+        msg = await this.iconService.deleteDeviceIcon(event.idx);
+      }
       console.log('😃 ' + msg);
-      this.dbService.syncDeviceIcon(event.idx, event.evaIcon);
       setTimeout(() => (this.iconLoading = false), 500);
     } catch (error) {
       console.error('⛔️ Could not save device icon', error);
     }
   }
 
-  async onSubscribeClick(event: any) {
+  onSubscribeClick(event: any) {
     this.pushLoading = true;
-    const pushSub: PushSubscription = await this.swPush.requestSubscription({
-      serverPublicKey: this.VAPID_PUBLIC_KEY
-    });
     if (!event.isSubscribed) {
       try {
-        const payload = {
-          device: event.device,
-          statusUrl:
-            `${event.settings.ssl ? 'https' : 'http'}://` +
-            `${event.settings.domain}:${
-              event.settings.port
-            }/${Api.device.replace('{idx}', event.device.idx)}`,
-          sub: pushSub
-        };
-        this.service
-          .subscribeToNotifications(payload)
-          .pipe(take(1))
+        this.pushService
+          .subscribeToNotifications(event.device)
+          .pipe(
+            take(1),
+            takeUntil(this.unsubscribe$),
+            finalize(() => (this.pushLoading = false))
+          )
           .subscribe();
-        try {
-          const msg = await this.dbService.addPushSub(pushSub);
-          this.dbService.syncPushSub(pushSub);
-          console.log(msg);
-        } catch (error) {
-          this.dbService.syncPushSub(null);
-          console.log(error);
-        }
       } catch (error) {
-        console.error('Could not subscribe to notifications', error);
-      } finally {
-        this.pushLoading = false;
+        console.error('🚫 Could not subscribe to notifications', error);
       }
     } else {
-      this.service
-        .stopSubscription(event.device, pushSub)
+      this.pushService
+        .stopSubscription(event.device)
         .pipe(
           take(1),
           finalize(() => (this.pushLoading = false)),

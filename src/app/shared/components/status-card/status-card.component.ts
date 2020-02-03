@@ -1,23 +1,53 @@
-import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  Output,
+  EventEmitter
+} from '@angular/core';
 
 @Component({
   selector: 'nd-status-card',
   template: `
-    <nb-card (click)="switchLight()" [ngClass]="{'off': !on, 'disabled': disabled,
-      'no-event': !clickable}" [nbSpinner]="loading">
+    <nb-card
+      (click)="switchLight()"
+      [ngClass]="{
+        off: !on,
+        disabled: device.HaveTimeout,
+        'no-event': !clickable
+      }"
+      [nbSpinner]="loading"
+    >
       <div class="icon-container">
         <div class="icon primary">
-          <ng-content></ng-content>
+          <nd-svg-icon
+            *ngIf="
+              !!icon[device.Image] ||
+                (type === 'Door Contact' &&
+                  deviceIcon === 'alert-triangle-outline');
+              else nbIcon
+            "
+            class="nd-icon {{ device[statusKey] }}"
+            [name]="icon[device.Image]"
+            [status]="device[statusKey]"
+          >
+          </nd-svg-icon>
+          <ng-template #nbIcon>
+            <nb-icon class="temp-icon" [icon]="deviceIcon"> </nb-icon>
+          </ng-template>
         </div>
       </div>
 
       <div class="details">
-        <div class="title">{{ title }}</div>
+        <div class="title">{{ device.Name }}</div>
         <div class="status">{{ status }}</div>
       </div>
 
-      <nb-icon class="option-icon" icon="plus-outline"
-        (click)="onOptionsClick($event)">
+      <nb-icon
+        class="option-icon"
+        icon="plus-outline"
+        (click)="onOptionsClick($event)"
+      >
       </nb-icon>
     </nb-card>
   `,
@@ -25,14 +55,19 @@ import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter } from 
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatusCardComponent {
-
-  @Input() title: string;
+  @Input() device: any;
 
   @Input() type: string;
 
-  @Input() on: boolean;
+  @Input() statusKey: string;
 
-  @Input() disabled: boolean;
+  @Input()
+  set deviceIcons(value: any[]) {
+    const record = value.find(x => x.idx === this.device.idx);
+    this.deviceIcon = record ? record.deviceIcon : 'alert-triangle-outline';
+  }
+
+  @Input() on: boolean;
 
   @Input() loading: boolean;
 
@@ -44,13 +79,22 @@ export class StatusCardComponent {
       this._status = value;
     }
   }
-  get status() { return this._status; }
+  get status() {
+    return this._status;
+  }
 
   @Output() statusChanged = new EventEmitter<string>();
 
   @Output() optionsClick = new EventEmitter();
 
   clickable: boolean;
+
+  deviceIcon: string;
+
+  icon = {
+    Fireplace: 'nd-fireplace',
+    Door: 'nd-door'
+  };
 
   switchLight() {
     this.statusChanged.emit(this.on ? 'Off' : 'On');
@@ -60,5 +104,4 @@ export class StatusCardComponent {
     evt.stopPropagation();
     this.optionsClick.emit();
   }
-
 }

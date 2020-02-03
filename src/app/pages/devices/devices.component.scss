@@ -2,32 +2,9 @@
 @import '../../../animations';
 
 @include nb-install-component() {
-
   .type-container {
-
     .type {
       font-size: nb-theme(text-heading-5-font-size);
-    }
-
-    .nd-icon {
-      width: 100%;
-      height: 100%;
-
-      &.Off {
-        fill: nb-theme(text-basic-color);
-        stroke: nb-theme(text-basic-color);
-      }
-
-      &.Closed, &.Open {
-        fill: nb-theme(text-basic-color);
-        stroke: nb-theme(text-basic-color);
-        pointer-events: none;
-      }
-
-      &.On {
-        fill: nb-theme(text-primary-color);
-        stroke: nb-theme(text-primary-color);
-      }
     }
   }
 }
@@ -41,7 +18,6 @@
   position: relative;
 
   &.light {
-
     &.in {
       animation-name: enterleft;
     }
@@ -53,7 +29,6 @@
   }
 
   &.temp {
-
     &.in {
       animation-name: enterright;
     }
@@ -68,11 +43,6 @@
     margin: 1rem 0;
     text-transform: uppercase;
   }
-
-  .temp-icon {
-    width: 60%;
-    height: 60%;
-  }
 }
 
 .no-devices {
@@ -81,7 +51,6 @@
   position: relative;
 
   &.temp {
-
     &.in {
       animation-name: enterright;
     }

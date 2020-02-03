@@ -13,7 +13,12 @@ import {
 
 import { Switch, Temp } from '@nd/core/models';
 
-import { DevicesService, SwitchesService, DBService } from '@nd/core/services';
+import {
+  DevicesService,
+  SwitchesService,
+  DBService,
+  DeviceIconService
+} from '@nd/core/services';
 
 @Component({
   selector: 'nd-devices',
@@ -27,12 +32,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
 
   types$ = this.service.select<string[]>('types');
 
-  icon = {
-    Fireplace: 'nd-fireplace',
-    Door: 'nd-door'
-  };
-
-  deviceIcons: any[];
+  deviceIcons$ = this.dbService.select<any[]>('deviceIcons');
 
   switchLoading: boolean;
 
@@ -65,7 +65,8 @@ export class DevicesComponent implements OnInit, OnDestroy {
     private switchesService: SwitchesService,
     private router: Router,
     private route: ActivatedRoute,
-    private dbService: DBService
+    private dbService: DBService,
+    private iconService: DeviceIconService
   ) {}
 
   ngOnInit() {
@@ -88,21 +89,6 @@ export class DevicesComponent implements OnInit, OnDestroy {
     )
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe();
-    this.getDeviceIcons();
-  }
-
-  async getDeviceIcons() {
-    try {
-      const icons = await this.dbService.getAllIcons();
-      this.deviceIcons = icons as any[];
-    } catch (error) {
-      console.error('Could not retrieve device icons', error);
-    }
-  }
-
-  getDeviceIcon(idx: string) {
-    const device = (this.deviceIcons || []).find(icon => icon.idx === idx);
-    return !!device ? device.deviceIcon : 'alert-triangle-outline';
   }
 
   isSwitchOn(_switch: Switch): boolean {

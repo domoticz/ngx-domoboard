@@ -71,8 +71,10 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
   private _color: DomoticzColor;
   @Input()
   set color(value: DomoticzColor) {
-    this.colorInit(value);
-    this.kelvinInit(value);
+    if (value) {
+      this.colorInit(value);
+      this.kelvinInit(value);
+    }
     this._color = value;
   }
   get color() {
@@ -129,8 +131,10 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
       k =>
         k.r <= _c.r + 1 &&
         k.r >= _c.r - 1 &&
-        k.g <= _c.g + 1 && k.g >= _c.g - 1 &&
-        k.b <= _c.b + 1 && k.b >= _c.b - 1
+        k.g <= _c.g + 1 &&
+        k.g >= _c.g - 1 &&
+        k.b <= _c.b + 1 &&
+        k.b >= _c.b - 1
     );
     if (!!_k) {
       this.kelvin = _k.kelvin;

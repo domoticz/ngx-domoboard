@@ -8,12 +8,13 @@ import { DomoticzSettings } from '@nd/core/models';
 interface State {
   settings: DomoticzSettings;
   pushSubscription: PushSubscription;
-  deviceIcon: string;
+  monitoredDevices: any[];
+  deviceIcons: any[];
 }
 
 @Injectable({ providedIn: 'root' })
 export class DBService {
-  private subject = new BehaviorSubject<State>({} as State);
+  subject = new BehaviorSubject<State>({} as State);
   store = this.subject
     .asObservable()
     .pipe(
@@ -24,13 +25,16 @@ export class DBService {
 
   DB_NAME = 'NDDB';
 
-  DB_VERSION = 1;
+  // upgrade version to trigger onupgradeneeded event
+  DB_VERSION = 2;
 
   SETTINGS_STORE = 'domoticz_settings';
 
   PUSHSUB_STORE = 'push_subscription';
 
-  ICON_STORE = 'device_icon';
+  ICON_STORE = 'device_icons';
+
+  MONITOR_STORE = 'monitored_devices';
 
   select<T>(...name: string[]): Observable<T> {
     return this.store.pipe(pluck(...name));
@@ -39,7 +43,7 @@ export class DBService {
   openDb(): Promise<any> {
     const req = indexedDB.open(this.DB_NAME, this.DB_VERSION);
     return new Promise<any>((resolve, reject) => {
-      req.onsuccess = function(evt) {
+      req.onsuccess = function(evt: any) {
         resolve((this.db = evt.target.result));
       }.bind(this);
 
@@ -48,21 +52,30 @@ export class DBService {
       };
 
       req.onupgradeneeded = function(evt) {
-        evt.currentTarget['result'].createObjectStore(this.SETTINGS_STORE, {
-          keyPath: 'id'
-        });
-        evt.currentTarget['result'].createObjectStore(this.PUSHSUB_STORE, {
-          keyPath: 'id'
-        });
-        evt.currentTarget['result'].createObjectStore(this.ICON_STORE, {
-          keyPath: 'idx'
-        });
+        this.createStore(this.SETTINGS_STORE, 'id', evt);
+        this.createStore(this.PUSHSUB_STORE, 'id', evt);
+        this.createStore(this.ICON_STORE, 'idx', evt);
+        this.createStore(this.MONITOR_STORE, 'idx', evt);
       }.bind(this);
     });
   }
 
-  getObjectStore(store_name, mode) {
-    const tx = this.db.transaction(store_name, mode);
+  createStore(storeName: string, keyPath: string, evt: any) {
+    const db = evt.target.result as IDBDatabase;
+    if (!db.objectStoreNames.contains(storeName)) {
+      db.createObjectStore(storeName, {
+        keyPath
+      });
+    }
+  }
+
+  getObjectStore(store_name: string, mode?: any) {
+    let tx: IDBTransaction;
+    if (mode) {
+      tx = this.db.transaction(store_name, mode);
+    } else {
+      tx = this.db.transaction(store_name);
+    }
     return tx.objectStore(store_name);
   }
 
@@ -89,37 +102,6 @@ export class DBService {
 
       req.onerror = function(evt) {
         reject('addSettings: ' + evt.target['error'].message);
-      };
-    });
-  }
-
-  addPushSub(pushSubscription: PushSubscription): Promise<any> {
-    const store = this.getObjectStore(this.PUSHSUB_STORE, 'readwrite');
-    const req = store.put({
-      id: 1,
-      pushSubscription: pushSubscription.toJSON()
-    });
-    return new Promise<any>((resolve, reject) => {
-      req.onsuccess = function(evt: any) {
-        resolve('addPushSub: ' + evt.type);
-      };
-      req.onerror = function(evt) {
-        reject('addPushSub: ' + evt.target['error'].message);
-      };
-    });
-  }
-
-  addDeviceIcon(idx: string, icon: string) {
-    const store = this.getObjectStore(this.ICON_STORE, 'readwrite');
-    const req = !!icon
-      ? store.put({ idx: idx, deviceIcon: icon })
-      : store.delete(idx);
-    return new Promise<any>((resolve, reject) => {
-      req.onsuccess = function(evt: any) {
-        resolve('addDeviceIcon: ' + evt.type);
-      };
-      req.onerror = function(evt) {
-        reject('addDeviceIcon: ' + evt.target['error'].message);
       };
     });
   }
@@ -154,40 +136,6 @@ export class DBService {
     });
   }
 
-  syncPushSub(pushSubscription: PushSubscription) {
-    const req = this.getObjectStore(this.PUSHSUB_STORE, 'readonly').get(1);
-    req.onsuccess = ((evt: any) => {
-      if (!!evt.target.result) {
-        this.subject.next({
-          ...this.subject.value,
-          pushSubscription: evt.target.result.pushSubscription
-        });
-      } else {
-        this.subject.next({
-          ...this.subject.value,
-          pushSubscription
-        });
-      }
-    }).bind(this);
-  }
-
-  syncDeviceIcon(idx: string, icon: string) {
-    const req = this.getObjectStore(this.ICON_STORE, 'readonly').get(idx);
-    req.onsuccess = ((evt: any) => {
-      if (!!evt.target.result) {
-        this.subject.next({
-          ...this.subject.value,
-          deviceIcon: evt.target.result.deviceIcon
-        });
-      } else {
-        this.subject.next({
-          ...this.subject.value,
-          deviceIcon: icon
-        });
-      }
-    }).bind(this);
-  }
-
   decodeSettings(settings: DomoticzSettings): DomoticzSettings {
     if (!!settings && !!settings.authToken) {
       return {
@@ -200,10 +148,6 @@ export class DBService {
     } else {
       return settings;
     }
-  }
-
-  getAllIcons() {
-    return this.getAllStore(this.ICON_STORE);
   }
 
   getAllStore(store: string) {

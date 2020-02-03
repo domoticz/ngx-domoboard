@@ -19,6 +19,7 @@ import { TreeNode } from './switch-logs.component';
           <div class="logs--cell-container">
             <nb-icon
               *ngIf="column === 'Date' && row.data.Date"
+              class="logs--cell-icon"
               [icon]="
                 !row.expanded ? 'arrow-right-outline' : 'arrow-down-outline'
               "
@@ -33,6 +34,9 @@ import { TreeNode } from './switch-logs.component';
     `
       .logs--cell-container {
         display: flex;
+      }
+      .logs--cell-icon {
+        cursor: pointer;
       }
     `
   ],

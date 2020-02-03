@@ -10,28 +10,14 @@ import { DBService } from './db.service';
 import { DomoticzResponse, Switch, Temp, DomoticzColor } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
 
-import { environment } from 'environments/environment';
-import { SwitchLog } from '../models/switch-log.interface';
-
 interface State<T> {
   device: T;
-  isSubscribed: boolean;
 }
-
-const pushApi = {
-  server: environment.pushServer,
-  monitor: '/monitor-device',
-  stop: '/stop-monitoring',
-  isMonitoring: '/is-monitoring'
-};
-
-const isTemp = (device: any): device is Temp => device.Temp !== undefined;
 
 @Injectable({ providedIn: 'root' })
 export class DeviceOptionsService extends DataService {
   initialState: State<Temp | Switch> = {
-    device: {} as Temp | Switch,
-    isSubscribed: false
+    device: {} as Temp | Switch
   };
 
   private subject = new BehaviorSubject<State<Temp | Switch>>(
@@ -94,61 +80,6 @@ export class DeviceOptionsService extends DataService {
     return this.get<DomoticzResponse<any>>(
       Api.kelvinLevel.replace('{idx}', idx).replace('{kelvin}', kelvin)
     );
-  }
-
-  isSubscribed(
-    device: any,
-    pushSubscription: PushSubscription
-  ): Observable<any> {
-    return this.httpClient
-      .post<boolean>(`${pushApi.server}${pushApi.isMonitoring}`, {
-        device,
-        pushSubscription
-      })
-      .pipe(
-        tap((resp: any) => {
-          if (resp.status === 'OK') {
-            this.syncIsSubscribed(resp.isMonitoring);
-          }
-        })
-      );
-  }
-
-  subscribeToNotifications(payload: any): Observable<any> {
-    return this.httpClient
-      .post(`${pushApi.server}${pushApi.monitor}`, payload)
-      .pipe(
-        tap((resp: any) => {
-          if (resp.status === 'OK') {
-            this.syncIsSubscribed(true);
-          }
-        })
-      );
-  }
-
-  stopSubscription(
-    device: any,
-    pushSubscription: PushSubscription
-  ): Observable<any> {
-    return this.httpClient
-      .post<boolean>(`${pushApi.server}${pushApi.stop}`, {
-        device,
-        pushSubscription
-      })
-      .pipe(
-        tap((resp: any) => {
-          if (resp.status === 'OK') {
-            this.syncIsSubscribed(false);
-          }
-        })
-      );
-  }
-
-  syncIsSubscribed(isSubscribed: boolean) {
-    this.subject.next({
-      ...this.subject.value,
-      isSubscribed: isSubscribed
-    });
   }
 
   syncColor(color: DomoticzColor) {

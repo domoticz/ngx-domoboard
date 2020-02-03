@@ -30,7 +30,7 @@ import { environment } from '../environments/environment';
 
 import { AppInitializerService } from './core/services/app-initializer.service';
 
-function initializeApp(initializerService: AppInitializerService) {
+export function initializeApp(initializerService: AppInitializerService) {
   return (): Promise<any> => initializerService.init();
 }
 

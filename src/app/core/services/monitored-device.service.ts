@@ -52,11 +52,12 @@ export class MonitoredDeviceService extends DBService {
     const req = this.getMonitorStore('readwrite').delete(device.idx);
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = function(evt: any) {
-        let newDevices: any[];
-        [device, ...newDevices] = this.dbSubject.value.monitoredDevices;
+        const devices = [...this.dbSubject.value.monitoredDevices];
+        const index = devices.indexOf(device);
+        devices.splice(index, 1);
         this.dbSubject.next({
           ...this.dbSubject.value,
-          monitoredDevices: newDevices
+          monitoredDevices: devices
         });
         resolve('deleteMonitoredDevice: ' + evt.type);
       }.bind(this);

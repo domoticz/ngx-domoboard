@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 
-import { Observable } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
+import { Observable, from } from 'rxjs';
+import { tap, switchMap, take, withLatestFrom } from 'rxjs/operators';
 
 import { DBService } from './db.service';
 import { MonitoredDeviceService } from './monitored-device.service';
@@ -32,30 +32,20 @@ export class PushSubscriptionService extends DBService {
 
   settings$ = this.dbService.select<DomoticzSettings>('settings');
 
-  get pushSubscription() {
-    // return (async () => {
-    //   let pushSubscription: PushSubscription;
-    //   pushSubscription = await this.dbService
-    //     .select<PushSubscription>('pushSubscription')
-    //     .pipe(first())
-    //     .toPromise();
-    //   if (!pushSubscription) {
-    //     pushSubscription = await this.swPush.requestSubscription({
-    //       serverPublicKey: VAPID_PUBLIC_KEY
-    //     });
-    //   }
-    //   return pushSubscription;
-    // })();
-    return {
-      endpoint:
-        'https://fcm.googleapis.com/fcm/send/d1AHolIOEto:APA91bE5C2hXmqJTXKcL5IUPz1eYstLYJ0-o0KDBmLF1PiWZiG5_DssSnX_ACn5ZZFR3sM9IifA3a6qeyIsy-YcA8Gf-m0oXZU-8SJVMMt9Jw9792XdZnrODFBZOY__h_QuSPYbPOz3Y',
-      expirationTime: null,
-      keys: {
-        p256dh:
-          'BG6oCpRhEW9GYSh4v8lCDlgVgB3JuaYfuSNN361n1p6p6R_VvaEEfY1PPJIZbs6oDKOMkjPK6RT2mxRF9ZjR6N8',
-        auth: 'eRTPXpUZE1fHp-Yh7gAfjQ'
+  get pushSubscription$() {
+    return (async () => {
+      let pushSubscription: PushSubscription;
+      pushSubscription = await this.dbService
+        .select<PushSubscription>('pushSubscription')
+        .pipe(take(1))
+        .toPromise();
+      if (!pushSubscription) {
+        pushSubscription = await this.swPush.requestSubscription({
+          serverPublicKey: VAPID_PUBLIC_KEY
+        });
       }
-    };
+      return pushSubscription;
+    })();
   }
 
   constructor(
@@ -73,7 +63,8 @@ export class PushSubscriptionService extends DBService {
 
   subscribeToNotifications(device: any): Observable<any> {
     return this.settings$.pipe(
-      switchMap((settings: DomoticzSettings) => {
+      withLatestFrom(this.pushSubscription$),
+      switchMap(([settings, pushSubscription]) => {
         const payload = {
           device: device,
           statusUrl:
@@ -82,17 +73,14 @@ export class PushSubscriptionService extends DBService {
               '{idx}',
               device.idx
             )}`,
-          sub: this.pushSubscription
+          sub: pushSubscription
         };
         return this.httpClient
           .post(`${pushApi.server}${pushApi.monitor}`, payload)
           .pipe(
             tap(async (resp: any) => {
               if (resp.status === 'OK') {
-                await this.syncWithDb(
-                  'push_subscription',
-                  this.pushSubscription
-                );
+                await this.syncWithDb('push_subscription', pushSubscription);
                 await this.syncWithDb('monitored_device', device);
               }
             })
@@ -151,31 +139,41 @@ export class PushSubscriptionService extends DBService {
   }
 
   stopSubscription(device: any): Observable<any> {
-    return this.httpClient
-      .post<boolean>(`${pushApi.server}${pushApi.stop}`, {
-        pushSubscription: this.pushSubscription,
-        device
-      })
-      .pipe(
-        tap(async (resp: any) => {
-          if (resp.status === 'OK') {
-            try {
-              const msg = await this.monitorService.deleteMonitoredDevice(
-                device
-              );
-              console.log('😃 ' + msg);
-            } catch (error) {
-              console.log('⛔️ ' + error);
-            }
-            try {
-              const msg = await this.clearPushSubscription();
-              console.log('😃 ' + msg);
-            } catch (error) {
-              console.log('⛔️ ' + error);
-            }
-          }
-        })
-      );
+    return from(this.pushSubscription$).pipe(
+      switchMap((pushSubscription: PushSubscription) =>
+        this.httpClient
+          .post<boolean>(`${pushApi.server}${pushApi.stop}`, {
+            pushSubscription,
+            device
+          })
+          .pipe(
+            tap(async (resp: any) => {
+              if (resp.status === 'OK') {
+                try {
+                  const msg = await this.monitorService.deleteMonitoredDevice(
+                    device
+                  );
+                  console.log('😃 ' + msg);
+                } catch (error) {
+                  console.log('⛔️ ' + error);
+                }
+                const devices = await this.dbService
+                  .select<any[]>('monitoredDevices')
+                  .pipe(take(1))
+                  .toPromise();
+                if (!devices.length) {
+                  try {
+                    const msg = await this.clearPushSubscription();
+                    console.log('😃 ' + msg);
+                  } catch (error) {
+                    console.log('⛔️ ' + error);
+                  }
+                }
+              }
+            })
+          )
+      )
+    );
   }
 
   clearPushSubscription() {

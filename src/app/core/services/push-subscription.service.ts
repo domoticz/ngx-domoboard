@@ -62,6 +62,7 @@ export class PushSubscriptionService extends DBService {
     return this.settings$.pipe(
       withLatestFrom(this.pushSubscription$),
       switchMap(([settings, pushSubscription]) => {
+        console.log(pushSubscription);
         const payload = {
           device: device,
           statusUrl:

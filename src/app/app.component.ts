@@ -16,9 +16,13 @@ import {
 import { NbToastrConfig } from '@nebular/theme/components/toastr/toastr-config';
 
 import { Observable } from 'rxjs';
-import { tap, filter } from 'rxjs/operators';
+import { tap, filter, switchMap, take } from 'rxjs/operators';
 
-import { NotificationService } from '@nd/core/services';
+import {
+  NotificationService,
+  DBService,
+  PushSubscriptionService
+} from '@nd/core/services';
 
 import { environment } from 'environments/environment';
 
@@ -51,6 +55,8 @@ export class AppComponent implements OnInit {
     )
   );
 
+  monitoredDevices$ = this.dbService.select<any[]>('monitoredDevices');
+
   constructor(
     private themeService: NbThemeService,
     private notifService: NotificationService,
@@ -59,7 +65,9 @@ export class AppComponent implements OnInit {
     private update: SwUpdate,
     private cd: ChangeDetectorRef,
     private router: Router,
-    readonly swPush: SwPush
+    readonly swPush: SwPush,
+    private dbService: DBService,
+    private pushService: PushSubscriptionService
   ) {}
 
   ngOnInit() {
@@ -98,7 +106,12 @@ export class AppComponent implements OnInit {
     this.swPush.messages
       .pipe(
         filter((msg: any) => msg.notification.body === '🔥 Push server up!'),
-        tap(msg => console.log(msg))
+        switchMap(() => this.monitoredDevices$),
+        switchMap(devices => {
+          if (devices && devices.length) {
+            return this.pushService.initSubscriptions();
+          }
+        })
       )
       .subscribe();
   }

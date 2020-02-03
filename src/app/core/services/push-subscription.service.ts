@@ -18,7 +18,7 @@ const pushApi = {
   server: environment.pushServer,
   monitor: '/monitor-device',
   stop: '/stop-monitoring',
-  isMonitoring: '/is-monitoring'
+  initMonitoring: '/init-monitoring'
 };
 
 const VAPID_PUBLIC_KEY =
@@ -85,6 +85,22 @@ export class PushSubscriptionService extends DBService {
               }
             })
           );
+      })
+    );
+  }
+
+  initSubscriptions(): Observable<any> {
+    return this.settings$.pipe(
+      switchMap((settings: DomoticzSettings) => {
+        const payload = {
+          api:
+            `${settings.ssl ? 'https' : 'http'}://` +
+            `${settings.domain}:${settings.port}`
+        };
+        return this.httpClient.post(
+          `${pushApi.server}${pushApi.initMonitoring}`,
+          payload
+        );
       })
     );
   }

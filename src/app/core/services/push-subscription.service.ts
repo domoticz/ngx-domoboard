@@ -37,9 +37,11 @@ export class PushSubscriptionService extends DBService {
     .pipe(
       switchMap((pushSubscription: PushSubscription) => {
         if (!pushSubscription) {
-          return this.swPush.requestSubscription({
-            serverPublicKey: VAPID_PUBLIC_KEY
-          });
+          return from(
+            this.swPush.requestSubscription({
+              serverPublicKey: VAPID_PUBLIC_KEY
+            })
+          );
         }
         return of(pushSubscription);
       })

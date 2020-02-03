@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 
-import { Observable, from } from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import { tap, switchMap, take, withLatestFrom } from 'rxjs/operators';
 
 import { DBService } from './db.service';
@@ -32,21 +32,18 @@ export class PushSubscriptionService extends DBService {
 
   settings$ = this.dbService.select<DomoticzSettings>('settings');
 
-  get pushSubscription$() {
-    return (async () => {
-      let pushSubscription: PushSubscription;
-      pushSubscription = await this.dbService
-        .select<PushSubscription>('pushSubscription')
-        .pipe(take(1))
-        .toPromise();
-      if (!pushSubscription) {
-        pushSubscription = await this.swPush.requestSubscription({
-          serverPublicKey: VAPID_PUBLIC_KEY
-        });
-      }
-      return pushSubscription;
-    })();
-  }
+  pushSubscription$: Observable<PushSubscription> = this.dbService
+    .select<PushSubscription>('pushSubscription')
+    .pipe(
+      switchMap((pushSubscription: PushSubscription) => {
+        if (!pushSubscription) {
+          return this.swPush.requestSubscription({
+            serverPublicKey: VAPID_PUBLIC_KEY
+          });
+        }
+        return of(pushSubscription);
+      })
+    );
 
   constructor(
     private httpClient: HttpClient,
@@ -123,8 +120,8 @@ export class PushSubscriptionService extends DBService {
     const store = this.getPushSubStore('readwrite');
     const req = store.put({
       id: 1,
-      pushSubscription: pushSubscription
-      // pushSubscription: pushSubscription.toJSON()
+      // pushSubscription: pushSubscription
+      pushSubscription: pushSubscription.toJSON()
     });
     return new Promise<any>((resolve, reject) => {
       req.onsuccess = function(evt: any) {
@@ -155,7 +152,7 @@ export class PushSubscriptionService extends DBService {
   }
 
   stopSubscription(device: any): Observable<any> {
-    return from(this.pushSubscription$).pipe(
+    return this.pushSubscription$.pipe(
       switchMap((pushSubscription: PushSubscription) =>
         this.httpClient
           .post<boolean>(`${pushApi.server}${pushApi.stop}`, {

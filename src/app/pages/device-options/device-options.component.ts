@@ -195,7 +195,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
           this.notificationsSupport =
             'Notification' in window &&
             isSwitch(device) &&
-            !environment.domoticz;
+            (!environment.production || location.protocol === 'https:');
         }),
         take(1),
         takeUntil(this.unsubscribe$)

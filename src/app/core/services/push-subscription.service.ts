@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 
-import { Observable, from, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { tap, switchMap, take, withLatestFrom } from 'rxjs/operators';
 
 import { DBService } from './db.service';
@@ -35,15 +35,13 @@ export class PushSubscriptionService extends DBService {
   pushSubscription$: Observable<PushSubscription> = this.dbService
     .select<PushSubscription>('pushSubscription')
     .pipe(
-      switchMap((pushSubscription: PushSubscription) => {
+      switchMap(async (pushSubscription: PushSubscription) => {
         if (!pushSubscription) {
-          return from(
-            this.swPush.requestSubscription({
-              serverPublicKey: VAPID_PUBLIC_KEY
-            })
-          );
+          pushSubscription = await this.swPush.requestSubscription({
+            serverPublicKey: VAPID_PUBLIC_KEY
+          });
         }
-        return of(pushSubscription);
+        return pushSubscription;
       })
     );
 
@@ -61,10 +59,9 @@ export class PushSubscriptionService extends DBService {
   }
 
   subscribeToNotifications(device: any): Observable<any> {
-    return this.settings$.pipe(
-      withLatestFrom(this.pushSubscription$),
-      switchMap(([settings, pushSubscription]) => {
-        console.log(pushSubscription);
+    return this.pushSubscription$.pipe(
+      withLatestFrom(this.settings$),
+      switchMap(([pushSubscription, settings]) => {
         const payload = {
           device: device,
           statusUrl:

@@ -1,6 +1,11 @@
 <nb-layout>
   <nb-layout-header class="header">
-    <nd-header (menuToggle)="onMenuToggle()"></nd-header>
+    <nd-header
+      (menuToggle)="onMenuToggle()"
+      [themes]="themes"
+      [selectedTheme]="selectedTheme"
+      (themeSelected)="enableTheme($event)"
+    ></nd-header>
   </nb-layout-header>
 
   <nb-layout-column class="content {{ menuState }}">
@@ -12,15 +17,20 @@
   </nb-layout-footer>
 </nb-layout>
 
-<nd-menu-sidebar *ngIf="showMenu" [animationState]="menuState"
-  (outsideClick)="onMenuToggle()">
+<nd-menu-sidebar
+  *ngIf="showMenu"
+  [animationState]="menuState"
+  (outsideClick)="onMenuToggle()"
+>
 </nd-menu-sidebar>
 
 <nd-settings-sidebar></nd-settings-sidebar>
 
 <ng-template #updateDialog let-data let-ref="dialogRef">
   <nb-card>
-    <nb-card-header id="dialog-header" class="center">Update available</nb-card-header>
+    <nb-card-header id="dialog-header" class="center"
+      >Update available</nb-card-header
+    >
     <nb-card-body class="center dialog-body">{{ data }}</nb-card-body>
     <nb-card-footer class="center">
       <button nbButton (click)="closeDialog()">Reload</button>

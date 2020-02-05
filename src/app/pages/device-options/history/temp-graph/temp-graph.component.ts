@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 
 import { ReplaySubject } from 'rxjs';
-import { takeWhile, tap, withLatestFrom, filter } from 'rxjs/operators';
+import { takeWhile, tap, withLatestFrom } from 'rxjs/operators';
 
 import echarts from 'echarts';
 

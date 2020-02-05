@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import {
   NbInputModule,
   NbProgressBarModule,
-  NbSelectModule,
   NbTreeGridModule
 } from '@nebular/theme';
 
@@ -27,7 +26,6 @@ import { historyComponents } from './history';
     FormsModule,
     NbInputModule,
     NbProgressBarModule,
-    NbSelectModule,
     NbTreeGridModule
   ],
   declarations: [

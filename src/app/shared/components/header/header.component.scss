@@ -1,16 +1,13 @@
 @import '../../../../themes';
 
 @include nb-install-component() {
-
   .header-container .logo-containter .logo {
     color: nb-theme(text-primary-color);
     font-weight: nb-theme(text-paragraph-font-weight);
   }
 
   .header-container {
-
     .logo-containter {
-
       .logo {
         border-color: nb-theme(divider-color);
       }
@@ -42,9 +39,7 @@
 }
 
 @media (max-width: 768px) {
-
   .header-container {
-
     #header-tabset {
       display: none;
     }
@@ -63,14 +58,18 @@
 }
 
 @media (min-width: 768px) {
-
   .header-container {
-
     .logo-containter {
-
       .navigation {
         display: none;
       }
     }
+  }
+
+  .header--select-theme {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 2em;
   }
 }

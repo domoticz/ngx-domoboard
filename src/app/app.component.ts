@@ -44,6 +44,14 @@ export class AppComponent implements OnInit {
 
   menuState = 'out';
 
+  selectedTheme = 'default';
+
+  themes = [
+    { label: 'Cosmic (legacy)', theme: 'custom-cosmic' },
+    { label: 'Cosmic', theme: 'cosmic' },
+    { label: 'Light', theme: 'default' }
+  ];
+
   notification$: Observable<string> = this.notifService.notification.pipe(
     filter(message => !!message),
     tap(message =>
@@ -71,7 +79,6 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.enableDarkTheme();
     this.notification$.subscribe();
     this.manageUpdate();
     this.managePushNotifications();
@@ -89,8 +96,9 @@ export class AppComponent implements OnInit {
       .subscribe();
   }
 
-  enableDarkTheme() {
-    this.themeService.changeTheme('custom-cosmic');
+  enableTheme(theme: string) {
+    this.themeService.changeTheme(theme);
+    this.selectedTheme = theme;
   }
 
   manageUpdate() {

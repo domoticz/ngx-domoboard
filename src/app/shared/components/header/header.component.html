@@ -1,10 +1,27 @@
 <div class="header-container">
   <div class="logo-containter">
-    <a class="navigation" (click)="menuToggle.emit()"><i id="menu-icon" class="nb-menu"></i></a>
-    <div class="logo"><span>{{ name }}</span></div>
+    <a class="navigation" (click)="menuToggle.emit()"
+      ><i id="menu-icon" class="nb-menu"></i
+    ></a>
+    <div class="logo">
+      <span>{{ name }}</span>
+    </div>
   </div>
 
   <nb-tabset id="header-tabset" (changeTab)="onChangeTab($event)">
-    <nb-tab *ngFor="let route of routes | keyvalue" tabTitle="{{ route.key }}"></nb-tab>
+    <nb-tab
+      *ngFor="let route of routes | keyvalue"
+      tabTitle="{{ route.key }}"
+    ></nb-tab>
   </nb-tabset>
+
+  <nb-select
+    class="header--select-theme"
+    [selected]="selectedTheme"
+    (selectedChange)="themeSelected.emit($event)"
+  >
+    <nb-option *ngFor="let theme of themes" [value]="theme.theme">{{
+      theme.label
+    }}</nb-option>
+  </nb-select>
 </div>

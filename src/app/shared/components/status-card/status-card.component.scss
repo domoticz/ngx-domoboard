@@ -8,7 +8,7 @@
     .icon {
       border-radius: nb-theme(card-border-radius) 0 0
         nb-theme(card-border-radius);
-      color: nb-theme(text-primary-color);
+      color: nb-theme(text-control-color);
 
       &.primary {
         $left-color: nb-theme(button-hero-primary-left-background-color);
@@ -70,8 +70,8 @@
     }
 
     &.On {
-      fill: nb-theme(text-primary-color);
-      stroke: nb-theme(text-primary-color);
+      fill: nb-theme(text-control-color);
+      stroke: nb-theme(text-control-color);
     }
   }
 

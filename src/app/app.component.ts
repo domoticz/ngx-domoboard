@@ -21,7 +21,8 @@ import { tap, filter, switchMap, take } from 'rxjs/operators';
 import {
   NotificationService,
   DBService,
-  PushSubscriptionService
+  PushSubscriptionService,
+  ThemeSelectService
 } from '@nd/core/services';
 
 import { environment } from 'environments/environment';
@@ -44,12 +45,13 @@ export class AppComponent implements OnInit {
 
   menuState = 'out';
 
-  selectedTheme = 'default';
+  selectedTheme$ = this.dbService.select<string>('selectedTheme');
 
   themes = [
     { label: 'Cosmic (legacy)', theme: 'custom-cosmic' },
     { label: 'Cosmic', theme: 'cosmic' },
-    { label: 'Light', theme: 'default' }
+    { label: 'Light', theme: 'default' },
+    { label: 'Dark', theme: 'dark' }
   ];
 
   notification$: Observable<string> = this.notifService.notification.pipe(
@@ -75,7 +77,8 @@ export class AppComponent implements OnInit {
     private router: Router,
     readonly swPush: SwPush,
     private dbService: DBService,
-    private pushService: PushSubscriptionService
+    private pushService: PushSubscriptionService,
+    private themeSelectService: ThemeSelectService
   ) {}
 
   ngOnInit() {
@@ -94,11 +97,22 @@ export class AppComponent implements OnInit {
         tap(() => this.onMenuToggle())
       )
       .subscribe();
+    this.enableTheme();
   }
 
-  enableTheme(theme: string) {
-    this.themeService.changeTheme(theme);
-    this.selectedTheme = theme;
+  enableTheme() {
+    this.selectedTheme$
+      .pipe(tap((theme: string) => this.themeService.changeTheme(theme)))
+      .subscribe();
+  }
+
+  async saveTheme(theme: string) {
+    try {
+      const msg = await this.themeSelectService.saveTheme(theme);
+      console.log('🖌 ' + msg);
+    } catch (error) {
+      console.error('⛔️ ' + error);
+    }
   }
 
   manageUpdate() {

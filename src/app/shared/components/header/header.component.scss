@@ -55,6 +55,10 @@
       }
     }
   }
+
+  .header--theme-container {
+    display: none;
+  }
 }
 
 @media (min-width: 768px) {
@@ -66,9 +70,8 @@
     }
   }
 
-  .header--select-theme {
-    display: flex;
-    align-items: center;
+  .header--theme-container {
+    align-self: center;
     margin-left: auto;
     margin-right: 2em;
   }

@@ -3,8 +3,8 @@
     <nd-header
       (menuToggle)="onMenuToggle()"
       [themes]="themes"
-      [selectedTheme]="selectedTheme"
-      (themeSelected)="enableTheme($event)"
+      [selectedTheme]="selectedTheme$ | async"
+      (themeSelected)="saveTheme($event)"
     ></nd-header>
   </nb-layout-header>
 

@@ -20,7 +20,10 @@
 <nd-menu-sidebar
   *ngIf="showMenu"
   [animationState]="menuState"
+  [themes]="themes"
+  [selectedTheme]="selectedTheme$ | async"
   (outsideClick)="onMenuToggle()"
+  (themeSelected)="saveTheme($event)"
 >
 </nd-menu-sidebar>
 

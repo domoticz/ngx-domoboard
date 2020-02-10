@@ -30,7 +30,7 @@ import { TempGraphData } from '@nd/core/models';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TempGraphComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('myChart', { static: false }) myChartRef: ElementRef;
+  @ViewChild('myChart') myChartRef: ElementRef;
 
   private alive = true;
 

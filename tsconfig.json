@@ -17,6 +17,6 @@
     }
   },
   "angularCompilerOptions": {
-    "strictTemplates": true
+    "strictTemplates": false
   }
 }

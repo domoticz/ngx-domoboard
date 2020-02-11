@@ -66,7 +66,8 @@ export class MenuSidebarComponent implements OnInit, OnDestroy {
           (event: any) =>
             this.animationState === 'in' &&
             event.target.id !== 'menu' &&
-            event.target.id !== 'menu-icon'
+            event.target.id !== 'menu-icon' &&
+            event.target.type !== 'button'
         ),
         tap(() => this.outsideClick.emit()),
         takeUntil(this.unsubscribe$)

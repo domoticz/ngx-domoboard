@@ -2,21 +2,23 @@
 @import '../../../../animations';
 
 @include nb-install-component() {
-
   #menu-sidebar {
-
     .menu-container {
       background: nb-theme(background-basic-color-2);
     }
   }
+
+  .menu--theme-container {
+    color: nb-theme(text-basic-color);
+  }
 }
 
 #menu-sidebar {
-  background: rgba(0,0,0,0.7);
-	position: fixed;
-	top: 0;
-	right: 0;
-	bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
   left: 0;
   z-index: 10000;
   animation-duration: 500ms;
@@ -32,12 +34,13 @@
 
   .menu-container {
     display: flex;
-    justify-content: flex-start;
+    flex-direction: column;
     height: 100%;
     position: fixed;
     top: 0;
     animation-duration: 500ms;
     overflow: hidden;
+    min-width: 17rem;
 
     &.in {
       animation-name: enterleft;
@@ -53,8 +56,15 @@
   }
 }
 
-@media (min-width: 768px) {
+.menu--theme-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
 
+@media (min-width: 768px) {
   #menu-sidebar {
     display: none;
   }

@@ -21,7 +21,7 @@ import {
 import { SharedModule } from '@nd/shared/shared.module';
 import { GlobalErrorHandler } from '@nd/core/global-error-handler';
 import { httpInterceptorProviders } from '@nd/core/http-interceptors';
-import { CUSTOM_COSMIC_THEME } from '@nd/core/theme.custom-cosmic';
+import { THEMES } from '@nd/core/themes';
 
 import { AppComponent } from './app.component';
 import { routes } from './app.routes';
@@ -44,7 +44,7 @@ export function initializeApp(initializerService: AppInitializerService) {
       scrollPositionRestoration: 'enabled'
     }),
     BrowserAnimationsModule,
-    NbThemeModule.forRoot({ name: 'custom-cosmic' }, [CUSTOM_COSMIC_THEME]),
+    NbThemeModule.forRoot({ name: 'default' }, THEMES),
     NbLayoutModule,
     NbDialogModule.forRoot(),
     NbButtonModule,

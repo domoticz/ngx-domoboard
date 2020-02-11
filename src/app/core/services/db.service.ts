@@ -10,6 +10,7 @@ interface State {
   pushSubscription: PushSubscription;
   monitoredDevices: any[];
   deviceIcons: any[];
+  selectedTheme: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -26,7 +27,7 @@ export class DBService {
   DB_NAME = 'NDDB';
 
   // upgrade version to trigger onupgradeneeded event
-  DB_VERSION = 2;
+  DB_VERSION = 3;
 
   SETTINGS_STORE = 'domoticz_settings';
 
@@ -35,6 +36,8 @@ export class DBService {
   ICON_STORE = 'device_icons';
 
   MONITOR_STORE = 'monitored_devices';
+
+  THEME_STORE = 'theme';
 
   select<T>(...name: string[]): Observable<T> {
     return this.store.pipe(pluck(...name));
@@ -54,6 +57,7 @@ export class DBService {
       req.onupgradeneeded = function(evt) {
         this.createStore(this.SETTINGS_STORE, 'id', evt);
         this.createStore(this.PUSHSUB_STORE, 'id', evt);
+        this.createStore(this.THEME_STORE, 'id', evt);
         this.createStore(this.ICON_STORE, 'idx', evt);
         this.createStore(this.MONITOR_STORE, 'idx', evt);
       }.bind(this);

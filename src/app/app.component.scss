@@ -2,8 +2,8 @@
 @import '~@nebular/bootstrap/styles/hero-buttons';
 
 @include nb-install-component() {
-
-  #dialog-header, .dialog-body {
+  #dialog-header,
+  .dialog-body {
     color: nb-theme(text-primary-color);
   }
 }

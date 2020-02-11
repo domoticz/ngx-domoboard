@@ -66,7 +66,7 @@ export class ColorPickerComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private debouncer$ = new Subject<DomoticzColor>();
 
-  @ViewChild('container', { static: false }) container: ElementRef;
+  @ViewChild('container') container: ElementRef;
 
   private _color: DomoticzColor;
   @Input()

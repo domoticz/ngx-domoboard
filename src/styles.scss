@@ -19,11 +19,18 @@
 
 @include nb-install() {
   @include nb-theme-global();
-};
+}
 
 .pace {
-
   .pace-progress {
     z-index: 10002 !important;
   }
+}
+
+.cdk-overlay-container {
+  z-index: 10002 !important;
+}
+
+#menu-sidebar nb-menu .menu-item a {
+  font-size: 1.125rem;
 }

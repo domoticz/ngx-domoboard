@@ -20,6 +20,7 @@ import {
 } from '@nd/core/services';
 import {
   Temp,
+  Hum,
   Switch,
   DomoticzSettings,
   DomoticzColor,
@@ -28,10 +29,9 @@ import {
 
 import { environment } from 'environments/environment';
 
-const isSwitch = (device: any): device is Switch =>
-  device.SwitchType !== undefined;
-
+const isSwitch = (device: any): device is Switch => device.SwitchType !== undefined;
 const isTemp = (device: any): device is Temp => device.Temp !== undefined;
+const isHum = (device: any): device is Hum => device.Humidity !== undefined;
 
 const noColor: DomoticzColor = {
   m: null,
@@ -46,37 +46,25 @@ const noColor: DomoticzColor = {
 @Component({
   selector: 'nd-device-options',
   template: `
-    <div
-      *ngIf="device$ | async as device"
-      class="options-container {{ appearanceState }}"
-    >
+    <div  *ngIf="device$ | async as device" class="options-container {{ appearanceState }}">
+
       <div class="options--header-container">
-        <div
-          *ngIf="device.BatteryLevel !== 255"
-          class="options--header-battery"
-        >
-          <nb-icon
-            class="options--header-icons"
-            icon="battery-outline"
-          ></nb-icon>
-          <span class="options--battery-level"
-            >{{ device.BatteryLevel }} %</span
-          >
+
+        <div *ngIf="device.BatteryLevel !== 255" class="options--header-battery">
+          <nb-icon class="options--header-icons" icon="battery-outline"></nb-icon>
+          <span class="options--battery-level">{{ device.BatteryLevel }} %</span>
         </div>
-        <nb-icon
-          class="options--header-icons options--header-close"
-          icon="close-outline"
-          (click)="onCloseClick()"
-        >
+
+        <nb-icon class="options--header-icons options--header-close" icon="close-outline"(click)="onCloseClick()">
         </nb-icon>
       </div>
+
       <div class="small-blocks">
         <nd-name
           [device]="device"
           [loading]="renameLoading"
           (nameClick)="onRenameClick($event)"
-          class="col-xxxl-3 col-md-6 small-block"
-        >
+          class="col-xxxl-3 col-md-6 small-block">
         </nd-name>
 
         <nd-device-icon
@@ -84,8 +72,7 @@ const noColor: DomoticzColor = {
           [deviceIcon]="deviceIcon$ | async"
           (saveIconClick)="onSaveIconClick($event)"
           [loading]="iconLoading"
-          class="col-xxxl-3 col-md-6 small-block"
-        >
+          class="col-xxxl-3 col-md-6 small-block">
         </nd-device-icon>
 
         <nd-notifications
@@ -95,17 +82,23 @@ const noColor: DomoticzColor = {
           (subscribeClick)="onSubscribeClick($event)"
           [isSubscribed]="isSubscribed$ | async"
           [loading]="pushLoading"
-          class="col-xxxl-3 col-md-6 small-block"
-        >
+          class="col-xxxl-3 col-md-6 small-block">
         </nd-notifications>
 
         <nd-dim-level
           *ngIf="(isDimmer$ | async) && device.Type !== 'Color Switch'"
           [device]="device"
           (levelSet)="onLevelSet($event)"
-          class="col-xxxl-3 col-md-6 small-block"
-        >
+          class="col-xxxl-3 col-md-6 small-block">
         </nd-dim-level>
+
+        <nd-blind-percentage
+            *ngIf="isBlindPercentage$ | async"
+            [device]="device"
+            (levelSet)="onLevelSet($event)"
+            class="col-xxxl-3 col-md-6 small-block">
+          </nd-blind-percentage>
+
       </div>
 
       <div class="big-blocks">
@@ -126,7 +119,7 @@ const noColor: DomoticzColor = {
 export class DeviceOptionsComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject();
 
-  device$: Observable<Temp | Switch> = this.service.select<Temp | Switch>(
+  device$: Observable<Temp | Hum | Switch> = this.service.select<Temp | Hum | Switch>(
     'device'
   );
 
@@ -170,6 +163,10 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
     return this.device$.pipe(map(device => isTemp(device)));
   }
 
+  get isHum$(): Observable<boolean> {
+    return this.device$.pipe(map(device => isHum(device)));
+  }
+
   get isDimmer$(): Observable<boolean> {
     return this.device$.pipe(
       map(device => isSwitch(device) && device.SwitchType === 'Dimmer')
@@ -180,13 +177,19 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
     return this.device$.pipe(map(device => isSwitch(device) && device.Level));
   }
 
+  get isBlindPercentage$(): Observable<boolean> {
+    return this.device$.pipe(
+      map(device => isSwitch(device) && device.SwitchType === 'Blinds Percentage')
+    );
+  }
+
   constructor(
     private service: DeviceOptionsService,
     private pushService: PushSubscriptionService,
     private dbService: DBService,
     private router: Router,
     private iconService: DeviceIconService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.device$
@@ -208,7 +211,7 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
     this.router.navigate([`devices/${this.previousUrl[0].path}`]);
   }
 
-  onRenameClick(device: Temp | Switch) {
+  onRenameClick(device: Temp | Hum | Switch) {
     this.renameLoading = true;
     this.service
       .renameDevice(device.idx, device.Name)
@@ -266,7 +269,18 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
   onLevelSet(device: Switch) {
     this.service
       .setDimLevel(device.idx, device.Level)
-      .pipe(take(1), takeUntil(this.unsubscribe$))
+      .pipe(
+        tap((resp: DomoticzResponse<Switch>) => {
+          console.log("↩️ Response from Server when set level-->" + JSON.stringify(resp, null, 4));
+          if (resp.status === 'OK') {
+            console.log("😃 bingo!!!");
+            //this.service.syncColor(event);
+          } else {
+            console.log("😥 missing!!!");
+            throw resp;
+          }
+        }),
+        take(1), takeUntil(this.unsubscribe$))
       .subscribe();
   }
 
@@ -275,8 +289,13 @@ export class DeviceOptionsComponent implements OnInit, OnDestroy {
       .setColorBrightness(idx, event)
       .pipe(
         tap((resp: DomoticzResponse<Switch>) => {
+          console.log("↩️ Response from Server when set color-->" + JSON.stringify(resp, null, 4));
           if (resp.status === 'OK') {
+            console.log("😃 bingo!!!");
             this.service.syncColor(event);
+          } else {
+            console.log("😥 missing!!!");
+            throw resp;
           }
         }),
         take(1),

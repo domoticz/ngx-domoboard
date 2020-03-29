@@ -16,6 +16,7 @@ import { environment } from '@nd/../environments/environment';
   styleUrls: ['./header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
+
 export class HeaderComponent {
   @Input() position = 'normal';
 
@@ -30,11 +31,14 @@ export class HeaderComponent {
   name = environment.name;
 
   routes = {
+    Dashboard: 'devices/dashboard',
     Switches: 'devices/switches',
-    Temperature: 'devices/temperature'
+    Temperature: 'devices/temperature',
+    Scenes: 'devices/scenes',
+    Utility: 'devices/utility'
   };
 
-  constructor(private router: Router, private cd: ChangeDetectorRef) {}
+  constructor(private router: Router, private cd: ChangeDetectorRef) { }
 
   onChangeTab(event: any) {
     this.router.navigate([this.routes[event.tabTitle]]);

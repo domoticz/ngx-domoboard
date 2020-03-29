@@ -39,7 +39,7 @@ export class DeviceIconComponent {
 
   @Output() saveIconClick = new EventEmitter<any>();
 
-  title = 'ICON (link to ';
+  title = 'Icon (link to ';
 
   evaIcon: string;
 

@@ -2,7 +2,7 @@
 
 @include nb-install-component() {
 
-  .dim-container {
+  .blind-container {
 
     .title {
       font-size: nb-theme(text-heading-6-font-size);
@@ -13,7 +13,7 @@
 .card-body {
   overflow: hidden;
 
-  .dim-container {
+  .blind-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -23,7 +23,7 @@
       margin: 0 0 1rem 0;
     }
 
-    #dim-progress {
+    #blind-progress {
       cursor: pointer;
     }
 

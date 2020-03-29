@@ -201,6 +201,7 @@
   },
   "defaultProject": "ngx-domoboard",
   "cli": {
-    "defaultCollection": "@nativescript/schematics"
+    "defaultCollection": "@nativescript/schematics",
+    "analytics": "3c4eed1d-a250-4e4e-a301-ae90e1a77caf"
   }
 }

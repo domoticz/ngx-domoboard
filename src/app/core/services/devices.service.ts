@@ -16,10 +16,8 @@ import { DBService } from './db.service';
 import { DomoticzResponse, Switch, Temp } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
 
-const isSwitch = (device: any): device is Switch =>
-  device.SwitchType !== undefined;
-const isTemp = (device: any): device is Temp =>
-  device.Temp !== undefined || device.Humidity !== undefined;
+const isSwitch = (device: any): device is Switch => device.SwitchType !== undefined;
+const isTemp = (device: any): device is Temp => device.Temp !== undefined || device.Humidity !== undefined;
 
 interface State<T> {
   types: string[];
@@ -56,34 +54,34 @@ export class DevicesService extends DataService {
   }
 
   getDevices<T>(_filter: string): Observable<DomoticzResponse<T>> {
+    let cmds: string;
+    cmds = Api.devices.replace('{filter}', _filter);
+    console.log("👣 get all devices request-->" + cmds);
+
     return this.get<DomoticzResponse<T>>(
-      Api.devices.replace('{filter}', _filter),
-      true
-    ).pipe(
-      tap((resp: DomoticzResponse<T>) =>
-        !!resp && !!resp.result
-          ? this.subject.next({
-              ...this.subject.value,
-              devices: resp.result as any[],
-              lastUpdate: resp.ActTime.toString(),
-              types: [
-                ...resp.result
-                  .map(d => {
-                    if (isSwitch(d)) {
-                      return d.SwitchType;
-                    } else if (isTemp(d)) {
-                      return d.Type;
-                    }
-                  })
-                  .filter((type, i, types) => types.indexOf(type) === i)
-              ]
-            })
-          : this.clearStore()
-      )
-    );
+      Api.devices.replace('{filter}', _filter), true).pipe(
+        tap((resp: DomoticzResponse<T>) => {
+          console.log("↩️ Response from Server when get all devices-->" + JSON.stringify(resp, null, 4));
+          !!resp && !!resp.result ? this.subject.next({
+            ...this.subject.value, devices: resp.result as any[], lastUpdate: resp.ActTime.toString(),
+            types: [...resp.result.map(d => {
+              if (isSwitch(d)) {
+                return d.SwitchType;
+              } else if (isTemp(d)) {
+                return d.Type;
+              }
+            }).filter((type, i, types) => types.indexOf(type) === i)]
+          }) : this.clearStore()
+        }
+        )
+      );
   }
 
   refreshDevices<T>(_filter: string): Observable<DomoticzResponse<T>> {
+    let cmds: string;
+    cmds = Api.refreshDevices.replace('{lastupdate}', this.subject.value.lastUpdate).replace('{filter}', _filter);
+    console.log("👣 refresh/update all devices request-->" + cmds);
+
     return interval(10000).pipe(
       switchMap(() =>
         this.get<DomoticzResponse<T>>(
@@ -102,8 +100,7 @@ export class DevicesService extends DataService {
                 if (isSwitch(device) || isTemp(device)) {
                   return device.idx === res.idx;
                 }
-              }) || device
-          ),
+              }) || device),
           lastUpdate: resp.ActTime.toString()
         })
       )

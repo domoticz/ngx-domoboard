@@ -1,0 +1,36 @@
+export interface Hum {
+    AddjMulti: number;
+    AddjMulti2: number;
+    AddjValue: number;
+    AddjValue2: number;
+    BatteryLevel: number;
+    CustomImage: number;
+    Data: string;
+    Description: string;
+    Favorite: number;
+    HardwareID: number;
+    HardwareName: string;
+    HardwareType: string;
+    HardwareTypeVal: number;
+    HaveTimeout: boolean;
+    Humidity: number;
+    HumidityStatus: string;
+    ID: string;
+    LastUpdate: string;
+    Name: string;
+    Notifications: string;
+    PlanID: string;
+    PlanIDs: number[];
+    Protected: boolean;
+    ShowNotifications: boolean;
+    SignalLevel?: number;
+    SubType: string;
+    Timers: string;
+    Type: string;
+    TypeImg: string;
+    Unit: number;
+    Used: number;
+    XOffset: string;
+    YOffset: string;
+    idx: string;
+}

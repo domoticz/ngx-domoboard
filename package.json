@@ -3,7 +3,7 @@
   "version": "1.2.4",
   "scripts": {
     "ng": "ng",
-    "start": "node version.js && ng serve",
+    "start": "node version.js && ng serve --port 8090",
     "build": "node version.js && ng build --configuration production",
     "build:stats": "node version.js && ng build --configuration production --stats-json",
     "build:domoticz": "node version.js && ng build --configuration domoticz",

@@ -43,7 +43,7 @@ export class PushNotificationsComponent {
 
   @Output() subscribeClick = new EventEmitter<any>();
 
-  title = 'PUSH NOTIFICATIONS (on status change):';
+  title = 'Push Notifications (on status change):';
 
   onSubscribeClick() {
     this.subscribeClick.emit({

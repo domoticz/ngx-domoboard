@@ -17,13 +17,13 @@ import { NbMenuItem } from '@nebular/theme';
   template: `
     <div id="menu-sidebar" class="{{ animationState }}">
       <div class="menu-container {{ animationState }}">
-        <nb-menu id="menu" tag="menu" [items]="items"> </nb-menu>
+        <nb-menu id="menu" tag="menu" [items]="items"></nb-menu>
         <nd-theme-select
           class="menu--theme-container"
           [selectedTheme]="selectedTheme"
           [themes]="themes"
-          (themeSelected)="themeSelected.emit($event)"
-        ></nd-theme-select>
+          (themeSelected)="themeSelected.emit($event)">
+          </nd-theme-select>
       </div>
     </div>
   `,
@@ -44,6 +44,11 @@ export class MenuSidebarComponent implements OnInit, OnDestroy {
 
   items: NbMenuItem[] = [
     {
+      title: 'Dashboard',
+      link: '/devices/dashboard',
+      icon: 'color-palette-outline'
+    },
+    {
       title: 'Switches',
       link: '/devices/switches',
       icon: 'toggle-left-outline'
@@ -52,6 +57,16 @@ export class MenuSidebarComponent implements OnInit, OnDestroy {
       title: 'Temperature',
       link: '/devices/temperature',
       icon: 'thermometer-outline'
+    },
+    {
+      title: 'Scenes',
+      link: '/devices/scenes',
+      icon: 'toggle-left-outline'
+    },
+    {
+      title: 'Utility',
+      link: '/devices/utility',
+      icon: 'activity-outline'
     }
   ];
 

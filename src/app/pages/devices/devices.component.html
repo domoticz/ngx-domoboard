@@ -1,29 +1,20 @@
+<nd-time-bar></nd-time-bar>
+
 <ng-container *ngIf="devices$ | async as devices">
-  <div
-    class="type-container {{ filter }} {{ navState }}"
-    *ngIf="!!devices.length || navState === 'out'; else noDevices"
-  >
+  <div class="type-container {{ filter }} {{ navState }}"
+    *ngIf="!!devices.length || navState === 'out'; else noDevices">
     <ng-container *ngFor="let type of types$ | async">
       <span class="type">{{ type }}</span>
 
       <div class="row">
         <ng-container *ngFor="let device of devices">
-          <div
-            class="col-xxxl-3 col-md-6"
-            *ngIf="device.SwitchType === type || device.Type === type"
-          >
-            <nd-status-card
-              [device]="device"
-              [type]="type"
-              [statusKey]="statusKey"
-              [deviceIcons]="deviceIcons$ | async"
-              (statusChanged)="statusChanged($event, device)"
-              [on]="isSwitchOn(device)"
-              [status]="device[statusKey]"
-              [loading]="switchLoading && clickedIdx === device.idx"
-              (optionsClick)="onOptionsClick(device.idx)"
-            >
+          <div class="col-xxxl-3 col-md-6" *ngIf="device.SwitchType === type || device.Type === type">
+
+            <nd-status-card [device]="device" [type]="type" [statusKey]="statusKey" [deviceIcons]="deviceIcons$ | async"
+              (statusChanged)="statusChanged($event, device)" [on]="isSwitchOn(device)" [status]="device[statusKey]"
+              [loading]="switchLoading && clickedIdx === device.idx" (optionsClick)="onOptionsClick(device.idx)">
             </nd-status-card>
+
           </div>
         </ng-container>
       </div>
@@ -32,11 +23,7 @@
 </ng-container>
 
 <ng-template #noDevices>
-  <div
-    class="no-devices {{ path === 'temperature' ? 'temp' : 'switches' }} {{
-      navState
-    }}"
-  >
+  <div class="no-devices {{ path === 'temperature' ? 'temp' : 'switches' }} {{navState}}">
     <span>No</span>
     <span>devices</span>
     <span>found</span>

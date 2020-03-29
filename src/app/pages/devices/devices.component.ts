@@ -43,6 +43,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
   navState = 'in';
 
   get filter() {
+    //console.log("👣 route snapshot url-->" + this.path);
     switch (this.path) {
       case 'temperature':
         return 'temp';
@@ -67,7 +68,7 @@ export class DevicesComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private dbService: DBService,
     private iconService: DeviceIconService
-  ) {}
+  ) { }
 
   ngOnInit() {
     merge(
@@ -99,16 +100,26 @@ export class DevicesComponent implements OnInit, OnDestroy {
   }
 
   statusChanged(event: any, _switch: Switch) {
-    if (['On/Off', 'Dimmer'].includes(_switch.SwitchType)) {
+    console.log("👣 user operation-->switch");
+    console.log("🐜 debuging..." + _switch.SwitchType);
+
+    if (['On/Off', 'Dimmer', "Blinds", "Blinds Percentage"].includes(_switch.SwitchType)) {
       this.switchLoading = true;
       this.clickedIdx = _switch.idx;
       this.switchesService
         .switchLight(_switch.idx, event)
         .pipe(
           tap(resp => {
+            console.log("↩️ Response from Server when status changed-->" + JSON.stringify(resp, null, 4));
             if (resp.status === 'OK') {
-              _switch.Status = event;
+              console.log("😃 bingo!!!");
+              if (_switch.Status === 'Open' || _switch.Status === 'Closed') {
+                _switch.Status = event === 'On' ? 'Closed' : 'Open';
+              }
+              else { _switch.Status = event; }
+
             } else {
+              console.log("😥 missing!!!");
               throw resp;
             }
           }),

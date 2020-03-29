@@ -8,34 +8,34 @@ import { tap, filter, takeUntil, debounceTime } from 'rxjs/operators';
 import { Switch } from '@nd/core/models';
 
 @Component({
-  selector: 'nd-dim-level',
+  selector: 'nd-blind-percentage',
   template: `
-  <nb-card>
-  <nb-card-body class="card-body">
-    <div class="dim-container">
-      <span class="title">{{ title + (device.Level > 100 ? '100%' : device.Level < 0 ? '0' : device.Level + '%') }}</span>
-      <nb-progress-bar id="dim-progress" [value]="device.Level" [status]="'info'"
-        (click)="onBarClick($event)" size="tiny">
-      </nb-progress-bar>
-      <div class="radio-container" #radioContainer>
-        <div class="radio-content">
-          <svg class="radio-btn" viewBox="0 0 100 100"
-            [ngStyle]="{ 'margin-left': device.Level > 100 ? '100%' : device.Level < 0 ? '0' : device.Level + '%' }"
-            (mousedown)="onMouseDown($event)" (touchmove)="onMouseMove($event, true)"
-            (touchstart)="onMouseDown($event, true)" (touchend)="onMouseUp()">
-            <circle cx="50" cy="50" r="50" fill="url(#grad1)"/>
-          </svg>
+    <nb-card>
+      <nb-card-body class="card-body">
+        <div class="blind-container">
+          <span class="title">{{ title + (device.Level > 100 ? '100%' : device.Level < 0 ? '0' : device.Level + '%') }}</span>
+          <nb-progress-bar id="blind-progress" [value]="device.Level" [status]="'info'"
+            (click)="onBarClick($event)" size="tiny">
+          </nb-progress-bar>
+          <div class="radio-container" #radioContainer>
+            <div class="radio-content">
+              <svg class="radio-btn" viewBox="0 0 100 100"
+                [ngStyle]="{ 'margin-left': device.Level > 100 ? '100%' : device.Level < 0 ? '0' : device.Level + '%' }"
+                (mousedown)="onMouseDown($event)" (touchmove)="onMouseMove($event, true)"
+                (touchstart)="onMouseDown($event, true)" (touchend)="onMouseUp()">
+                <circle cx="50" cy="50" r="50" fill="url(#grad1)"/>
+              </svg>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </nb-card-body>
-</nb-card>
+      </nb-card-body>
+    </nb-card>
   `,
-  styleUrls: ['./dim-level.component.scss'],
+  styleUrls: ['./blind-percentage.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class DimLevelComponent implements OnInit, OnDestroy {
+export class BlindPercentageComponent implements OnInit, OnDestroy {
 
   private unsubscribe$ = new Subject();
 
@@ -47,7 +47,7 @@ export class DimLevelComponent implements OnInit, OnDestroy {
 
   @Output() levelSet = new EventEmitter<Switch>();
 
-  title = `Dim Level: `;
+  title = `Blind Percentage: `;
 
   isMouseDown: boolean;
 

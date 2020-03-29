@@ -1,0 +1,16 @@
+<div class="row" *ngIf="sunRiseSet">
+    <div class="col-md-12 col-xxxl-4">
+        <nb-card>
+            <nb-card-header>
+                <nb-icon class="option-icon" icon="clock-outline"></nb-icon>
+                {{sunRiseSet.ServerTime}}
+
+                <nb-icon class="option-icon" icon="sun"></nb-icon>
+                <nb-icon class="option-icon" icon="arrow-up"></nb-icon>
+                {{sunRiseSet.Sunrise}}
+                <nb-icon class="option-icon" icon="arrow-down"></nb-icon>
+                {{sunRiseSet.Sunset}}
+            </nb-card-header>
+        </nb-card>
+    </div>
+</div>

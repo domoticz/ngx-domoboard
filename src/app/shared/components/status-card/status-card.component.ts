@@ -9,17 +9,13 @@ import {
 @Component({
   selector: 'nd-status-card',
   template: `
-    <nb-card
-      (click)="switchLight()"
-      [ngClass]="{
-        off: !on,
-        disabled: device.HaveTimeout,
-        'no-event': !clickable
-      }"
-      [nbSpinner]="loading"
-    >
+    <nb-card (click)="switchableDevice()" [ngClass]="{off: !on, disabled: device.HaveTimeout, 
+      'no-event': !clickable}" [nbSpinner]="loading">
+
       <div class="icon-container">
+
         <div class="icon primary">
+
           <nd-svg-icon
             *ngIf="
               !!icon[device.Image] ||
@@ -29,9 +25,9 @@ import {
             "
             class="nd-icon {{ device[statusKey] }}"
             [name]="icon[device.Image]"
-            [status]="device[statusKey]"
-          >
+            [status]="device[statusKey]">
           </nd-svg-icon>
+
           <ng-template #nbIcon>
             <nb-icon class="temp-icon" [icon]="deviceIcon"> </nb-icon>
           </ng-template>
@@ -43,11 +39,7 @@ import {
         <div class="status">{{ status }}</div>
       </div>
 
-      <nb-icon
-        class="option-icon"
-        icon="plus-outline"
-        (click)="onOptionsClick($event)"
-      >
+      <nb-icon class="option-icon" icon="plus-outline" (click)="onOptionsClick($event)">
       </nb-icon>
     </nb-card>
   `,
@@ -75,7 +67,9 @@ export class StatusCardComponent {
   @Input()
   set status(value) {
     if (!!value) {
-      this.clickable = ['On', 'Off', 'Level'].some(s => value.includes(s));
+      //console.log("debug................" + value.substr(0, 10));
+      //this.clickable = ['Set Level:'].some(s => value.substr(0, 10).includes(s));
+      this.clickable = ['On', 'Off', 'Open', 'Closed'].some(s => value.includes(s));
       this._status = value;
     }
   }
@@ -89,6 +83,7 @@ export class StatusCardComponent {
 
   clickable: boolean;
 
+
   deviceIcon: string;
 
   icon = {
@@ -96,8 +91,17 @@ export class StatusCardComponent {
     Door: 'nd-door'
   };
 
-  switchLight() {
-    this.statusChanged.emit(this.on ? 'Off' : 'On');
+
+  switchableDevice() {
+    if (this.status === 'On' || this.status === 'Off') {
+      // set this condition for light since they maybe reverse
+      this.statusChanged.emit(this.on ? 'Off' : 'On');
+    } else if (this.status === 'Open' || this.status === 'Closed') {
+      // set this condition for curtain/blinds/shutter since they maybe reverse
+      this.statusChanged.emit(this.on ? 'On' : 'Off');
+    } else {
+      console.log('⛔️ Not a switchable device!');
+    }
   }
 
   onOptionsClick(evt: any) {

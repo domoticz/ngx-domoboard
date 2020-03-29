@@ -7,7 +7,7 @@ import { distinctUntilChanged, tap, pluck } from 'rxjs/operators';
 import { DataService } from './data.service';
 import { DBService } from './db.service';
 
-import { DomoticzResponse, TempGraphData, SwitchLog } from '@nd/core/models';
+import { DomoticzResponse, TempGraphData, HumGraphData, SwitchLog } from '@nd/core/models';
 import { Api } from '@nd/core/enums/api.enum';
 
 interface State {
@@ -16,6 +16,11 @@ interface State {
     month: TempGraphData[];
     year: TempGraphData[];
   };
+  humGraph: {
+    day: HumGraphData[];
+    month: HumGraphData[];
+    year: HumGraphData[];
+  };
   switchLogs: SwitchLog[];
 }
 
@@ -23,6 +28,11 @@ interface State {
 export class DeviceHistoryService extends DataService {
   initialState: State = {
     tempGraph: {
+      day: [],
+      month: [],
+      year: []
+    },
+    humGraph: {
       day: [],
       month: [],
       year: []
@@ -46,10 +56,15 @@ export class DeviceHistoryService extends DataService {
   }
 
   getTempGraph(idx: string, range: string): Observable<DomoticzResponse<any>> {
+    let cmds: string;
+    cmds = Api.tempGraph.replace('{idx}', idx).replace('{range}', range);
+    console.log("👣 get temp graph request from logs-->" + cmds);
+
     return this.get<DomoticzResponse<any>>(
       Api.tempGraph.replace('{idx}', idx).replace('{range}', range)
     ).pipe(
       tap((resp: DomoticzResponse<any>) => {
+        console.log("↩️ Response from Server when get temp graph from logs-->" + JSON.stringify(resp, null, 4));
         if (resp.status === 'OK') {
           this.subject.next({
             ...this.subject.value,
@@ -63,7 +78,34 @@ export class DeviceHistoryService extends DataService {
     );
   }
 
+  getHumGraph(idx: string, range: string): Observable<DomoticzResponse<any>> {
+    let cmds: string;
+    cmds = Api.humGraph.replace('{idx}', idx).replace('{range}', range);
+    console.log("👣 get humidity graph request from logs-->" + cmds);
+
+    return this.get<DomoticzResponse<any>>(
+      Api.humGraph.replace('{idx}', idx).replace('{range}', range)
+    ).pipe(
+      tap((resp: DomoticzResponse<any>) => {
+        console.log("↩️ Response from Server when get humidity graph from logs-->" + JSON.stringify(resp, null, 4));
+        if (resp.status === 'OK') {
+          this.subject.next({
+            ...this.subject.value,
+            humGraph: {
+              ...this.subject.value.humGraph,
+              [range]: resp.result
+            }
+          });
+        }
+      })
+    );
+  }
+
   getSwitchLogs(idx: string): Observable<DomoticzResponse<SwitchLog>> {
+    let cmds: string;
+    cmds = Api.lightLog.replace('{idx}', idx);
+    console.log("👣 get switch logs request from logs-->" + cmds);
+
     return this.get<DomoticzResponse<SwitchLog>>(
       Api.lightLog.replace('{idx}', idx)
     ).pipe(
@@ -79,6 +121,10 @@ export class DeviceHistoryService extends DataService {
   }
 
   clearSwitchLogs(idx: string): Observable<DomoticzResponse<any>> {
+    let cmds: string;
+    cmds = Api.clearLog.replace('{idx}', idx);
+    console.log("👣 clear switch logs request from logs-->" + cmds);
+
     return this.get<DomoticzResponse<any>>(
       Api.clearLog.replace('{idx}', idx)
     ).pipe(

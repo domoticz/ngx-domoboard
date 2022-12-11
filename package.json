@@ -19,7 +19,7 @@
     "@angular/cdk": "9.0.0",
     "@angular/common": "9.0.0",
     "@angular/compiler": "9.0.0",
-    "@angular/core": "9.0.0",
+    "@angular/core": "11.0.5",
     "@angular/elements": "9.0.0",
     "@angular/forms": "9.0.0",
     "@angular/platform-browser": "9.0.0",

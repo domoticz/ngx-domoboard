@@ -4,7 +4,7 @@
   "theme_color": "#7474bd",
   "background_color": "#7474bd",
   "display": "standalone",
-  "scope": "/",
+  "scope": "/ngx-domoboard/",
   "start_url": "/ngx-domoboard/",
   "icons": [
     {
